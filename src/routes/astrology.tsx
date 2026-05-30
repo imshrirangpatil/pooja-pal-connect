@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { astrologers } from "@/lib/data";
 import { Phone, MessageCircle, Star, Sparkles } from "lucide-react";
@@ -64,9 +64,19 @@ function Astrology() {
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <button disabled={!a.online} className="flex items-center justify-center gap-1.5 rounded-full bg-secondary py-2.5 text-xs font-semibold text-secondary-foreground disabled:opacity-50">
-                  <MessageCircle className="h-3.5 w-3.5" /> Chat
-                </button>
+                {a.online ? (
+                  <Link
+                    to="/astrology/chat/$id"
+                    params={{ id: a.id }}
+                    className="flex items-center justify-center gap-1.5 rounded-full bg-secondary py-2.5 text-xs font-semibold text-secondary-foreground"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" /> Chat
+                  </Link>
+                ) : (
+                  <button disabled className="flex items-center justify-center gap-1.5 rounded-full bg-secondary py-2.5 text-xs font-semibold text-secondary-foreground opacity-50">
+                    <MessageCircle className="h-3.5 w-3.5" /> Chat
+                  </button>
+                )}
                 <button disabled={!a.online} className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-warm py-2.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
                   <Phone className="h-3.5 w-3.5" /> Call
                 </button>
