@@ -9,15 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PanditsRouteImport } from './routes/pandits'
 import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as BecomePanditRouteImport } from './routes/become-pandit'
 import { Route as AstrologyRouteImport } from './routes/astrology'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PoojasIndexRouteImport } from './routes/poojas.index'
 import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SamagriRoute = SamagriRouteImport.update({
   id: '/samagri',
   path: '/samagri',
@@ -36,6 +43,11 @@ const PanditsRoute = PanditsRouteImport.update({
 const BookingsRoute = BookingsRouteImport.update({
   id: '/bookings',
   path: '/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BecomePanditRoute = BecomePanditRouteImport.update({
+  id: '/become-pandit',
+  path: '/become-pandit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AstrologyRoute = AstrologyRouteImport.update({
@@ -62,20 +74,24 @@ const PoojasSlugRoute = PoojasSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/astrology': typeof AstrologyRoute
+  '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
+  '/signup': typeof SignupRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas/': typeof PoojasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/astrology': typeof AstrologyRoute
+  '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
+  '/signup': typeof SignupRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas': typeof PoojasIndexRoute
 }
@@ -83,10 +99,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/astrology': typeof AstrologyRoute
+  '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
+  '/signup': typeof SignupRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas/': typeof PoojasIndexRoute
 }
@@ -95,30 +113,36 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/astrology'
+    | '/become-pandit'
     | '/bookings'
     | '/pandits'
     | '/profile'
     | '/samagri'
+    | '/signup'
     | '/poojas/$slug'
     | '/poojas/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/astrology'
+    | '/become-pandit'
     | '/bookings'
     | '/pandits'
     | '/profile'
     | '/samagri'
+    | '/signup'
     | '/poojas/$slug'
     | '/poojas'
   id:
     | '__root__'
     | '/'
     | '/astrology'
+    | '/become-pandit'
     | '/bookings'
     | '/pandits'
     | '/profile'
     | '/samagri'
+    | '/signup'
     | '/poojas/$slug'
     | '/poojas/'
   fileRoutesById: FileRoutesById
@@ -126,16 +150,25 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AstrologyRoute: typeof AstrologyRoute
+  BecomePanditRoute: typeof BecomePanditRoute
   BookingsRoute: typeof BookingsRoute
   PanditsRoute: typeof PanditsRoute
   ProfileRoute: typeof ProfileRoute
   SamagriRoute: typeof SamagriRoute
+  SignupRoute: typeof SignupRoute
   PoojasSlugRoute: typeof PoojasSlugRoute
   PoojasIndexRoute: typeof PoojasIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/samagri': {
       id: '/samagri'
       path: '/samagri'
@@ -162,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/bookings'
       fullPath: '/bookings'
       preLoaderRoute: typeof BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/become-pandit': {
+      id: '/become-pandit'
+      path: '/become-pandit'
+      fullPath: '/become-pandit'
+      preLoaderRoute: typeof BecomePanditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/astrology': {
@@ -198,13 +238,25 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AstrologyRoute: AstrologyRoute,
+  BecomePanditRoute: BecomePanditRoute,
   BookingsRoute: BookingsRoute,
   PanditsRoute: PanditsRoute,
   ProfileRoute: ProfileRoute,
   SamagriRoute: SamagriRoute,
+  SignupRoute: SignupRoute,
   PoojasSlugRoute: PoojasSlugRoute,
   PoojasIndexRoute: PoojasIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
