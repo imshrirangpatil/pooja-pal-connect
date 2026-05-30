@@ -9,38 +9,168 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SamagriRouteImport } from './routes/samagri'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PanditsRouteImport } from './routes/pandits'
+import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as AstrologyRouteImport } from './routes/astrology'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PoojasIndexRouteImport } from './routes/poojas.index'
+import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
 
+const SamagriRoute = SamagriRouteImport.update({
+  id: '/samagri',
+  path: '/samagri',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanditsRoute = PanditsRouteImport.update({
+  id: '/pandits',
+  path: '/pandits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingsRoute = BookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AstrologyRoute = AstrologyRouteImport.update({
+  id: '/astrology',
+  path: '/astrology',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PoojasIndexRoute = PoojasIndexRouteImport.update({
+  id: '/poojas/',
+  path: '/poojas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoojasSlugRoute = PoojasSlugRouteImport.update({
+  id: '/poojas/$slug',
+  path: '/poojas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/astrology': typeof AstrologyRoute
+  '/bookings': typeof BookingsRoute
+  '/pandits': typeof PanditsRoute
+  '/profile': typeof ProfileRoute
+  '/samagri': typeof SamagriRoute
+  '/poojas/$slug': typeof PoojasSlugRoute
+  '/poojas/': typeof PoojasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/astrology': typeof AstrologyRoute
+  '/bookings': typeof BookingsRoute
+  '/pandits': typeof PanditsRoute
+  '/profile': typeof ProfileRoute
+  '/samagri': typeof SamagriRoute
+  '/poojas/$slug': typeof PoojasSlugRoute
+  '/poojas': typeof PoojasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/astrology': typeof AstrologyRoute
+  '/bookings': typeof BookingsRoute
+  '/pandits': typeof PanditsRoute
+  '/profile': typeof ProfileRoute
+  '/samagri': typeof SamagriRoute
+  '/poojas/$slug': typeof PoojasSlugRoute
+  '/poojas/': typeof PoojasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/astrology'
+    | '/bookings'
+    | '/pandits'
+    | '/profile'
+    | '/samagri'
+    | '/poojas/$slug'
+    | '/poojas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/astrology'
+    | '/bookings'
+    | '/pandits'
+    | '/profile'
+    | '/samagri'
+    | '/poojas/$slug'
+    | '/poojas'
+  id:
+    | '__root__'
+    | '/'
+    | '/astrology'
+    | '/bookings'
+    | '/pandits'
+    | '/profile'
+    | '/samagri'
+    | '/poojas/$slug'
+    | '/poojas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AstrologyRoute: typeof AstrologyRoute
+  BookingsRoute: typeof BookingsRoute
+  PanditsRoute: typeof PanditsRoute
+  ProfileRoute: typeof ProfileRoute
+  SamagriRoute: typeof SamagriRoute
+  PoojasSlugRoute: typeof PoojasSlugRoute
+  PoojasIndexRoute: typeof PoojasIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/samagri': {
+      id: '/samagri'
+      path: '/samagri'
+      fullPath: '/samagri'
+      preLoaderRoute: typeof SamagriRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pandits': {
+      id: '/pandits'
+      path: '/pandits'
+      fullPath: '/pandits'
+      preLoaderRoute: typeof PanditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookings': {
+      id: '/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/astrology': {
+      id: '/astrology'
+      path: '/astrology'
+      fullPath: '/astrology'
+      preLoaderRoute: typeof AstrologyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +178,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/poojas/': {
+      id: '/poojas/'
+      path: '/poojas'
+      fullPath: '/poojas/'
+      preLoaderRoute: typeof PoojasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/poojas/$slug': {
+      id: '/poojas/$slug'
+      path: '/poojas/$slug'
+      fullPath: '/poojas/$slug'
+      preLoaderRoute: typeof PoojasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AstrologyRoute: AstrologyRoute,
+  BookingsRoute: BookingsRoute,
+  PanditsRoute: PanditsRoute,
+  ProfileRoute: ProfileRoute,
+  SamagriRoute: SamagriRoute,
+  PoojasSlugRoute: PoojasSlugRoute,
+  PoojasIndexRoute: PoojasIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
