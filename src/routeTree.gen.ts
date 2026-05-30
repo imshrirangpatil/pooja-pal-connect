@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PanditsRouteImport } from './routes/pandits'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as BecomePanditRouteImport } from './routes/become-pandit'
 import { Route as AstrologyRouteImport } from './routes/astrology'
@@ -38,6 +39,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PanditsRoute = PanditsRouteImport.update({
   id: '/pandits',
   path: '/pandits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookingsRoute = BookingsRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/astrology': typeof AstrologyRoute
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
+  '/cart': typeof CartRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/astrology': typeof AstrologyRoute
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
+  '/cart': typeof CartRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/astrology': typeof AstrologyRoute
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
+  '/cart': typeof CartRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/astrology'
     | '/become-pandit'
     | '/bookings'
+    | '/cart'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/astrology'
     | '/become-pandit'
     | '/bookings'
+    | '/cart'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/astrology'
     | '/become-pandit'
     | '/bookings'
+    | '/cart'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AstrologyRoute: typeof AstrologyRoute
   BecomePanditRoute: typeof BecomePanditRoute
   BookingsRoute: typeof BookingsRoute
+  CartRoute: typeof CartRoute
   PanditsRoute: typeof PanditsRoute
   ProfileRoute: typeof ProfileRoute
   SamagriRoute: typeof SamagriRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/pandits'
       fullPath: '/pandits'
       preLoaderRoute: typeof PanditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookings': {
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   AstrologyRoute: AstrologyRoute,
   BecomePanditRoute: BecomePanditRoute,
   BookingsRoute: BookingsRoute,
+  CartRoute: CartRoute,
   PanditsRoute: PanditsRoute,
   ProfileRoute: ProfileRoute,
   SamagriRoute: SamagriRoute,
@@ -250,3 +271,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
