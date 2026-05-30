@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet } from "lucide-react";
 
@@ -48,7 +48,7 @@ function Profile() {
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">Become a partner</p>
         <h3 className="mt-1 text-base font-bold">Are you a pandit or astrologer?</h3>
         <p className="mt-1 text-xs text-muted-foreground">Apply to join Divya's verified network.</p>
-        <button className="mt-3 w-full rounded-full bg-foreground py-2.5 text-xs font-semibold text-background">Apply now</button>
+        <Link to="/become-pandit" className="mt-3 block w-full rounded-full bg-foreground py-2.5 text-center text-xs font-semibold text-background">Apply now</Link>
       </div>
 
       <button className="mx-auto mt-6 flex items-center gap-2 text-sm font-medium text-accent">
