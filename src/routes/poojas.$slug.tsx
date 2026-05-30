@@ -57,7 +57,7 @@ function PoojaDetail() {
 
         <h2 className="mt-7 text-base font-semibold">What's included</h2>
         <ul className="mt-3 space-y-2.5">
-          {pooja.includes.map((i) => (
+          {pooja.includes.map((i: string) => (
             <li key={i} className="flex items-center gap-3 text-sm">
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-accent">
                 <Check className="h-3.5 w-3.5" />
