@@ -20,6 +20,7 @@ import { Route as AstrologyRouteImport } from './routes/astrology'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PoojasIndexRouteImport } from './routes/poojas.index'
 import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
+import { Route as AstrologyChatIdRouteImport } from './routes/astrology.chat.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -76,10 +77,15 @@ const PoojasSlugRoute = PoojasSlugRouteImport.update({
   path: '/poojas/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AstrologyChatIdRoute = AstrologyChatIdRouteImport.update({
+  id: '/chat/$id',
+  path: '/chat/$id',
+  getParentRoute: () => AstrologyRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/astrology': typeof AstrologyRoute
+  '/astrology': typeof AstrologyRouteWithChildren
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -89,10 +95,11 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas/': typeof PoojasIndexRoute
+  '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/astrology': typeof AstrologyRoute
+  '/astrology': typeof AstrologyRouteWithChildren
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -102,11 +109,12 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas': typeof PoojasIndexRoute
+  '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/astrology': typeof AstrologyRoute
+  '/astrology': typeof AstrologyRouteWithChildren
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas/': typeof PoojasIndexRoute
+  '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/poojas/$slug'
     | '/poojas/'
+    | '/astrology/chat/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/poojas/$slug'
     | '/poojas'
+    | '/astrology/chat/$id'
   id:
     | '__root__'
     | '/'
@@ -157,11 +168,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/poojas/$slug'
     | '/poojas/'
+    | '/astrology/chat/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AstrologyRoute: typeof AstrologyRoute
+  AstrologyRoute: typeof AstrologyRouteWithChildren
   BecomePanditRoute: typeof BecomePanditRoute
   BookingsRoute: typeof BookingsRoute
   CartRoute: typeof CartRoute
@@ -252,12 +264,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoojasSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/astrology/chat/$id': {
+      id: '/astrology/chat/$id'
+      path: '/chat/$id'
+      fullPath: '/astrology/chat/$id'
+      preLoaderRoute: typeof AstrologyChatIdRouteImport
+      parentRoute: typeof AstrologyRoute
+    }
   }
 }
 
+interface AstrologyRouteChildren {
+  AstrologyChatIdRoute: typeof AstrologyChatIdRoute
+}
+
+const AstrologyRouteChildren: AstrologyRouteChildren = {
+  AstrologyChatIdRoute: AstrologyChatIdRoute,
+}
+
+const AstrologyRouteWithChildren = AstrologyRoute._addFileChildren(
+  AstrologyRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AstrologyRoute: AstrologyRoute,
+  AstrologyRoute: AstrologyRouteWithChildren,
   BecomePanditRoute: BecomePanditRoute,
   BookingsRoute: BookingsRoute,
   CartRoute: CartRoute,
