@@ -128,8 +128,8 @@ export const samagri: Samagri[] = [
 ];
 
 export const festivals = [
-  { name: "Diwali", date: "Nov 1", days: 12, color: "from-amber-400 to-rose-600" },
-  { name: "Karwa Chauth", date: "Oct 20", days: 0, color: "from-rose-400 to-red-600" },
-  { name: "Govardhan", date: "Nov 2", days: 13, color: "from-orange-400 to-amber-600" },
-  { name: "Tulsi Vivah", date: "Nov 12", days: 23, color: "from-yellow-400 to-orange-600" },
+  { name: "Diwali", date: "Nov 1", days: 12, color: "bg-secondary" },
+  { name: "Karwa Chauth", date: "Oct 20", days: 0, color: "bg-secondary" },
+  { name: "Govardhan", date: "Nov 2", days: 13, color: "bg-secondary" },
+  { name: "Tulsi Vivah", date: "Nov 12", days: 23, color: "bg-secondary" },
 ];
