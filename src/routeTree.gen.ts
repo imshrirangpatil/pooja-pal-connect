@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -22,6 +23,11 @@ import { Route as PoojasIndexRouteImport } from './routes/poojas.index'
 import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
 import { Route as AstrologyChatIdRouteImport } from './routes/astrology.chat.$id'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/welcome': typeof WelcomeRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas/': typeof PoojasIndexRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/welcome': typeof WelcomeRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas': typeof PoojasIndexRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/welcome': typeof WelcomeRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/poojas/': typeof PoojasIndexRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/samagri'
     | '/signup'
+    | '/welcome'
     | '/poojas/$slug'
     | '/poojas/'
     | '/astrology/chat/$id'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/samagri'
     | '/signup'
+    | '/welcome'
     | '/poojas/$slug'
     | '/poojas'
     | '/astrology/chat/$id'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/samagri'
     | '/signup'
+    | '/welcome'
     | '/poojas/$slug'
     | '/poojas/'
     | '/astrology/chat/$id'
@@ -181,12 +193,20 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   SamagriRoute: typeof SamagriRoute
   SignupRoute: typeof SignupRoute
+  WelcomeRoute: typeof WelcomeRoute
   PoojasSlugRoute: typeof PoojasSlugRoute
   PoojasIndexRoute: typeof PoojasIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -296,9 +316,20 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   SamagriRoute: SamagriRoute,
   SignupRoute: SignupRoute,
+  WelcomeRoute: WelcomeRoute,
   PoojasSlugRoute: PoojasSlugRoute,
   PoojasIndexRoute: PoojasIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
