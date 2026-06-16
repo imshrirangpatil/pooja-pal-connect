@@ -4,6 +4,7 @@ import { ArrowLeft, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -17,34 +18,53 @@ export const Route = createFileRoute("/signup")({
 
 function SignUp() {
   const navigate = useNavigate();
+  const { sendPhoneOtp, verifyPhoneOtp, signInWithGoogle } = useAuth();
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
 
-  const sendOtp = () => {
+  const sendOtp = async () => {
     if (phone.length !== 10) {
       toast.error("Enter a valid 10-digit number");
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await sendPhoneOtp(phone);
       setStep("otp");
       toast.success(`OTP sent to +91 ${phone}`);
-    }, 600);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const verifyOtp = () => {
-    if (otp.join("").length !== 6) {
+  const verifyOtp = async () => {
+    const code = otp.join("");
+    if (code.length !== 6) {
       toast.error("Enter the 6-digit OTP");
       return;
     }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await verifyPhoneOtp(phone, code);
       toast.success("Welcome to Pranam 🙏");
       navigate({ to: "/" });
-    }, 600);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+    }
   };
 
   const updateOtp = (i: number, v: string) => {
@@ -118,7 +138,7 @@ function SignUp() {
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            <button className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-border bg-card text-sm font-semibold shadow-soft">
+            <button onClick={handleGoogle} className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-border bg-card text-sm font-semibold shadow-soft">
               <GoogleIcon /> Continue with Google
             </button>
 
