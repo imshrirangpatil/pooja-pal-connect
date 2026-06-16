@@ -19,8 +19,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 export const Route = createFileRoute("/become-pandit")({
   head: () => ({
     meta: [
-      { title: "Become a Pandit — Divya" },
-      { name: "description", content: "Join Divya's verified network of pandits. Apply, complete KYC and start receiving bookings." },
+      { title: "Become a Pandit — Pranam" },
+      { name: "description", content: "Join Pranam's verified network of pandits. Apply, complete KYC and start receiving bookings." },
     ],
   }),
   component: BecomePandit,
@@ -107,7 +107,7 @@ function BecomePandit() {
         </button>
         <div className="flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">Partner application</p>
-          <h1 className="text-base font-bold">Become a Divya Pandit</h1>
+          <h1 className="text-base font-bold">Become a Pranam Pandit</h1>
         </div>
         {step > 0 && step < 4 && (
           <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-accent">
@@ -248,7 +248,7 @@ function BecomePandit() {
                 className="mt-0.5"
               />
               <span className="text-xs leading-relaxed text-foreground">
-                I agree to Divya's <span className="font-semibold text-accent">Partner Agreement</span> and commission terms (15% platform fee per booking). I confirm all information is accurate.
+                I agree to Pranam's <span className="font-semibold text-accent">Partner Agreement</span> and commission terms (15% platform fee per booking). I confirm all information is accurate.
               </span>
             </label>
           </section>

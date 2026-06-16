@@ -79,10 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Divya — Pandit, Pooja & Astrology on demand" },
+      { title: "Pranam — Pandit, Pooja & Astrology on demand" },
       { name: "description", content: "Book verified pandits for any pooja, get samagri delivered, and consult trusted astrologers across India." },
       { name: "theme-color", content: "#f59e0b" },
-      { property: "og:title", content: "Divya — Pandit, Pooja & Astrology on demand" },
+      { property: "og:title", content: "Pranam — Pandit, Pooja & Astrology on demand" },
       { property: "og:description", content: "Verified pandits, samagri delivery and astrology — all in one app." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

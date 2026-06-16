@@ -5,7 +5,7 @@ import { CalendarCheck, Clock, ChevronRight } from "lucide-react";
 export const Route = createFileRoute("/bookings")({
   head: () => ({
     meta: [
-      { title: "My Bookings — Divya" },
+      { title: "My Bookings — Pranam" },
       { name: "description", content: "Track upcoming poojas and past bookings." },
     ],
   }),

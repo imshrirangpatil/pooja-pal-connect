@@ -5,8 +5,8 @@ import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, W
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — Divya" },
-      { name: "description", content: "Your Divya account, wallet and preferences." },
+      { title: "Profile — Pranam" },
+      { name: "description", content: "Your Pranam account, wallet and preferences." },
     ],
   }),
   component: Profile,
@@ -47,14 +47,14 @@ function Profile() {
       <div className="mx-5 mt-6 rounded-2xl border border-border/60 bg-card p-4 text-center shadow-soft">
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">Become a partner</p>
         <h3 className="mt-1 text-base font-bold">Are you a pandit or astrologer?</h3>
-        <p className="mt-1 text-xs text-muted-foreground">Apply to join Divya's verified network.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Apply to join Pranam's verified network.</p>
         <Link to="/become-pandit" className="mt-3 block w-full rounded-full bg-foreground py-2.5 text-center text-xs font-semibold text-background">Apply now</Link>
       </div>
 
       <button className="mx-auto mt-6 flex items-center gap-2 text-sm font-medium text-accent">
         <LogOut className="h-4 w-4" /> Log out
       </button>
-      <p className="mt-3 pb-2 text-center text-[10px] text-muted-foreground">Divya v1.0 · Made in India</p>
+      <p className="mt-3 pb-2 text-center text-[10px] text-muted-foreground">Pranam v1.0 · Made in India</p>
     </MobileShell>
   );
 }

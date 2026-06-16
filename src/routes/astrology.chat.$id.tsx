@@ -5,7 +5,7 @@ import { astrologers } from "@/lib/data";
 
 export const Route = createFileRoute("/astrology/chat/$id")({
   head: () => ({
-    meta: [{ title: "Live chat — Divya Astrology" }],
+    meta: [{ title: "Live chat — Pranam Astrology" }],
   }),
   component: ChatPage,
   notFoundComponent: () => (

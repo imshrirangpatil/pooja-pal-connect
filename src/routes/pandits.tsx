@@ -6,7 +6,7 @@ import { ShieldCheck, Star, MapPin, Languages } from "lucide-react";
 export const Route = createFileRoute("/pandits")({
   head: () => ({
     meta: [
-      { title: "Verified Pandits — Divya" },
+      { title: "Verified Pandits — Pranam" },
       { name: "description", content: "Hand-vetted pandits across India, with shastra knowledge and lineage verified." },
     ],
   }),
