@@ -18,7 +18,7 @@ function Astrology() {
     <MobileShell>
       <TopBar title="Astrology" subtitle="Chat or call live experts" />
 
-      <section className="mx-5 mt-4 rounded-3xl bg-gradient-warm p-5 text-primary-foreground shadow-glow">
+      <section className="mx-5 mt-4 rounded-3xl bg-secondary p-5 text-secondary-foreground shadow-glow">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider opacity-90">
           <Sparkles className="h-3.5 w-3.5" /> Free first consult
         </div>

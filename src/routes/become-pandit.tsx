@@ -287,7 +287,7 @@ function BecomePandit() {
 function Intro() {
   return (
     <div className="space-y-5">
-      <div className="overflow-hidden rounded-3xl bg-gradient-warm p-6 text-primary-foreground shadow-glow">
+      <div className="overflow-hidden rounded-3xl bg-secondary p-6 text-secondary-foreground shadow-glow">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-background/20 backdrop-blur">
           <Award className="h-6 w-6" />
         </div>
