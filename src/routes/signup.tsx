@@ -138,7 +138,7 @@ function SignUp() {
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            <button className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-border bg-card text-sm font-semibold shadow-soft">
+            <button onClick={handleGoogle} className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-border bg-card text-sm font-semibold shadow-soft">
               <GoogleIcon /> Continue with Google
             </button>
 
