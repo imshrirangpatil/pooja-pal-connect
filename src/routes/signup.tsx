@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Sign up — Divya" },
-      { name: "description", content: "Create your Divya account with phone OTP or Google to book verified pandits." },
+      { title: "Sign up — Pranam" },
+      { name: "description", content: "Create your Pranam account with phone OTP or Google to book verified pandits." },
     ],
   }),
   component: SignUp,
@@ -42,7 +42,7 @@ function SignUp() {
     }
     setLoading(true);
     setTimeout(() => {
-      toast.success("Welcome to Divya 🙏");
+      toast.success("Welcome to Pranam 🙏");
       navigate({ to: "/" });
     }, 600);
   };
@@ -74,7 +74,7 @@ function SignUp() {
             <Sparkles className="h-6 w-6" />
           </div>
           <h1 className="mt-3 font-display text-2xl font-bold">
-            {step === "phone" ? "Welcome to Divya" : "Verify your number"}
+            {step === "phone" ? "Welcome to Pranam" : "Verify your number"}
           </h1>
           <p className="mt-1 text-sm opacity-90">
             {step === "phone"
@@ -124,7 +124,7 @@ function SignUp() {
 
             <p className="mt-6 flex items-start gap-2 text-[11px] leading-relaxed text-muted-foreground">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-              By continuing you agree to Divya's Terms of Service and Privacy Policy. We'll never share your number.
+              By continuing you agree to Pranam's Terms of Service and Privacy Policy. We'll never share your number.
             </p>
           </>
         ) : (
@@ -166,7 +166,7 @@ function SignUp() {
         <div className="mt-10 rounded-2xl border border-border/60 bg-secondary/40 p-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-accent">For pandits & astrologers</p>
           <p className="mt-1 text-sm font-medium text-foreground">Are you a spiritual professional?</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">Apply to join Divya's verified network and start receiving bookings.</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">Apply to join Pranam's verified network and start receiving bookings.</p>
           <Link
             to="/become-pandit"
             className="mt-3 inline-flex items-center text-xs font-semibold text-accent underline-offset-2 hover:underline"

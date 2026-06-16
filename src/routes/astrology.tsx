@@ -6,7 +6,7 @@ import { Phone, MessageCircle, Star, Sparkles } from "lucide-react";
 export const Route = createFileRoute("/astrology")({
   head: () => ({
     meta: [
-      { title: "Astrology consult — Divya" },
+      { title: "Astrology consult — Pranam" },
       { name: "description", content: "Talk to verified Vedic astrologers, tarot readers and numerologists, live." },
     ],
   }),

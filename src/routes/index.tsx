@@ -10,7 +10,7 @@ import panditImg from "@/assets/cat-pandit.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Divya — Book Pandit & Pooja, Astrology on demand" },
+      { title: "Pranam — Book Pandit & Pooja, Astrology on demand" },
       { name: "description", content: "Verified pandits, full samagri delivered, astrology consults — every ritual, made easy." },
     ],
   }),

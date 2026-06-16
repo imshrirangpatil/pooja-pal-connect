@@ -6,7 +6,7 @@ import { ChevronRight, Filter } from "lucide-react";
 export const Route = createFileRoute("/poojas/")({
   head: () => ({
     meta: [
-      { title: "All Poojas — Divya" },
+      { title: "All Poojas — Pranam" },
       { name: "description", content: "Browse all poojas — Ganesh, Satyanarayan, Griha Pravesh, Lakshmi and more." },
     ],
   }),
