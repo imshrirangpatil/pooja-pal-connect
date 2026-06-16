@@ -133,7 +133,7 @@ function Home() {
         <div className="-mx-5 mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {pandits.slice(0, 4).map((p) => (
             <div key={p.id} className="min-w-[170px] rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-warm text-lg font-bold text-primary-foreground">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-lg font-bold text-secondary-foreground">
                 {p.initials}
               </div>
               <p className="mt-3 line-clamp-1 text-sm font-semibold">{p.name}</p>

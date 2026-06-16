@@ -60,7 +60,7 @@
   --primary: oklch(0.72 0.18 55);                 /* #f59e0b saffron amber */
   --primary-foreground: oklch(0.99 0.012 80);
 
-  --secondary: oklch(0.93 0.07 85);               /* #fde68a marigold soft */
+  --secondary: oklch(0.88 0.12 70);               /* light peach-orange */
   --secondary-foreground: oklch(0.35 0.12 35);
 
   --muted: oklch(0.96 0.02 80);
