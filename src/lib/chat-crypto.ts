@@ -1,11 +1,16 @@
 // Client-side AES-GCM encryption for astrology chat messages.
 // Plaintext never lives on the server in stored form — only ciphertext + iv land in the DB.
-// The session key is derived in-browser via PBKDF2 from a stable per-user secret + the
-// session salt issued at session creation. localStorage holds the user secret so the
-// same browser can decrypt history across reloads.
 
 const enc = new TextEncoder();
 const dec = new TextDecoder();
+
+// Strict TS lib treats Uint8Array<ArrayBufferLike> as not assignable to BufferSource;
+// every WebCrypto byte arg gets explicitly cast through this helper.
+const buf = (b: Uint8Array): ArrayBuffer => {
+  const out = new ArrayBuffer(b.byteLength);
+  new Uint8Array(out).set(b);
+  return out;
+};
 
 function bytesToB64(bytes: Uint8Array): string {
   let bin = "";
@@ -14,47 +19,41 @@ function bytesToB64(bytes: Uint8Array): string {
 }
 function b64ToBytes(b64: string): Uint8Array {
   const bin = atob(b64);
-  const out = new Uint8Array(new ArrayBuffer(bin.length));
+  const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
 }
 
 const SECRET_KEY = "pranam.chat.secret.v1";
 
-function randomBytes(n: number): Uint8Array {
-  const buf = new Uint8Array(new ArrayBuffer(n));
-  crypto.getRandomValues(buf);
-  return buf;
-}
-
 export function getOrCreateUserSecret(userId: string): string {
   const k = `${SECRET_KEY}:${userId}`;
   let s = localStorage.getItem(k);
   if (!s) {
-    const buf = new Uint8Array(32);
-    crypto.getRandomValues(buf);
-    s = bytesToB64(buf);
+    const r = new Uint8Array(32);
+    crypto.getRandomValues(r);
+    s = bytesToB64(r);
     localStorage.setItem(k, s);
   }
   return s;
 }
 
 export function generateSalt(): string {
-  const buf = new Uint8Array(16);
-  crypto.getRandomValues(buf);
-  return bytesToB64(buf);
+  const r = new Uint8Array(16);
+  crypto.getRandomValues(r);
+  return bytesToB64(r);
 }
 
 export async function deriveSessionKey(userSecret: string, saltB64: string): Promise<CryptoKey> {
   const baseKey = await crypto.subtle.importKey(
     "raw",
-    enc.encode(userSecret),
+    buf(enc.encode(userSecret)),
     "PBKDF2",
     false,
     ["deriveKey"],
   );
   return crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt: b64ToBytes(saltB64), iterations: 120000, hash: "SHA-256" },
+    { name: "PBKDF2", salt: buf(b64ToBytes(saltB64)), iterations: 120000, hash: "SHA-256" },
     baseKey,
     { name: "AES-GCM", length: 256 },
     false,
@@ -63,17 +62,22 @@ export async function deriveSessionKey(userSecret: string, saltB64: string): Pro
 }
 
 export async function encryptText(key: CryptoKey, text: string): Promise<{ ciphertext: string; iv: string }> {
-  const iv = randomBytes(12);
-  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, enc.encode(text));
-  return { ciphertext: bytesToB64(new Uint8Array(ct)), iv: bytesToB64(iv) };
+  const ivBytes = new Uint8Array(12);
+  crypto.getRandomValues(ivBytes);
+  const ct = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: buf(ivBytes) },
+    key,
+    buf(enc.encode(text)),
+  );
+  return { ciphertext: bytesToB64(new Uint8Array(ct)), iv: bytesToB64(ivBytes) };
 }
 
 export async function decryptText(key: CryptoKey, ciphertext: string, iv: string): Promise<string> {
   try {
     const pt = await crypto.subtle.decrypt(
-      { name: "AES-GCM", iv: b64ToBytes(iv) },
+      { name: "AES-GCM", iv: buf(b64ToBytes(iv)) },
       key,
-      b64ToBytes(ciphertext),
+      buf(b64ToBytes(ciphertext)),
     );
     return dec.decode(pt);
   } catch {
