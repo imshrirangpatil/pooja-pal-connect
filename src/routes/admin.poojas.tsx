@@ -99,7 +99,16 @@ function AdminPoojas() {
       {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
 
       {poojas.map((p) => (
-        <PoojaRow key={p.slug} pooja={p} onSave={(d) => save.mutate(d)} onDelete={() => del.mutate(p.slug)} />
+        <PoojaRow
+          key={p.slug}
+          pooja={{
+            slug: p.slug, name: p.name, tagline: p.tagline, duration: p.duration,
+            price_from: p.price_from, description: p.description, season: p.season ?? "",
+            popular: p.popular, visible: p.visible,
+          }}
+          onSave={(d) => save.mutate(d)}
+          onDelete={() => del.mutate(p.slug)}
+        />
       ))}
     </div>
   );
