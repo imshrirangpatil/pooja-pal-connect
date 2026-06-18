@@ -14,6 +14,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PanditsRouteImport } from './routes/pandits'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as BecomePanditRouteImport } from './routes/become-pandit'
@@ -46,6 +47,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PanditsRoute = PanditsRouteImport.update({
   id: '/pandits',
   path: '/pandits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartRoute = CartRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/become-pandit'
     | '/bookings'
     | '/cart'
+    | '/checkout'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/become-pandit'
     | '/bookings'
     | '/cart'
+    | '/checkout'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/become-pandit'
     | '/bookings'
     | '/cart'
+    | '/checkout'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -189,6 +201,7 @@ export interface RootRouteChildren {
   BecomePanditRoute: typeof BecomePanditRoute
   BookingsRoute: typeof BookingsRoute
   CartRoute: typeof CartRoute
+  CheckoutRoute: typeof CheckoutRoute
   PanditsRoute: typeof PanditsRoute
   ProfileRoute: typeof ProfileRoute
   SamagriRoute: typeof SamagriRoute
@@ -233,6 +246,13 @@ declare module '@tanstack/react-router' {
       path: '/pandits'
       fullPath: '/pandits'
       preLoaderRoute: typeof PanditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cart': {
@@ -312,6 +332,7 @@ const rootRouteChildren: RootRouteChildren = {
   BecomePanditRoute: BecomePanditRoute,
   BookingsRoute: BookingsRoute,
   CartRoute: CartRoute,
+  CheckoutRoute: CheckoutRoute,
   PanditsRoute: PanditsRoute,
   ProfileRoute: ProfileRoute,
   SamagriRoute: SamagriRoute,
