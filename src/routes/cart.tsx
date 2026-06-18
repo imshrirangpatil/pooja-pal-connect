@@ -120,11 +120,7 @@ function CartPage() {
 
           <div className="fixed bottom-16 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-card/95 p-4 backdrop-blur-xl">
             <Button
-              onClick={() => {
-                toast.success("Order placed! You'll receive a confirmation shortly.");
-                cart.clear();
-                navigate({ to: "/bookings" });
-              }}
+              onClick={() => navigate({ to: "/checkout" })}
               className="h-12 w-full bg-gradient-warm text-base font-semibold text-primary-foreground shadow-glow"
             >
               Checkout · ₹{cart.total}

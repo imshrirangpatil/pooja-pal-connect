@@ -14,6 +14,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PanditsRouteImport } from './routes/pandits'
+import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BookingsRouteImport } from './routes/bookings'
@@ -48,6 +49,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PanditsRoute = PanditsRouteImport.update({
   id: '/pandits',
   path: '/pandits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/orders': typeof OrdersRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/orders': typeof OrdersRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -144,6 +152,7 @@ export interface FileRoutesById {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/orders': typeof OrdersRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
   '/samagri': typeof SamagriRoute
@@ -163,6 +172,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/orders'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/orders'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/orders'
     | '/pandits'
     | '/profile'
     | '/samagri'
@@ -215,6 +227,7 @@ export interface RootRouteChildren {
   BookingsRoute: typeof BookingsRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
+  OrdersRoute: typeof OrdersRoute
   PanditsRoute: typeof PanditsRoute
   ProfileRoute: typeof ProfileRoute
   SamagriRoute: typeof SamagriRoute
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/pandits'
       fullPath: '/pandits'
       preLoaderRoute: typeof PanditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -354,6 +374,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingsRoute: BookingsRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
+  OrdersRoute: OrdersRoute,
   PanditsRoute: PanditsRoute,
   ProfileRoute: ProfileRoute,
   SamagriRoute: SamagriRoute,
