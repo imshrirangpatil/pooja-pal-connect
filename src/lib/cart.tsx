@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useMemo, type ReactNode } from "react";
 import { samagri, type Samagri } from "./data";
 
 export type CartItem = { item: Samagri; qty: number };
@@ -17,8 +17,37 @@ type CartCtx = {
 
 const Ctx = createContext<CartCtx | null>(null);
 
+const STORAGE_KEY = "pranam.cart.v1";
+
+function loadInitial(): Record<string, number> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return typeof parsed === "object" && parsed ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<Record<string, number>>({});
+
+  // Hydrate from localStorage after mount (SSR-safe)
+  useEffect(() => {
+    setMap(loadInitial());
+  }, []);
+
+  // Persist on every change
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    } catch {
+      /* ignore quota errors */
+    }
+  }, [map]);
 
   const value = useMemo<CartCtx>(() => {
     const items: CartItem[] = Object.entries(map)

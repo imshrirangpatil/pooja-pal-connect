@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet } from "lucide-react";
+import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -35,6 +35,8 @@ function Profile() {
       </section>
 
       <div className="mt-5 space-y-1 px-5">
+        <Row to="/orders" icon={<Package className="h-4 w-4" />} label="My Orders" />
+        <Row to="/addresses" icon={<MapPin className="h-4 w-4" />} label="Saved Addresses" />
         <Row icon={<Wallet className="h-4 w-4" />} label="Wallet & Offers" />
         <Row icon={<Heart className="h-4 w-4" />} label="Saved Pandits" />
         <Row icon={<Gift className="h-4 w-4" />} label="Refer & Earn ₹100" />
@@ -68,13 +70,16 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Row({ icon, label, hint }: { icon: React.ReactNode; label: string; hint?: string }) {
-  return (
-    <button className="flex w-full items-center gap-3 rounded-2xl bg-card p-3.5 text-left shadow-soft">
+function Row({ icon, label, hint, to }: { icon: React.ReactNode; label: string; hint?: string; to?: "/orders" | "/addresses" }) {
+  const inner = (
+    <>
       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-accent">{icon}</span>
       <span className="flex-1 text-sm font-medium">{label}</span>
       {hint && <span className="text-xs text-muted-foreground">{hint}</span>}
       <ChevronRight className="h-4 w-4 text-muted-foreground" />
-    </button>
+    </>
   );
+  const cls = "flex w-full items-center gap-3 rounded-2xl bg-card p-3.5 text-left shadow-soft";
+  if (to) return <Link to={to} className={cls}>{inner}</Link>;
+  return <button className={cls}>{inner}</button>;
 }

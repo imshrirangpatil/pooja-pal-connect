@@ -14,6 +14,170 @@ export type Database = {
   }
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          is_default: boolean
+          label: string
+          landmark: string | null
+          line1: string
+          line2: string | null
+          phone: string
+          pincode: string
+          recipient_name: string
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          landmark?: string | null
+          line1: string
+          line2?: string | null
+          phone: string
+          pincode: string
+          recipient_name: string
+          state: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          landmark?: string | null
+          line1?: string
+          line2?: string | null
+          phone?: string
+          pincode?: string
+          recipient_name?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          emoji: string | null
+          id: string
+          line_total: number
+          name: string
+          order_id: string
+          qty: number
+          samagri_id: string
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          line_total: number
+          name: string
+          order_id: string
+          qty: number
+          samagri_id: string
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          line_total?: number
+          name?: string
+          order_id?: string
+          qty?: number
+          samagri_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address_label: string | null
+          city: string
+          created_at: string
+          id: string
+          landmark: string | null
+          line1: string
+          line2: string | null
+          notes: string | null
+          payment_method: string
+          payment_status: string
+          phone: string
+          pincode: string
+          recipient_name: string
+          shipping: number
+          state: string
+          status: string
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_label?: string | null
+          city: string
+          created_at?: string
+          id?: string
+          landmark?: string | null
+          line1: string
+          line2?: string | null
+          notes?: string | null
+          payment_method?: string
+          payment_status?: string
+          phone: string
+          pincode: string
+          recipient_name: string
+          shipping?: number
+          state: string
+          status?: string
+          subtotal: number
+          total: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_label?: string | null
+          city?: string
+          created_at?: string
+          id?: string
+          landmark?: string | null
+          line1?: string
+          line2?: string | null
+          notes?: string | null
+          payment_method?: string
+          payment_status?: string
+          phone?: string
+          pincode?: string
+          recipient_name?: string
+          shipping?: number
+          state?: string
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
