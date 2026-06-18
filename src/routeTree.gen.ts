@@ -19,11 +19,11 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as BecomePanditRouteImport } from './routes/become-pandit'
-import { Route as AstrologyRouteImport } from './routes/astrology'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AddressesRouteImport } from './routes/addresses'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PoojasIndexRouteImport } from './routes/poojas.index'
+import { Route as AstrologyIndexRouteImport } from './routes/astrology.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -83,11 +83,6 @@ const BecomePanditRoute = BecomePanditRouteImport.update({
   path: '/become-pandit',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AstrologyRoute = AstrologyRouteImport.update({
-  id: '/astrology',
-  path: '/astrology',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -106,6 +101,11 @@ const IndexRoute = IndexRouteImport.update({
 const PoojasIndexRoute = PoojasIndexRouteImport.update({
   id: '/poojas/',
   path: '/poojas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AstrologyIndexRoute = AstrologyIndexRouteImport.update({
+  id: '/astrology/',
+  path: '/astrology/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -144,16 +144,15 @@ const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
   getParentRoute: () => AdminRoute,
 } as any)
 const AstrologyChatIdRoute = AstrologyChatIdRouteImport.update({
-  id: '/chat/$id',
-  path: '/chat/$id',
-  getParentRoute: () => AstrologyRoute,
+  id: '/astrology/chat/$id',
+  path: '/astrology/chat/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/addresses': typeof AddressesRoute
   '/admin': typeof AdminRouteWithChildren
-  '/astrology': typeof AstrologyRouteWithChildren
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -171,13 +170,13 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/astrology/': typeof AstrologyIndexRoute
   '/poojas/': typeof PoojasIndexRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/addresses': typeof AddressesRoute
-  '/astrology': typeof AstrologyRouteWithChildren
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -195,6 +194,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/astrology': typeof AstrologyIndexRoute
   '/poojas': typeof PoojasIndexRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
@@ -203,7 +203,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/addresses': typeof AddressesRoute
   '/admin': typeof AdminRouteWithChildren
-  '/astrology': typeof AstrologyRouteWithChildren
   '/become-pandit': typeof BecomePanditRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -221,6 +220,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/astrology/': typeof AstrologyIndexRoute
   '/poojas/': typeof PoojasIndexRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
@@ -230,7 +230,6 @@ export interface FileRouteTypes {
     | '/'
     | '/addresses'
     | '/admin'
-    | '/astrology'
     | '/become-pandit'
     | '/bookings'
     | '/cart'
@@ -248,13 +247,13 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/poojas/$slug'
     | '/admin/'
+    | '/astrology/'
     | '/poojas/'
     | '/astrology/chat/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/addresses'
-    | '/astrology'
     | '/become-pandit'
     | '/bookings'
     | '/cart'
@@ -272,6 +271,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/poojas/$slug'
     | '/admin'
+    | '/astrology'
     | '/poojas'
     | '/astrology/chat/$id'
   id:
@@ -279,7 +279,6 @@ export interface FileRouteTypes {
     | '/'
     | '/addresses'
     | '/admin'
-    | '/astrology'
     | '/become-pandit'
     | '/bookings'
     | '/cart'
@@ -297,6 +296,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/poojas/$slug'
     | '/admin/'
+    | '/astrology/'
     | '/poojas/'
     | '/astrology/chat/$id'
   fileRoutesById: FileRoutesById
@@ -305,7 +305,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddressesRoute: typeof AddressesRoute
   AdminRoute: typeof AdminRouteWithChildren
-  AstrologyRoute: typeof AstrologyRouteWithChildren
   BecomePanditRoute: typeof BecomePanditRoute
   BookingsRoute: typeof BookingsRoute
   CartRoute: typeof CartRoute
@@ -317,7 +316,9 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   WelcomeRoute: typeof WelcomeRoute
   PoojasSlugRoute: typeof PoojasSlugRoute
+  AstrologyIndexRoute: typeof AstrologyIndexRoute
   PoojasIndexRoute: typeof PoojasIndexRoute
+  AstrologyChatIdRoute: typeof AstrologyChatIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -392,13 +393,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BecomePanditRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/astrology': {
-      id: '/astrology'
-      path: '/astrology'
-      fullPath: '/astrology'
-      preLoaderRoute: typeof AstrologyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -425,6 +419,13 @@ declare module '@tanstack/react-router' {
       path: '/poojas'
       fullPath: '/poojas/'
       preLoaderRoute: typeof PoojasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/astrology/': {
+      id: '/astrology/'
+      path: '/astrology'
+      fullPath: '/astrology/'
+      preLoaderRoute: typeof AstrologyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -478,10 +479,10 @@ declare module '@tanstack/react-router' {
     }
     '/astrology/chat/$id': {
       id: '/astrology/chat/$id'
-      path: '/chat/$id'
+      path: '/astrology/chat/$id'
       fullPath: '/astrology/chat/$id'
       preLoaderRoute: typeof AstrologyChatIdRouteImport
-      parentRoute: typeof AstrologyRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -506,23 +507,10 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface AstrologyRouteChildren {
-  AstrologyChatIdRoute: typeof AstrologyChatIdRoute
-}
-
-const AstrologyRouteChildren: AstrologyRouteChildren = {
-  AstrologyChatIdRoute: AstrologyChatIdRoute,
-}
-
-const AstrologyRouteWithChildren = AstrologyRoute._addFileChildren(
-  AstrologyRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddressesRoute: AddressesRoute,
   AdminRoute: AdminRouteWithChildren,
-  AstrologyRoute: AstrologyRouteWithChildren,
   BecomePanditRoute: BecomePanditRoute,
   BookingsRoute: BookingsRoute,
   CartRoute: CartRoute,
@@ -534,7 +522,9 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   WelcomeRoute: WelcomeRoute,
   PoojasSlugRoute: PoojasSlugRoute,
+  AstrologyIndexRoute: AstrologyIndexRoute,
   PoojasIndexRoute: PoojasIndexRoute,
+  AstrologyChatIdRoute: AstrologyChatIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
