@@ -90,7 +90,22 @@ function BecomePandit() {
         toast.error("Please accept the partner agreement");
         return;
       }
-      toast.success("Application submitted! Our team will verify within 48 hours.");
+      void (async () => {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase.from("pandit_applications").insert({
+          user_id: user?.id ?? null,
+          full_name: form.fullName,
+          phone: form.phone,
+          city: form.city,
+          experience: Number(form.yearsExp) || 0,
+          languages: form.languages.join(", "),
+          specialties: form.specialties.join(", "),
+          message: form.bio || null,
+        });
+        if (error) toast.error(error.message);
+        else toast.success("Application submitted! Our team will verify within 48 hours.");
+      })();
       return setStep(4);
     }
   };
