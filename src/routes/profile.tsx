@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin } from "lucide-react";
+import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin, ShieldCheck } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { useIsAdmin } from "@/lib/admin";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -13,6 +15,19 @@ export const Route = createFileRoute("/profile")({
 });
 
 function Profile() {
+  const { user, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
+  const navigate = useNavigate();
+
+  const initial = (user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "G")[0]?.toUpperCase();
+  const name = user?.user_metadata?.full_name || user?.user_metadata?.name || (user?.email?.split("@")[0] ?? "Guest");
+  const phone = user?.phone ? `+${user.phone}` : (user?.email ?? "Not signed in");
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate({ to: "/welcome" });
+  };
+
   return (
     <MobileShell>
       <TopBar title="Profile" />
@@ -20,11 +35,11 @@ function Profile() {
       <section className="mx-5 mt-4 rounded-3xl bg-secondary p-5 text-secondary-foreground shadow-glow">
         <div className="flex items-center gap-3">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background/20 text-lg font-bold backdrop-blur">
-            A
+            {initial}
           </div>
-          <div>
-            <p className="text-lg font-bold">Aarav Sharma</p>
-            <p className="text-xs opacity-90">+91 98765 43210</p>
+          <div className="min-w-0">
+            <p className="truncate text-lg font-bold">{name}</p>
+            <p className="truncate text-xs opacity-90">{phone}</p>
           </div>
         </div>
         <div className="mt-4 flex gap-3">
@@ -33,6 +48,16 @@ function Profile() {
           <Stat label="Saved" value="₹1.2k" />
         </div>
       </section>
+
+      {isAdmin && (
+        <Link to="/admin" className="mx-5 mt-4 flex items-center gap-3 rounded-2xl bg-primary p-3.5 text-primary-foreground shadow-glow">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/15">
+            <ShieldCheck className="h-4 w-4" />
+          </span>
+          <span className="flex-1 text-sm font-semibold">Admin Dashboard</span>
+          <ChevronRight className="h-4 w-4" />
+        </Link>
+      )}
 
       <div className="mt-5 space-y-1 px-5">
         <Row to="/orders" icon={<Package className="h-4 w-4" />} label="My Orders" />
@@ -53,9 +78,11 @@ function Profile() {
         <Link to="/become-pandit" className="mt-3 block w-full rounded-full bg-foreground py-2.5 text-center text-xs font-semibold text-background">Apply now</Link>
       </div>
 
-      <button className="mx-auto mt-6 flex items-center gap-2 text-sm font-medium text-accent">
-        <LogOut className="h-4 w-4" /> Log out
-      </button>
+      {user && (
+        <button onClick={handleLogout} className="mx-auto mt-6 flex items-center gap-2 text-sm font-medium text-accent">
+          <LogOut className="h-4 w-4" /> Log out
+        </button>
+      )}
       <p className="mt-3 pb-2 text-center text-[10px] text-muted-foreground">Pranam v1.0 · Made in India</p>
     </MobileShell>
   );

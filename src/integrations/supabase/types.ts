@@ -178,6 +178,150 @@ export type Database = {
         }
         Relationships: []
       }
+      pandit_applications: {
+        Row: {
+          city: string
+          created_at: string
+          experience: number
+          full_name: string
+          id: string
+          languages: string
+          message: string | null
+          phone: string
+          specialties: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          experience?: number
+          full_name: string
+          id?: string
+          languages?: string
+          message?: string | null
+          phone: string
+          specialties?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          experience?: number
+          full_name?: string
+          id?: string
+          languages?: string
+          message?: string | null
+          phone?: string
+          specialties?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      pandits: {
+        Row: {
+          city: string
+          created_at: string
+          experience: number
+          id: string
+          initials: string
+          languages: Json
+          name: string
+          rating: number
+          reviews: number
+          specialties: Json
+          updated_at: string
+          verified: boolean
+          visible: boolean
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          experience?: number
+          id?: string
+          initials?: string
+          languages?: Json
+          name: string
+          rating?: number
+          reviews?: number
+          specialties?: Json
+          updated_at?: string
+          verified?: boolean
+          visible?: boolean
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          experience?: number
+          id?: string
+          initials?: string
+          languages?: Json
+          name?: string
+          rating?: number
+          reviews?: number
+          specialties?: Json
+          updated_at?: string
+          verified?: boolean
+          visible?: boolean
+        }
+        Relationships: []
+      }
+      poojas: {
+        Row: {
+          created_at: string
+          description: string
+          duration: string
+          image_url: string | null
+          includes: Json
+          name: string
+          popular: boolean
+          price_from: number
+          samagri_included: boolean
+          season: string | null
+          slug: string
+          tagline: string
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          duration?: string
+          image_url?: string | null
+          includes?: Json
+          name: string
+          popular?: boolean
+          price_from?: number
+          samagri_included?: boolean
+          season?: string | null
+          slug: string
+          tagline?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration?: string
+          image_url?: string | null
+          includes?: Json
+          name?: string
+          popular?: boolean
+          price_from?: number
+          samagri_included?: boolean
+          season?: string | null
+          slug?: string
+          tagline?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
