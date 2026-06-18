@@ -3,7 +3,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { astrologers } from "@/lib/data";
 import { Phone, MessageCircle, Star, Sparkles } from "lucide-react";
 
-export const Route = createFileRoute("/astrology")({
+export const Route = createFileRoute("/astrology/")({
   head: () => ({
     meta: [
       { title: "Astrology consult — Pranam" },
