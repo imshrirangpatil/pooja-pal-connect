@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Phone, Send, Sparkles, Shield, Star, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Phone, Send, Sparkles, Shield, Star, Loader2, LogIn } from "lucide-react";
 import { astrologers } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,35 +37,45 @@ const FREE_SECONDS = 300;
 function ChatPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const astrologer = astrologers.find((a) => a.id === id);
   if (!astrologer) throw notFound();
 
   const replyFn = useServerFn(generateAstrologerReply);
 
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [keyRef, setKeyRef] = useState<CryptoKey | null>(null);
-  const [messages, setMessages] = useState<Msg[]>([]);
+  // UI state — initialised immediately so the interface renders without waiting on backend.
+  const [messages, setMessages] = useState<Msg[]>(() => [
+    {
+      id: "sys-1",
+      from: "system",
+      text: "Free first 5 minutes • Conversation is end-to-end encrypted on this device",
+      at: Date.now(),
+    },
+    {
+      id: "greet-1",
+      from: "astrologer",
+      text: `Namaste 🙏 I'm ${astrologer.name.split(" ").slice(-1)[0]}. Please share your name, date and place of birth so I can guide you.`,
+      at: Date.now(),
+    },
+  ]);
   const [draft, setDraft] = useState("");
   const [typing, setTyping] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [seconds, setSeconds] = useState(0);
   const [ended, setEnded] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const startedAtRef = useRef<number>(Date.now());
 
-  // Redirect to auth if not signed in.
-  useEffect(() => {
-    if (!authLoading && !user) navigate({ to: "/welcome" });
-  }, [authLoading, user, navigate]);
+  // Backend wiring — populated asynchronously; null means run in local mode.
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const keyRef = useRef<CryptoKey | null>(null);
+  const [backendReady, setBackendReady] = useState(false);
 
-  // Bootstrap or resume session, derive key, load history.
+  // Bootstrap or resume the persisted session — non-blocking.
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
     (async () => {
       try {
-        // Look for an active session for this user+astrologer.
         const { data: existing } = await supabase
           .from("astro_chat_sessions")
           .select("*")
@@ -99,7 +109,6 @@ function ChatPage() {
         const key = await deriveSessionKey(secret, session.encryption_salt);
         if (cancelled) return;
 
-        // Load existing messages and decrypt.
         const { data: rows } = await supabase
           .from("astro_chat_messages")
           .select("*")
@@ -117,38 +126,27 @@ function ChatPage() {
 
         if (cancelled) return;
 
+        keyRef.current = key;
         setSessionId(session.id);
-        setKeyRef(key);
         startedAtRef.current = new Date(session.started_at).getTime();
 
-        // Seed system + greeting on a brand-new session.
-        if (decrypted.length === 0) {
+        if (decrypted.length > 0) {
+          setMessages(decrypted);
+        } else {
+          // Persist the seeded greeting for the brand-new session.
           const sysText = "Free first 5 minutes • Conversation is end-to-end encrypted on this device";
           const greetText = `Namaste 🙏 I'm ${astrologer.name.split(" ").slice(-1)[0]}. Please share your name, date and place of birth so I can guide you.`;
           const sysEnc = await encryptText(key, sysText);
           const grEnc = await encryptText(key, greetText);
-          const { data: inserted } = await supabase
-            .from("astro_chat_messages")
-            .insert([
-              { session_id: session.id, sender: "system", ciphertext: sysEnc.ciphertext, iv: sysEnc.iv },
-              { session_id: session.id, sender: "astrologer", ciphertext: grEnc.ciphertext, iv: grEnc.iv },
-            ])
-            .select("*");
-          const seeded: Msg[] = (inserted ?? []).map((r, i) => ({
-            id: r.id,
-            from: r.sender as Msg["from"],
-            text: i === 0 ? sysText : greetText,
-            at: new Date(r.created_at).getTime(),
-          }));
-          setMessages(seeded);
-        } else {
-          setMessages(decrypted);
+          await supabase.from("astro_chat_messages").insert([
+            { session_id: session.id, sender: "system", ciphertext: sysEnc.ciphertext, iv: sysEnc.iv },
+            { session_id: session.id, sender: "astrologer", ciphertext: grEnc.ciphertext, iv: grEnc.iv },
+          ]);
         }
+        setBackendReady(true);
       } catch (e) {
-        console.error(e);
-        toast.error("Could not start chat. Please try again.");
-      } finally {
-        if (!cancelled) setLoading(false);
+        console.error("[astro-chat] backend setup failed", e);
+        // Continue without persistence — UI keeps working in local-only mode.
       }
     })();
     return () => {
@@ -156,49 +154,43 @@ function ChatPage() {
     };
   }, [user, astrologer.id, astrologer.name, astrologer.pricePerMin]);
 
-  // Timer derived from session start.
+  // Timer.
   useEffect(() => {
-    if (!sessionId || ended) return;
-    const tick = () => {
-      const s = Math.floor((Date.now() - startedAtRef.current) / 1000);
-      setSeconds(s);
-    };
+    if (ended) return;
+    const tick = () => setSeconds(Math.floor((Date.now() - startedAtRef.current) / 1000));
     tick();
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
-  }, [sessionId, ended]);
+  }, [ended]);
 
   useEffect(() => {
     scrollerRef.current?.scrollTo({ top: scrollerRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
-  const persist = async (from: Msg["from"], text: string): Promise<Msg | null> => {
-    if (!sessionId || !keyRef) return null;
-    const { ciphertext, iv } = await encryptText(keyRef, text);
-    const { data, error } = await supabase
-      .from("astro_chat_messages")
-      .insert({ session_id: sessionId, sender: from, ciphertext, iv })
-      .select("*")
-      .single();
-    if (error || !data) {
-      console.error(error);
-      return null;
+  const persist = async (from: Msg["from"], text: string) => {
+    if (!sessionId || !keyRef.current) return;
+    try {
+      const { ciphertext, iv } = await encryptText(keyRef.current, text);
+      await supabase
+        .from("astro_chat_messages")
+        .insert({ session_id: sessionId, sender: from, ciphertext, iv });
+    } catch (e) {
+      console.error("[astro-chat] persist failed", e);
     }
-    return { id: data.id, from, text, at: new Date(data.created_at).getTime() };
   };
 
   const send = async () => {
     const text = draft.trim();
-    if (!text || !sessionId || !keyRef || typing || ended) return;
+    if (!text || typing || ended) return;
     setDraft("");
-    const tempId = `tmp-${Date.now()}`;
-    setMessages((m) => [...m, { id: tempId, from: "user", text, at: Date.now() }]);
-    const saved = await persist("user", text);
-    if (saved) setMessages((m) => m.map((x) => (x.id === tempId ? saved : x)));
+
+    const userMsg: Msg = { id: `u-${Date.now()}`, from: "user", text, at: Date.now() };
+    setMessages((m) => [...m, userMsg]);
+    void persist("user", text);
 
     setTyping(true);
     try {
-      const history = [...messages, { id: tempId, from: "user", text, at: Date.now() }]
+      const history = [...messages, userMsg]
         .filter((m) => m.from !== "system")
         .slice(-20)
         .map((m) => ({
@@ -214,8 +206,14 @@ function ChatPage() {
           history,
         },
       });
-      const savedReply = await persist("astrologer", res.reply);
-      if (savedReply) setMessages((m) => [...m, savedReply]);
+      const reply: Msg = {
+        id: `a-${Date.now()}`,
+        from: "astrologer",
+        text: res.reply,
+        at: Date.now(),
+      };
+      setMessages((m) => [...m, reply]);
+      void persist("astrologer", reply.text);
     } catch (e) {
       console.error(e);
       toast.error("Astrologer could not reply. Try again.");
@@ -225,39 +223,30 @@ function ChatPage() {
   };
 
   const endSession = async () => {
-    if (!sessionId) return;
-    const billed =
-      seconds > FREE_SECONDS
-        ? Math.ceil((seconds - FREE_SECONDS) / 60) * astrologer.pricePerMin
-        : 0;
-    await supabase
-      .from("astro_chat_sessions")
-      .update({
-        status: "ended",
-        ended_at: new Date().toISOString(),
-        seconds_elapsed: seconds,
-        billed_amount: billed,
-      })
-      .eq("id", sessionId);
+    if (sessionId) {
+      const billed =
+        seconds > FREE_SECONDS
+          ? Math.ceil((seconds - FREE_SECONDS) / 60) * astrologer.pricePerMin
+          : 0;
+      await supabase
+        .from("astro_chat_sessions")
+        .update({
+          status: "ended",
+          ended_at: new Date().toISOString(),
+          seconds_elapsed: seconds,
+          billed_amount: billed,
+        })
+        .eq("id", sessionId);
+      toast.success(billed > 0 ? `Session ended. ₹${billed} billed.` : "Session ended.");
+    }
     setEnded(true);
-    toast.success(billed > 0 ? `Session ended. ₹${billed} billed.` : "Session ended.");
-    setTimeout(() => navigate({ to: "/astrology" }), 800);
+    setTimeout(() => navigate({ to: "/astrology" }), 600);
   };
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
   const ss = String(seconds % 60).padStart(2, "0");
   const freeLeft = Math.max(0, FREE_SECONDS - seconds);
   const isFree = freeLeft > 0;
-
-  const grouped = useMemo(() => messages, [messages]);
-
-  if (authLoading || loading) {
-    return (
-      <div className="mx-auto flex h-[100dvh] w-full max-w-md items-center justify-center bg-background">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto flex h-[100dvh] w-full max-w-md flex-col bg-background">
@@ -310,9 +299,25 @@ function ChatPage() {
         </div>
       </header>
 
+      {!user && (
+        <div className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-700 dark:text-amber-400">
+          <LogIn className="h-3.5 w-3.5 shrink-0" />
+          <span className="flex-1">Sign in to save this conversation across devices.</span>
+          <Link to="/welcome" className="font-semibold underline">
+            Sign in
+          </Link>
+        </div>
+      )}
+      {user && !backendReady && (
+        <div className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-border/60 bg-muted/60 px-3 py-2 text-[11px] text-muted-foreground">
+          <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
+          Securing your session…
+        </div>
+      )}
+
       {/* Messages */}
       <div ref={scrollerRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-        {grouped.map((m) => {
+        {messages.map((m) => {
           if (m.from === "system") {
             return (
               <div
