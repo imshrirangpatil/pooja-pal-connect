@@ -65,6 +65,89 @@ export type Database = {
         }
         Relationships: []
       }
+      astro_chat_messages: {
+        Row: {
+          ciphertext: string
+          created_at: string
+          id: string
+          iv: string
+          sender: string
+          session_id: string
+        }
+        Insert: {
+          ciphertext: string
+          created_at?: string
+          id?: string
+          iv: string
+          sender: string
+          session_id: string
+        }
+        Update: {
+          ciphertext?: string
+          created_at?: string
+          id?: string
+          iv?: string
+          sender?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "astro_chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "astro_chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      astro_chat_sessions: {
+        Row: {
+          astrologer_id: string
+          astrologer_name: string
+          billed_amount: number
+          created_at: string
+          encryption_salt: string
+          ended_at: string | null
+          id: string
+          price_per_min: number
+          seconds_elapsed: number
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          astrologer_id: string
+          astrologer_name: string
+          billed_amount?: number
+          created_at?: string
+          encryption_salt: string
+          ended_at?: string | null
+          id?: string
+          price_per_min?: number
+          seconds_elapsed?: number
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          astrologer_id?: string
+          astrologer_name?: string
+          billed_amount?: number
+          created_at?: string
+          encryption_salt?: string
+          ended_at?: string | null
+          id?: string
+          price_per_min?: number
+          seconds_elapsed?: number
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
