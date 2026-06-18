@@ -21,6 +21,12 @@ function b64ToBytes(b64: string): Uint8Array {
 
 const SECRET_KEY = "pranam.chat.secret.v1";
 
+function randomBytes(n: number): Uint8Array {
+  const buf = new Uint8Array(new ArrayBuffer(n));
+  crypto.getRandomValues(buf);
+  return buf;
+}
+
 export function getOrCreateUserSecret(userId: string): string {
   const k = `${SECRET_KEY}:${userId}`;
   let s = localStorage.getItem(k);
