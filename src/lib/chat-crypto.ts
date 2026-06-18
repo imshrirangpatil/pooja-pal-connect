@@ -14,7 +14,7 @@ function bytesToB64(bytes: Uint8Array): string {
 }
 function b64ToBytes(b64: string): Uint8Array {
   const bin = atob(b64);
-  const out = new Uint8Array(bin.length);
+  const out = new Uint8Array(new ArrayBuffer(bin.length));
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
 }
@@ -63,8 +63,7 @@ export async function deriveSessionKey(userSecret: string, saltB64: string): Pro
 }
 
 export async function encryptText(key: CryptoKey, text: string): Promise<{ ciphertext: string; iv: string }> {
-  const iv = new Uint8Array(12);
-  crypto.getRandomValues(iv);
+  const iv = randomBytes(12);
   const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, enc.encode(text));
   return { ciphertext: bytesToB64(new Uint8Array(ct)), iv: bytesToB64(iv) };
 }
