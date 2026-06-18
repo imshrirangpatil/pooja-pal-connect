@@ -35,6 +35,8 @@ function Profile() {
       </section>
 
       <div className="mt-5 space-y-1 px-5">
+        <Row to="/orders" icon={<Package className="h-4 w-4" />} label="My Orders" />
+        <Row to="/addresses" icon={<MapPin className="h-4 w-4" />} label="Saved Addresses" />
         <Row icon={<Wallet className="h-4 w-4" />} label="Wallet & Offers" />
         <Row icon={<Heart className="h-4 w-4" />} label="Saved Pandits" />
         <Row icon={<Gift className="h-4 w-4" />} label="Refer & Earn ₹100" />
