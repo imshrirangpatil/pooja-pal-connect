@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { poojas } from "@/lib/data";
+import { usePoojas } from "@/lib/poojas-source";
 import { ChevronRight, Filter } from "lucide-react";
 
 export const Route = createFileRoute("/poojas/")({
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/poojas/")({
 });
 
 function PoojasList() {
+  const { poojas } = usePoojas();
   return (
     <MobileShell>
       <TopBar

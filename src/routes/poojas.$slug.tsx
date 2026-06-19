@@ -1,13 +1,21 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { poojas, pandits } from "@/lib/data";
+import { poojas as seedPoojas, pandits } from "@/lib/data";
+import { rowToPooja } from "@/lib/poojas-source";
+import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Check, Clock, Star, ShieldCheck, Calendar, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/poojas/$slug")({
-  loader: ({ params }) => {
-    const pooja = poojas.find((p) => p.slug === params.slug);
-    if (!pooja) throw notFound();
-    return { pooja };
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("poojas")
+      .select("*")
+      .eq("slug", params.slug)
+      .maybeSingle();
+    if (data) return { pooja: rowToPooja(data as Parameters<typeof rowToPooja>[0]) };
+    const seed = seedPoojas.find((p) => p.slug === params.slug);
+    if (!seed) throw notFound();
+    return { pooja: seed };
   },
   head: ({ loaderData }) => ({
     meta: loaderData?.pooja

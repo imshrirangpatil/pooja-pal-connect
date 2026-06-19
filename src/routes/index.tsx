@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { poojas, festivals, pandits } from "@/lib/data";
+import { festivals, pandits } from "@/lib/data";
+import { usePoojas } from "@/lib/poojas-source";
 import { Search, MapPin, Bell, ShieldCheck, Sparkles, Flame, ShoppingBag, ChevronRight, Star } from "lucide-react";
 import heroImg from "@/assets/hero-pooja.jpg";
 import astroImg from "@/assets/cat-astrology.jpg";
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { poojas } = usePoojas();
   return (
     <MobileShell>
       {/* Hero */}
