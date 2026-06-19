@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Phone, Send, Sparkles, Shield, Star, Loader2, LogIn } from "lucide-react";
+import { ArrowLeft, Phone, Send, Sparkles, Shield, Star, Loader2, LogIn, Video } from "lucide-react";
 import { astrologers } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
