@@ -48,63 +48,78 @@
 :root {
   --radius: 1rem;
 
-  /* Saffron & Marigold palette */
-  --background: oklch(0.99 0.012 80);            /* #fff7ed cream */
-  --foreground: oklch(0.28 0.09 30);              /* deep warm ink */
+  /* Sacred Flame palette */
+  --background: #FAF7F2;            /* Sandalwood cream */
+  --foreground: #1A0F00;            /* Primary text */
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.28 0.09 30);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.28 0.09 30);
+  --card: #FFF9F2;                  /* Warm white surface */
+  --card-foreground: #1A0F00;
+  --popover: #FFF9F2;
+  --popover-foreground: #1A0F00;
 
-  --primary: oklch(0.72 0.18 55);                 /* #f59e0b saffron amber */
-  --primary-foreground: oklch(0.99 0.012 80);
+  --primary: #E8510A;               /* Saffron orange */
+  --primary-foreground: #FAF7F2;
 
-  --secondary: oklch(0.88 0.12 70);               /* light peach-orange */
-  --secondary-foreground: oklch(0.35 0.12 35);
+  --secondary: #F5EFE6;             /* Parchment */
+  --secondary-foreground: #5C3D1E;
 
-  --muted: oklch(0.96 0.02 80);
-  --muted-foreground: oklch(0.52 0.06 40);
+  --muted: #F5EFE6;
+  --muted-foreground: #9C7A5A;
 
-  --accent: oklch(0.55 0.22 28);                  /* #b91c1c maroon */
-  --accent-foreground: oklch(0.99 0.012 80);
+  --accent: #C9910A;                /* Sacred gold */
+  --accent-foreground: #1A0F00;
 
-  --destructive: oklch(0.55 0.22 28);
-  --destructive-foreground: oklch(0.99 0.012 80);
+  --destructive: #C62828;
+  --destructive-foreground: #FAF7F2;
 
-  --border: oklch(0.9 0.04 75);
-  --input: oklch(0.92 0.03 75);
-  --ring: oklch(0.72 0.18 55);
+  --border: #EADFCF;
+  --input: #F5EFE6;
+  --ring: #E8510A;
 
-  --saffron: oklch(0.72 0.18 55);
-  --marigold: oklch(0.88 0.15 85);
-  --maroon: oklch(0.45 0.2 27);
-  --cream: oklch(0.99 0.012 80);
-  --gold: oklch(0.78 0.14 75);
+  --saffron: #E8510A;
+  --saffron-dark: #B83D06;
+  --marigold: #F0B429;              /* Turmeric */
+  --maroon: #7A1010;                /* Temple red */
+  --maroon-deep: #5D1A1A;
+  --cream: #FAF7F2;
+  --gold: #C9910A;
 
-  --gradient-warm: linear-gradient(135deg, oklch(0.72 0.18 55), oklch(0.55 0.22 28));
-  --gradient-glow: radial-gradient(ellipse at top, oklch(0.88 0.15 85 / 0.5), transparent 60%);
-  --gradient-card: linear-gradient(180deg, oklch(1 0 0), oklch(0.97 0.02 80));
+  --success: #2E7D32;
+  --warning: #E65100;
+  --info: #5C4033;
+  --auspicious-green: #4CAF50;
+  --auspicious-gold: #FFB300;
+
+  --color-saffron-dark: var(--saffron-dark);
+  --color-maroon-deep: var(--maroon-deep);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --gradient-warm: linear-gradient(135deg, #E8510A, #B83D06);
+  --gradient-glow: radial-gradient(ellipse at top, rgba(240, 180, 41, 0.28), transparent 60%);
+  --gradient-card: linear-gradient(180deg, #FFF9F2, #F5EFE6);
 }
 
 .dark {
-  --background: oklch(0.18 0.04 30);
-  --foreground: oklch(0.96 0.02 80);
-  --card: oklch(0.22 0.05 30);
-  --card-foreground: oklch(0.96 0.02 80);
-  --popover: oklch(0.22 0.05 30);
-  --popover-foreground: oklch(0.96 0.02 80);
-  --primary: oklch(0.78 0.17 60);
-  --primary-foreground: oklch(0.18 0.04 30);
-  --secondary: oklch(0.3 0.06 35);
-  --secondary-foreground: oklch(0.96 0.02 80);
-  --muted: oklch(0.28 0.04 35);
-  --muted-foreground: oklch(0.72 0.04 75);
-  --accent: oklch(0.65 0.2 28);
-  --accent-foreground: oklch(0.99 0.012 80);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.78 0.17 60);
+  --background: #0F0800;
+  --foreground: #FAF0E0;
+  --card: #1A1000;
+  --card-foreground: #FAF0E0;
+  --popover: #1A1000;
+  --popover-foreground: #FAF0E0;
+  --primary: #FF6B1A;
+  --primary-foreground: #1A0F00;
+  --secondary: #261800;
+  --secondary-foreground: #FAF0E0;
+  --muted: #261800;
+  --muted-foreground: #9C7A5A;
+  --accent: #FFB300;
+  --accent-foreground: #1A0F00;
+  --destructive: #C62828;
+  --destructive-foreground: #FAF0E0;
+  --border: rgba(250, 240, 224, 0.10);
+  --input: rgba(250, 240, 224, 0.15);
+  --ring: #FF6B1A;
 }
 
 @layer base {
