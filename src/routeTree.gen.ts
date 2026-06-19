@@ -32,6 +32,7 @@ import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AstrologyChatIdRouteImport } from './routes/astrology.chat.$id'
+import { Route as AstrologyCallIdRouteImport } from './routes/astrology.call.$id'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -148,6 +149,11 @@ const AstrologyChatIdRoute = AstrologyChatIdRouteImport.update({
   path: '/astrology/chat/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AstrologyCallIdRoute = AstrologyCallIdRouteImport.update({
+  id: '/astrology/call/$id',
+  path: '/astrology/call/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/astrology/': typeof AstrologyIndexRoute
   '/poojas/': typeof PoojasIndexRoute
+  '/astrology/call/$id': typeof AstrologyCallIdRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
 export interface FileRoutesByTo {
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/astrology': typeof AstrologyIndexRoute
   '/poojas': typeof PoojasIndexRoute
+  '/astrology/call/$id': typeof AstrologyCallIdRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
 export interface FileRoutesById {
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/astrology/': typeof AstrologyIndexRoute
   '/poojas/': typeof PoojasIndexRoute
+  '/astrology/call/$id': typeof AstrologyCallIdRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
 export interface FileRouteTypes {
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/astrology/'
     | '/poojas/'
+    | '/astrology/call/$id'
     | '/astrology/chat/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/astrology'
     | '/poojas'
+    | '/astrology/call/$id'
     | '/astrology/chat/$id'
   id:
     | '__root__'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/astrology/'
     | '/poojas/'
+    | '/astrology/call/$id'
     | '/astrology/chat/$id'
   fileRoutesById: FileRoutesById
 }
@@ -318,6 +330,7 @@ export interface RootRouteChildren {
   PoojasSlugRoute: typeof PoojasSlugRoute
   AstrologyIndexRoute: typeof AstrologyIndexRoute
   PoojasIndexRoute: typeof PoojasIndexRoute
+  AstrologyCallIdRoute: typeof AstrologyCallIdRoute
   AstrologyChatIdRoute: typeof AstrologyChatIdRoute
 }
 
@@ -484,6 +497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AstrologyChatIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/astrology/call/$id': {
+      id: '/astrology/call/$id'
+      path: '/astrology/call/$id'
+      fullPath: '/astrology/call/$id'
+      preLoaderRoute: typeof AstrologyCallIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -524,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   PoojasSlugRoute: PoojasSlugRoute,
   AstrologyIndexRoute: AstrologyIndexRoute,
   PoojasIndexRoute: PoojasIndexRoute,
+  AstrologyCallIdRoute: AstrologyCallIdRoute,
   AstrologyChatIdRoute: AstrologyChatIdRoute,
 }
 export const routeTree = rootRouteImport
