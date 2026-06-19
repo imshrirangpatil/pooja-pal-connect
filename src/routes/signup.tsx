@@ -21,11 +21,19 @@ export const Route = createFileRoute("/signup")({
 
 function SignUp() {
   const navigate = useNavigate();
-  const { sendPhoneOtp, verifyPhoneOtp, signInWithGoogle } = useAuth();
+  const search = Route.useSearch();
+  const { sendPhoneOtp, verifyPhoneOtp, signInWithGoogle, user } = useAuth();
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
+
+  const target = search.redirect && search.redirect.startsWith("/") ? search.redirect : "/";
+
+  // If a session arrives (Google OAuth round-trip, or any auth state change), leave the signup page.
+  useEffect(() => {
+    if (user) navigate({ to: target });
+  }, [user, target, navigate]);
 
   const sendOtp = async () => {
     if (phone.length !== 10) {
@@ -54,7 +62,7 @@ function SignUp() {
     try {
       await verifyPhoneOtp(phone, code);
       toast.success("Welcome to Pranam 🙏");
-      navigate({ to: "/" });
+      navigate({ to: target });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Invalid OTP");
     } finally {
@@ -65,6 +73,8 @@ function SignUp() {
   const handleGoogle = async () => {
     try {
       await signInWithGoogle();
+      // If the OAuth flow returned tokens directly (no redirect), the useEffect above will navigate.
+      // If it redirected away, this code path never resumes.
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign-in failed");
     }
