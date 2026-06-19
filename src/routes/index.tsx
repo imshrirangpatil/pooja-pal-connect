@@ -119,7 +119,7 @@ function Home() {
           <ShieldCheck className="mt-0.5 h-6 w-6" />
           <div>
             <h3 className="text-lg font-bold">Every pandit, personally verified</h3>
-            <p className="mt-1 text-sm text-primary-foreground/90">
+            <p className="mt-1 text-sm text-secondary-foreground/90">
               Aadhaar, lineage, shastra knowledge and on-ground review by senior acharyas.
             </p>
           </div>
