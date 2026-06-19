@@ -82,12 +82,12 @@ function Astrology() {
                     to="/astrology/call/$id"
                     params={{ id: a.id }}
                     search={{ mode: "audio" }}
-                    className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-warm py-2.5 text-xs font-semibold text-primary-foreground"
+                    className="flex items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground"
                   >
                     <Phone className="h-3.5 w-3.5" /> Call
                   </Link>
                 ) : (
-                  <button disabled className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-warm py-2.5 text-xs font-semibold text-primary-foreground opacity-50">
+                  <button disabled className="flex items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground opacity-50">
                     <Phone className="h-3.5 w-3.5" /> Call
                   </button>
                 )}

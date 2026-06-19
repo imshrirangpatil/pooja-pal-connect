@@ -320,7 +320,7 @@ function AddressesPage() {
               <Button
                 onClick={save}
                 disabled={saving}
-                className="flex-1 bg-gradient-warm text-primary-foreground shadow-glow"
+                className="flex-1 bg-primary text-primary-foreground shadow-glow"
               >
                 {saving ? "Saving…" : "Save address"}
               </Button>
