@@ -115,3 +115,51 @@ backend/src
 ```
 
 See `ROADMAP.md` for the full phased module plan.
+
+---
+
+## All modules (23) — now implemented
+
+This service now contains every module across the three phases. Modules 1–2
+were built from detailed specs; modules 3–23 follow the same architecture with
+sensible defaults and clearly-marked stubs where an external integration or an
+undefined business rule applies (search for `TODO(` in the source).
+
+### Route map
+
+| Prefix             | Module                | Notes |
+|--------------------|-----------------------|-------|
+| `/auth`            | Auth                  | OTP, Google, JWT/refresh |
+| `/users`           | User                  | profile, addresses, NRI, credits |
+| `/poojas`          | Puja Catalog          | list/filter/search, categories, admin upsert |
+| `/pandits`         | Pandit                | profiles, availability slots |
+| `/bookings`        | Booking               | sankalp, slot reservation, lifecycle |
+| `/kits`            | Kit & Inventory       | kits, items, stock (admin) |
+| `/cart`            | Cart                  | add/update/remove/clear |
+| `/orders`          | Order                 | build from cart, credits ≤20%, lifecycle |
+| `/payments`        | Payment               | gateway stub, initiate/confirm |
+| `/notifications`   | Notification          | in-app feed; push/email stubs |
+| `/admin`           | Admin                 | dashboard, users, roles, credits, orders |
+| `/video`           | Video Session (Agora) | session + RTC token stub |
+| `/astro`           | Astrology Chat        | sessions, messages, billing |
+| `/subscriptions`   | Subscription          | plans, subscribe, cancel |
+| `/referrals`       | Referral & Credits    | apply code → rewards ledger |
+| `/reviews`         | Reviews & Ratings     | upsert review, pandit rating rollup |
+| `/festivals`       | Festival & Muhurat    | upcoming festivals + muhurats |
+| `/payouts`         | Pandit Payout         | earnings, request, admin process |
+| `/search`          | Search                | Postgres FTS (Elasticsearch later) |
+| `/analytics`       | Analytics & Events    | event ingest + admin summary |
+| `/recommendations` | Recommendation Engine | history/popularity based |
+| `/reports`         | Report Generation     | queue Kundli/certificate (PDF worker stub) |
+| `/support`         | Support Ticket        | tickets + threaded messages |
+
+### Integration points still requiring real credentials/services
+
+- **Payment** (`src/services/payment-gateway.ts`) — wire Razorpay/Stripe SDK + signature verify.
+- **Video** (`src/services/agora.ts`) — real Agora `RtcTokenBuilder`.
+- **Notifications** (`src/services/push.ts`) — Firebase Admin + email provider.
+- **SMS** (`src/services/sms.ts`) — live MSG91 (works in dry-run today).
+- **Search** — optional Elasticsearch cluster.
+- **Reports** — async PDF worker + object storage for `file_url`.
+
+Run `npm run migrate` to apply both migrations (`001_init.sql`, `002_modules.sql`).
