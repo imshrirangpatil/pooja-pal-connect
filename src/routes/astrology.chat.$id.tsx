@@ -293,7 +293,7 @@ function ChatPage() {
             to="/astrology/call/$id"
             params={{ id: astrologer.id }}
             search={{ mode: "audio" }}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-warm text-primary-foreground shadow-glow"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow"
             aria-label="Voice call"
           >
             <Phone className="h-4 w-4" />
@@ -395,7 +395,7 @@ function ChatPage() {
           <button
             onClick={() => void send()}
             disabled={!draft.trim() || typing || ended}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-warm text-primary-foreground shadow-glow disabled:opacity-40"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow disabled:opacity-40"
           >
             {typing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </button>

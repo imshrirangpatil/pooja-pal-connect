@@ -96,7 +96,7 @@ function OrdersPage() {
             </p>
             <Link
               to="/samagri"
-              className="mt-4 rounded-full bg-gradient-warm px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow"
+              className="mt-4 rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow"
             >
               Open store
             </Link>

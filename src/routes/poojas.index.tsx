@@ -33,7 +33,7 @@ function PoojasList() {
             <button
               key={t}
               className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold ${
-                i === 0 ? "bg-gradient-warm text-primary-foreground shadow-glow" : "border border-border bg-card text-foreground"
+                i === 0 ? "bg-primary text-primary-foreground shadow-glow" : "border border-border bg-card text-foreground"
               }`}
             >
               {t}
@@ -66,7 +66,7 @@ function PoojasList() {
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Starts at</p>
                       <p className="text-xl font-bold text-accent">₹{p.priceFrom.toLocaleString("en-IN")}</p>
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-warm px-4 py-2 text-xs font-semibold text-primary-foreground">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">
                       Book <ChevronRight className="h-3.5 w-3.5" />
                     </span>
                   </div>

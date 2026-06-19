@@ -24,7 +24,7 @@ export function BottomNav() {
               >
                 <span
                   className={`flex h-9 w-9 items-center justify-center rounded-full transition-all ${
-                    active ? "bg-gradient-warm text-primary-foreground shadow-glow" : "text-muted-foreground"
+                    active ? "bg-primary text-primary-foreground shadow-glow" : "text-muted-foreground"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
