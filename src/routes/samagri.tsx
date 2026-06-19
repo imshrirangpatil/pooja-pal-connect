@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { samagri } from "@/lib/data";
+import samagriHero from "@/assets/samagri-hero.jpg.asset.json";
 import { useCart } from "@/lib/cart";
 import { ShoppingCart, Plus, Minus, Truck } from "lucide-react";
 import { toast } from "sonner";
