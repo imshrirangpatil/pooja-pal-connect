@@ -19,6 +19,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { poojas } = usePoojas();
   return (
     <MobileShell>
       {/* Hero */}
