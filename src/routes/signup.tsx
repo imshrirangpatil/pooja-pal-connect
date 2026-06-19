@@ -13,6 +13,9 @@ export const Route = createFileRoute("/signup")({
       { name: "description", content: "Create your Pranam account with phone OTP or Google to book verified pandits." },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+  }),
   component: SignUp,
 });
 
