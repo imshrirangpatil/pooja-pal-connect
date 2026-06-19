@@ -63,7 +63,7 @@ function Astrology() {
                 </div>
               </div>
 
-              <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="mt-3 grid grid-cols-3 gap-2">
                 {a.online ? (
                   <Link
                     to="/astrology/chat/$id"
@@ -77,9 +77,34 @@ function Astrology() {
                     <MessageCircle className="h-3.5 w-3.5" /> Chat
                   </button>
                 )}
-                <button disabled={!a.online} className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-warm py-2.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
-                  <Phone className="h-3.5 w-3.5" /> Call
-                </button>
+                {a.online ? (
+                  <Link
+                    to="/astrology/call/$id"
+                    params={{ id: a.id }}
+                    search={{ mode: "audio" }}
+                    className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-warm py-2.5 text-xs font-semibold text-primary-foreground"
+                  >
+                    <Phone className="h-3.5 w-3.5" /> Call
+                  </Link>
+                ) : (
+                  <button disabled className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-warm py-2.5 text-xs font-semibold text-primary-foreground opacity-50">
+                    <Phone className="h-3.5 w-3.5" /> Call
+                  </button>
+                )}
+                {a.online ? (
+                  <Link
+                    to="/astrology/call/$id"
+                    params={{ id: a.id }}
+                    search={{ mode: "video" }}
+                    className="flex items-center justify-center gap-1.5 rounded-full border border-border bg-card py-2.5 text-xs font-semibold text-foreground"
+                  >
+                    <Video className="h-3.5 w-3.5" /> Video
+                  </Link>
+                ) : (
+                  <button disabled className="flex items-center justify-center gap-1.5 rounded-full border border-border bg-card py-2.5 text-xs font-semibold text-foreground opacity-50">
+                    <Video className="h-3.5 w-3.5" /> Video
+                  </button>
+                )}
               </div>
             </article>
           ))}
