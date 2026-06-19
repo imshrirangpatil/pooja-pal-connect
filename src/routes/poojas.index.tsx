@@ -14,6 +14,7 @@ export const Route = createFileRoute("/poojas/")({
 });
 
 function PoojasList() {
+  const { poojas } = usePoojas();
   return (
     <MobileShell>
       <TopBar
