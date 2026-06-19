@@ -107,7 +107,7 @@ function CheckoutPage() {
         order_id: order.id,
         samagri_id: item.id,
         name: item.name,
-        emoji: item.emoji,
+        emoji: item.image,
         unit_price: item.price,
         qty,
         line_total: item.price * qty,
@@ -235,7 +235,7 @@ function CheckoutPage() {
           {cart.items.map(({ item, qty }) => (
             <div key={item.id} className="flex justify-between text-muted-foreground">
               <span className="line-clamp-1 pr-2">
-                {item.emoji} {item.name} × {qty}
+                {item.name} × {qty}
               </span>
               <span className="text-foreground">₹{item.price * qty}</span>
             </div>

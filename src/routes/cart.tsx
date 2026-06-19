@@ -51,8 +51,13 @@ function CartPage() {
           <div className="space-y-3 px-5 pt-5">
             {cart.items.map(({ item, qty }) => (
               <div key={item.id} className="flex gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-soft">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-secondary to-marigold/30 text-3xl">
-                  {item.emoji}
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-secondary to-marigold/30">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
                 <div className="flex flex-1 flex-col justify-between">
                   <div className="flex items-start justify-between gap-2">

@@ -1,4 +1,10 @@
 import ganesh from "@/assets/pooja-ganesh.jpg";
+import samagriDiwali from "@/assets/samagri-diwali.jpg";
+import samagriGriha from "@/assets/samagri-griha.jpg";
+import samagriDaily from "@/assets/samagri-daily.jpg";
+import samagriHavan from "@/assets/samagri-havan.jpg";
+import samagriDiya from "@/assets/samagri-diya.jpg";
+import samagriThali from "@/assets/samagri-thali.jpg";
 import satya from "@/assets/pooja-satyanarayan.jpg";
 import griha from "@/assets/pooja-griha.jpg";
 import lakshmi from "@/assets/pooja-lakshmi.jpg";
@@ -115,16 +121,16 @@ export type Samagri = {
   desc: string;
   price: number;
   mrp: number;
-  emoji: string;
+  image: string;
 };
 
 export const samagri: Samagri[] = [
-  { id: "s1", name: "Diwali Lakshmi Kit", desc: "Complete kit for Lakshmi pooja night", price: 899, mrp: 1199, emoji: "🪔" },
-  { id: "s2", name: "Griha Pravesh Kit", desc: "Vaastu & havan ready samagri", price: 1499, mrp: 1899, emoji: "🏠" },
-  { id: "s3", name: "Daily Pooja Essentials", desc: "Agarbatti, kumkum, rice, ghee", price: 349, mrp: 449, emoji: "🌼" },
-  { id: "s4", name: "Havan Samagri (500g)", desc: "Pure ayurvedic blend, 9 herbs", price: 249, mrp: 299, emoji: "🔥" },
-  { id: "s5", name: "Brass Diya Set (5 pcs)", desc: "Handcrafted, temple grade", price: 599, mrp: 799, emoji: "🪔" },
-  { id: "s6", name: "Pooja Thali Premium", desc: "Engraved brass with bell", price: 1199, mrp: 1499, emoji: "🛕" },
+  { id: "s1", name: "Diwali Lakshmi Kit", desc: "Complete kit for Lakshmi pooja night", price: 899, mrp: 1199, image: samagriDiwali },
+  { id: "s2", name: "Griha Pravesh Kit", desc: "Vaastu & havan ready samagri", price: 1499, mrp: 1899, image: samagriGriha },
+  { id: "s3", name: "Daily Pooja Essentials", desc: "Agarbatti, kumkum, rice, ghee", price: 349, mrp: 449, image: samagriDaily },
+  { id: "s4", name: "Havan Samagri (500g)", desc: "Pure ayurvedic blend, 9 herbs", price: 249, mrp: 299, image: samagriHavan },
+  { id: "s5", name: "Brass Diya Set (5 pcs)", desc: "Handcrafted, temple grade", price: 599, mrp: 799, image: samagriDiya },
+  { id: "s6", name: "Pooja Thali Premium", desc: "Engraved brass with bell", price: 1199, mrp: 1499, image: samagriThali },
 ];
 
 export const festivals = [

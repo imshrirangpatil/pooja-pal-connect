@@ -59,8 +59,13 @@ function Samagri() {
           const qty = qtyOf(s.id);
           return (
             <article key={s.id} className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-soft">
-              <div className="flex aspect-square items-center justify-center bg-gradient-to-br from-secondary to-marigold/30 text-5xl">
-                {s.emoji}
+              <div className="aspect-square overflow-hidden bg-gradient-to-br from-secondary to-marigold/30">
+                <img
+                  src={s.image}
+                  alt={s.name}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
               </div>
               <div className="p-3">
                 <h3 className="line-clamp-1 text-sm font-semibold">{s.name}</h3>
