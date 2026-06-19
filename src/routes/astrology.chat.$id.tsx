@@ -280,9 +280,24 @@ function ChatPage() {
           >
             End
           </button>
-          <button className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-warm text-primary-foreground shadow-glow">
+          <Link
+            to="/astrology/call/$id"
+            params={{ id: astrologer.id }}
+            search={{ mode: "video" }}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-foreground hover:bg-muted"
+            aria-label="Video call"
+          >
+            <Video className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/astrology/call/$id"
+            params={{ id: astrologer.id }}
+            search={{ mode: "audio" }}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-warm text-primary-foreground shadow-glow"
+            aria-label="Voice call"
+          >
             <Phone className="h-4 w-4" />
-          </button>
+          </Link>
         </div>
         <div
           className={`flex items-center justify-between px-4 py-1.5 text-[11px] font-medium ${
