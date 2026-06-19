@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { samagri } from "@/lib/data";
+import samagriHero from "@/assets/samagri-hero.jpg.asset.json";
 import { useCart } from "@/lib/cart";
 import { ShoppingCart, Plus, Minus, Truck } from "lucide-react";
 import { toast } from "sonner";
@@ -38,6 +39,15 @@ function Samagri() {
           </Link>
         }
       />
+
+      <div className="mx-5 mt-4 overflow-hidden rounded-2xl border border-border/60 shadow-soft">
+        <img
+          src={samagriHero.url}
+          alt="Pranam premium samagri kit with kumkum, haldi, akshat, ganga jal, kesar, panchamrit, camphor, rudraksha and incense sticks"
+          className="h-44 w-full object-cover"
+          loading="lazy"
+        />
+      </div>
 
       <div className="mx-5 mt-4 flex items-center gap-2 rounded-2xl bg-secondary p-3 text-xs text-secondary-foreground">
         <Truck className="h-4 w-4 text-accent" />
