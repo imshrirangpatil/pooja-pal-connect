@@ -259,7 +259,7 @@ function CheckoutPage() {
         <Button
           onClick={placeOrder}
           disabled={placing || !selectedId || cart.items.length === 0}
-          className="h-12 w-full bg-gradient-warm text-base font-semibold text-primary-foreground shadow-glow"
+          className="h-12 w-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
         >
           {placing ? "Placing order…" : `Place Order · ₹${cart.total}`}
         </Button>

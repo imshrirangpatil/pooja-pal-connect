@@ -25,7 +25,7 @@ export function Bookings() {
       <div className="px-5 pt-4">
         <div className="flex gap-2 rounded-full border border-border bg-card p-1">
           {["Upcoming", "Completed", "Cancelled"].map((t, i) => (
-            <button key={t} className={`flex-1 rounded-full py-2 text-xs font-semibold ${i === 0 ? "bg-gradient-warm text-primary-foreground" : "text-muted-foreground"}`}>
+            <button key={t} className={`flex-1 rounded-full py-2 text-xs font-semibold ${i === 0 ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
               {t}
             </button>
           ))}
@@ -68,7 +68,7 @@ function EmptyState() {
       </div>
       <h3 className="mt-4 text-base font-semibold">No bookings yet</h3>
       <p className="mt-1 max-w-xs text-xs text-muted-foreground">Your upcoming poojas will appear here once you book.</p>
-      <Link to="/poojas" className="mt-4 rounded-full bg-gradient-warm px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow">
+      <Link to="/poojas" className="mt-4 rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow">
         Browse Poojas
       </Link>
     </div>

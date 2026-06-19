@@ -82,12 +82,12 @@ function Samagri() {
                         toast.success(`${s.name} added to cart`);
                       }}
                       aria-label={`Add ${s.name} to cart`}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-warm text-primary-foreground shadow-glow transition-transform active:scale-95"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition-transform active:scale-95"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
                   ) : (
-                    <div className="flex items-center gap-1.5 rounded-full bg-gradient-warm p-0.5 text-primary-foreground shadow-glow">
+                    <div className="flex items-center gap-1.5 rounded-full bg-primary p-0.5 text-primary-foreground shadow-glow">
                       <button
                         onClick={() => cart.setQty(s.id, qty - 1)}
                         aria-label="Decrease"

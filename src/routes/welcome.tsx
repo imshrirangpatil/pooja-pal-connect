@@ -46,7 +46,7 @@ function Welcome() {
       >
         <Link
           to="/signup"
-          className="flex h-14 w-full items-center justify-center rounded-full bg-gradient-warm text-base font-semibold text-primary-foreground shadow-glow"
+          className="flex h-14 w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
         >
           Get Started
         </Link>

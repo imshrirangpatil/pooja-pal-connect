@@ -42,7 +42,7 @@ function CartPage() {
           </div>
           <h2 className="mt-5 text-lg font-semibold">Your cart is empty</h2>
           <p className="mt-1 text-sm text-muted-foreground">Add samagri kits and essentials to get started.</p>
-          <Button asChild className="mt-6 bg-gradient-warm text-primary-foreground shadow-glow">
+          <Button asChild className="mt-6 bg-primary text-primary-foreground shadow-glow">
             <Link to="/samagri">Browse Store</Link>
           </Button>
         </div>
@@ -126,7 +126,7 @@ function CartPage() {
           <div className="fixed bottom-16 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-card/95 p-4 backdrop-blur-xl">
             <Button
               onClick={() => navigate({ to: "/checkout" })}
-              className="h-12 w-full bg-gradient-warm text-base font-semibold text-primary-foreground shadow-glow"
+              className="h-12 w-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
             >
               Checkout · ₹{cart.total}
             </Button>

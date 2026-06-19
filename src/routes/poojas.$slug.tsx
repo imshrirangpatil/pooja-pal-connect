@@ -119,7 +119,7 @@ function PoojaDetail() {
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</p>
             <p className="text-lg font-bold text-accent">₹{pooja.priceFrom.toLocaleString("en-IN")}</p>
           </div>
-          <button className="flex-1 rounded-full bg-gradient-warm py-3.5 text-sm font-semibold text-primary-foreground shadow-glow">
+          <button className="flex-1 rounded-full bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-glow">
             Book Pandit Now
           </button>
         </div>

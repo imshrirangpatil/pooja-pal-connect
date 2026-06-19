@@ -191,7 +191,7 @@ function BecomePandit() {
                       onClick={() => toggle("specialties", s)}
                       className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                         on
-                          ? "border-primary bg-gradient-warm text-primary-foreground shadow-glow"
+                          ? "border-primary bg-primary text-primary-foreground shadow-glow"
                           : "border-border bg-card text-foreground"
                       }`}
                     >
@@ -277,7 +277,7 @@ function BecomePandit() {
         <div className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
           <Button
             onClick={next}
-            className="h-12 w-full rounded-full bg-gradient-warm text-base font-semibold shadow-glow"
+            className="h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
           >
             {step === 0 ? "Start application" : step === 3 ? "Submit for verification" : "Continue"}
             <ChevronRight className="ml-1 h-4 w-4" />
@@ -289,7 +289,7 @@ function BecomePandit() {
         <div className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
           <Button
             onClick={() => navigate({ to: "/" })}
-            className="h-12 w-full rounded-full bg-gradient-warm text-base font-semibold shadow-glow"
+            className="h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
           >
             Back to home
           </Button>

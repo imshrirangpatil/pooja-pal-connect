@@ -140,7 +140,7 @@ function SignUp() {
             <Button
               onClick={sendOtp}
               disabled={loading}
-              className="mt-5 h-12 w-full rounded-full bg-gradient-warm text-base font-semibold shadow-glow"
+              className="mt-5 h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
             >
               {loading ? "Sending..." : "Send OTP"}
             </Button>
@@ -182,7 +182,7 @@ function SignUp() {
             <Button
               onClick={verifyOtp}
               disabled={loading}
-              className="mt-6 h-12 w-full rounded-full bg-gradient-warm text-base font-semibold shadow-glow"
+              className="mt-6 h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
             >
               {loading ? "Verifying..." : "Verify & Continue"}
             </Button>
