@@ -88,6 +88,20 @@ function BecomePandit() {
       return setStep(3);
     }
     if (step === 3) {
+      if (form.payoutMethod === "upi") {
+        if (!form.upiId.includes("@")) {
+          toast.error("Enter a valid UPI ID (e.g. name@okhdfc)");
+          return;
+        }
+      } else {
+        if (!form.accountHolder || form.accountNumber.length < 8 || form.ifsc.length !== 11) {
+          toast.error("Please complete all bank fields (IFSC must be 11 chars)");
+          return;
+        }
+      }
+      return setStep(4);
+    }
+    if (step === 4) {
       if (!form.aadhaarUploaded || !form.credentialUploaded || !form.selfieUploaded) {
         toast.error("Upload all 3 documents to continue");
         return;
@@ -108,11 +122,16 @@ function BecomePandit() {
           languages: form.languages.join(", "),
           specialties: form.specialties.join(", "),
           message: form.bio || null,
+          upi_id: form.payoutMethod === "upi" ? form.upiId.trim() : null,
+          account_holder: form.payoutMethod === "bank" ? form.accountHolder.trim() : null,
+          account_number: form.payoutMethod === "bank" ? form.accountNumber.trim() : null,
+          ifsc: form.payoutMethod === "bank" ? form.ifsc.trim().toUpperCase() : null,
+          bank_name: form.payoutMethod === "bank" ? form.bankName.trim() : null,
         });
         if (error) toast.error(error.message);
         else toast.success("Application submitted! Our team will verify within 48 hours.");
       })();
-      return setStep(4);
+      return setStep(5);
     }
   };
 
