@@ -59,7 +59,7 @@ function Profile() {
         </div>
         <div className="mt-4 flex gap-3">
           <Stat label="Bookings" value="07" />
-          <Stat label="Wallet" value="₹250" />
+          <Stat label="Wallet" value={walletDisplay} />
           <Stat label="Saved" value="₹1.2k" />
         </div>
       </section>
@@ -77,14 +77,15 @@ function Profile() {
       <div className="mt-5 space-y-1 px-5">
         <Row to="/orders" icon={<Package className="h-4 w-4" />} label="My Orders" />
         <Row to="/addresses" icon={<MapPin className="h-4 w-4" />} label="Saved Addresses" />
-        <Row icon={<Wallet className="h-4 w-4" />} label="Wallet & Offers" />
+        <Row to="/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet & Credits" hint={walletDisplay} />
         <Row icon={<Heart className="h-4 w-4" />} label="Saved Pandits" />
-        <Row icon={<Gift className="h-4 w-4" />} label="Refer & Earn ₹100" />
+        <Row to="/refer" icon={<Gift className="h-4 w-4" />} label="Refer & Earn ₹100" />
         <Row icon={<Bell className="h-4 w-4" />} label="Notifications" />
         <Row icon={<Globe className="h-4 w-4" />} label="Language" hint="English" />
         <Row icon={<HelpCircle className="h-4 w-4" />} label="Help & Support" />
         <Row icon={<FileText className="h-4 w-4" />} label="Terms & Privacy" />
       </div>
+
 
       <div className="mx-5 mt-6 rounded-2xl border border-border/60 bg-card p-4 text-center shadow-soft">
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">Become a partner</p>
