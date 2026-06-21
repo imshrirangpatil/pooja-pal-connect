@@ -3,7 +3,7 @@ import { BottomNav } from "./BottomNav";
 
 export function MobileShell({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto min-h-screen w-full max-w-md bg-background pb-24">
+    <div className="mx-auto min-h-screen w-full max-w-md overscroll-y-contain bg-background pb-[calc(env(safe-area-inset-bottom)+6rem)] [scroll-behavior:smooth]">
       {children}
       <BottomNav />
     </div>
