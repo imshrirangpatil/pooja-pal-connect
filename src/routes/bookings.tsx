@@ -24,6 +24,7 @@ const mock = [
 export function Bookings() {
   const [tab, setTab] = useState<"Upcoming" | "Completed" | "Cancelled">("Upcoming");
   const [rating, setRating] = useState<{ panditId: string; bookingId: string } | null>(null);
+  const [details, setDetails] = useState<(typeof mock)[number] | null>(null);
 
   const list = mock.filter((b) =>
     tab === "Upcoming" ? b.status === "Confirmed" || b.status === "Pending" :
