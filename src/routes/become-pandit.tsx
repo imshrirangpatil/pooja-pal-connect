@@ -149,19 +149,19 @@ function BecomePandit() {
           <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">Partner application</p>
           <h1 className="text-base font-bold">Become a Pranam Pandit</h1>
         </div>
-        {step > 0 && step < 4 && (
+        {step > 0 && step < 5 && (
           <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-accent">
-            Step {step}/3
+            Step {step}/4
           </span>
         )}
       </header>
 
-      {step > 0 && step < 4 && (
+      {step > 0 && step < 5 && (
         <div className="px-5 pt-4">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
             <div
               className="h-full bg-gradient-warm transition-all"
-              style={{ width: `${(step / 3) * 100}%` }}
+              style={{ width: `${(step / 4) * 100}%` }}
             />
           </div>
         </div>
