@@ -29,6 +29,7 @@ import { Route as AstrologyIndexRouteImport } from './routes/astrology.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
 import { Route as PanditsIdRouteImport } from './routes/pandits.$id'
+import { Route as BookingNewRouteImport } from './routes/booking.new'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminPoojasRouteImport } from './routes/admin.poojas'
 import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
@@ -137,6 +138,11 @@ const PanditsIdRoute = PanditsIdRouteImport.update({
   path: '/pandits/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingNewRoute = BookingNewRouteImport.update({
+  id: '/booking/new',
+  path: '/booking/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/users': typeof AdminUsersRoute
+  '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/users': typeof AdminUsersRoute
+  '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/users': typeof AdminUsersRoute
+  '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/admin/pandits'
     | '/admin/poojas'
     | '/admin/users'
+    | '/booking/new'
     | '/pandits/$id'
     | '/poojas/$slug'
     | '/admin/'
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/admin/pandits'
     | '/admin/poojas'
     | '/admin/users'
+    | '/booking/new'
     | '/pandits/$id'
     | '/poojas/$slug'
     | '/admin'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/admin/pandits'
     | '/admin/poojas'
     | '/admin/users'
+    | '/booking/new'
     | '/pandits/$id'
     | '/poojas/$slug'
     | '/admin/'
@@ -364,6 +376,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
+  BookingNewRoute: typeof BookingNewRoute
   PanditsIdRoute: typeof PanditsIdRoute
   PoojasSlugRoute: typeof PoojasSlugRoute
   AstrologyIndexRoute: typeof AstrologyIndexRoute
@@ -515,6 +528,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanditsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/new': {
+      id: '/booking/new'
+      path: '/booking/new'
+      fullPath: '/booking/new'
+      preLoaderRoute: typeof BookingNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -602,6 +622,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
+  BookingNewRoute: BookingNewRoute,
   PanditsIdRoute: PanditsIdRoute,
   PoojasSlugRoute: PoojasSlugRoute,
   AstrologyIndexRoute: AstrologyIndexRoute,

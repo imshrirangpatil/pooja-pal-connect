@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { z } from "zod";
 import { MobileShell } from "@/components/MobileShell";
 import { poojas as seedPoojas, pandits } from "@/lib/data";
 import { rowToPooja } from "@/lib/poojas-source";
@@ -6,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Check, Clock, Star, ShieldCheck, Calendar, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/poojas/$slug")({
+  validateSearch: (s) => z.object({ pandit: z.string().optional() }).parse(s),
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("poojas")
