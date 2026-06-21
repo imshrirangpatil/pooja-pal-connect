@@ -61,7 +61,7 @@ function Home() {
       {/* Categories */}
       <section className="px-5 pt-2">
         <div className="grid grid-cols-2 gap-3">
-          <CategoryCard to="/poojas" img={panditImg} label="Book Pandit" sub="Verified, on schedule" />
+          <CategoryCard to="/darshan" img={darshanImg} label="Live Darshan" sub="Aarti & live pooja" />
           <CategoryCard to="/astrology" img={astroImg} label="Astrology" sub="Live chat & call" tone="dark" />
           <CategoryCard to="/samagri" img={samagriImg} label="Samagri" sub="Free delivery" />
           <CategoryCard to="/pandits" img={panditImg} label="Pandits" sub={`${pandits.length}+ verified`} />
