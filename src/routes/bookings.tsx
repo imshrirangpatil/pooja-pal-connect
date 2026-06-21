@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { CalendarCheck, Clock, ChevronRight, Star, X } from "lucide-react";
+import { CalendarCheck, Clock, ChevronRight, Star, X, MapPin, Phone, CreditCard, Calendar } from "lucide-react";
 import { ReviewModule } from "@/components/ReviewModule";
 import { pandits } from "@/lib/data";
 
