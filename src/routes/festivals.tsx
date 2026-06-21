@@ -143,7 +143,7 @@ function FestivalsPage() {
 
       {tab === "calendar" ? (
         <section className="px-5 pt-4">
-          <div className="rounded-3xl border border-border/60 bg-card p-2 shadow-soft">
+          <div className="overflow-hidden rounded-3xl border border-border/60 bg-card p-2 shadow-soft">
             <Calendar
               mode="single"
               selected={date}
