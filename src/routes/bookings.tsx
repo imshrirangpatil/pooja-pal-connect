@@ -32,12 +32,14 @@ export function Bookings() {
   const [tab, setTab] = useState<"Completed" | "Cancelled">("Completed");
   const [rating, setRating] = useState<{ panditId: string; bookingId: string } | null>(null);
   const [details, setDetails] = useState<Booking | null>(null);
+  const [confirmCancel, setConfirmCancel] = useState<Booking | null>(null);
 
   const list = bookings.filter((b) => b.status === tab);
 
   const cancelBooking = (id: string) => {
     setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Cancelled", payment: "Refunded to Wallet" } : b)));
     setDetails(null);
+    setConfirmCancel(null);
     setTab("Cancelled");
   };
 
@@ -196,13 +198,41 @@ export function Bookings() {
 
                 {details.status !== "Cancelled" && (
                   <button
-                    onClick={() => cancelBooking(details.id)}
+                    onClick={() => setConfirmCancel(details)}
                     className="w-full rounded-full border border-destructive/30 bg-destructive/10 py-2.5 text-xs font-semibold text-destructive hover:bg-destructive/15"
                   >
                     Cancel Booking
                   </button>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmCancel && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/50 backdrop-blur-sm px-5" onClick={() => setConfirmCancel(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-soft">
+            <p className="text-base font-bold">Cancel this pooja?</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Are you sure you want to cancel <span className="font-semibold text-foreground">{confirmCancel.pooja}</span>?
+            </p>
+            <div className="mt-3 rounded-xl border border-amber-300/40 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-900">
+              50% refund will be initiated only if you have added the insurance cover for this pooja. Otherwise, the booking is non-refundable as per our cancellation policy.
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => setConfirmCancel(null)}
+                className="flex-1 rounded-full border border-border bg-card py-2.5 text-xs font-semibold"
+              >
+                Keep Booking
+              </button>
+              <button
+                onClick={() => cancelBooking(confirmCancel.id)}
+                className="flex-1 rounded-full bg-destructive py-2.5 text-xs font-semibold text-destructive-foreground"
+              >
+                Yes, Cancel
+              </button>
             </div>
           </div>
         </div>
