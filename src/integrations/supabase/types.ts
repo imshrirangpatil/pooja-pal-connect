@@ -554,6 +554,51 @@ export type Database = {
         }
         Relationships: []
       }
+      support_tickets: {
+        Row: {
+          admin_response: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string | null
+          source: string
+          status: string
+          subject: string
+          transcript: Json | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_response?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name?: string | null
+          source?: string
+          status?: string
+          subject: string
+          transcript?: Json | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_response?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string | null
+          source?: string
+          status?: string
+          subject?: string
+          transcript?: Json | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
