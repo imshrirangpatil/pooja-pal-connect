@@ -4,8 +4,26 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Calendar } from "@/components/ui/calendar";
-import { Sun, Moon, Sparkles, CalendarDays, ChevronRight } from "lucide-react";
+import { Sun, Moon, Sparkles, CalendarDays, ChevronRight, MapPin, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Major Indian cities with coordinates — used for muhurat sunrise/sunset lookup
+const CITIES: { label: string; lat: number; lng: number; tz: string }[] = [
+  { label: "Delhi", lat: 28.6139, lng: 77.209, tz: "Asia/Kolkata" },
+  { label: "Mumbai", lat: 19.076, lng: 72.8777, tz: "Asia/Kolkata" },
+  { label: "Bengaluru", lat: 12.9716, lng: 77.5946, tz: "Asia/Kolkata" },
+  { label: "Kolkata", lat: 22.5726, lng: 88.3639, tz: "Asia/Kolkata" },
+  { label: "Chennai", lat: 13.0827, lng: 80.2707, tz: "Asia/Kolkata" },
+  { label: "Hyderabad", lat: 17.385, lng: 78.4867, tz: "Asia/Kolkata" },
+  { label: "Pune", lat: 18.5204, lng: 73.8567, tz: "Asia/Kolkata" },
+  { label: "Ahmedabad", lat: 23.0225, lng: 72.5714, tz: "Asia/Kolkata" },
+  { label: "Jaipur", lat: 26.9124, lng: 75.7873, tz: "Asia/Kolkata" },
+  { label: "Lucknow", lat: 26.8467, lng: 80.9462, tz: "Asia/Kolkata" },
+  { label: "Varanasi", lat: 25.3176, lng: 82.9739, tz: "Asia/Kolkata" },
+  { label: "Bhopal", lat: 23.2599, lng: 77.4126, tz: "Asia/Kolkata" },
+  { label: "Patna", lat: 25.5941, lng: 85.1376, tz: "Asia/Kolkata" },
+  { label: "Chandigarh", lat: 30.7333, lng: 76.7794, tz: "Asia/Kolkata" },
+];
 
 export const Route = createFileRoute("/festivals")({
   head: () => ({
