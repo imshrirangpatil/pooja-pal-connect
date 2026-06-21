@@ -113,7 +113,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Row({ icon, label, hint, to }: { icon: React.ReactNode; label: string; hint?: string; to?: "/orders" | "/addresses" | "/wallet" | "/refer" }) {
+function Row({ icon, label, hint, to }: { icon: React.ReactNode; label: string; hint?: string; to?: "/orders" | "/addresses" | "/wallet" | "/refer" | "/support" }) {
   const inner = (
     <>
       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-accent">{icon}</span>
