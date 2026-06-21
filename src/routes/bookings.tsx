@@ -16,9 +16,9 @@ export const Route = createFileRoute("/bookings")({
 });
 
 const mock = [
-  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Confirmed", amount: 1799 },
-  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Pending", amount: 2199 },
-  { id: "b3", pooja: "Ganesh Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Mon, 8 Sep · 9:00 AM", status: "Completed", amount: 1499 },
+  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Confirmed", amount: 1799, address: "204, Sunflower Apartments, Andheri West, Mumbai", phone: "+91 98765 43210", payment: "UPI — Paid", bookedOn: "21 Oct 2025" },
+  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Pending", amount: 2199, address: "12, Gokuldham Society, Goregaon East, Mumbai", phone: "+91 87654 32109", payment: "Cash on Delivery", bookedOn: "18 Oct 2025" },
+  { id: "b3", pooja: "Ganesh Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Mon, 8 Sep · 9:00 AM", status: "Completed", amount: 1499, address: "55, Krishna Niwas, Borivali, Mumbai", phone: "+91 76543 21098", payment: "Wallet — Paid", bookedOn: "1 Sep 2025" },
 ];
 
 export function Bookings() {
