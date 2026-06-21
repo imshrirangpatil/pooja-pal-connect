@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Calendar } from "@/components/ui/calendar";
 import { Sun, Moon, Sparkles, CalendarDays, ChevronRight } from "lucide-react";
@@ -17,39 +19,36 @@ export const Route = createFileRoute("/festivals")({
   component: FestivalsPage,
 });
 
+type FestivalType = "major" | "vrat" | "ekadashi" | "amavasya" | "purnima";
 type Festival = {
+  id: string;
   name: string;
-  date: string; // YYYY-MM-DD
-  type: "major" | "vrat" | "ekadashi" | "amavasya" | "purnima";
+  date: string; // YYYY-MM-DD (local)
+  type: FestivalType;
   note: string;
   pooja?: { slug: string; label: string };
 };
 
-const FESTIVALS: Festival[] = [
-  { name: "Karwa Chauth", date: "2026-10-29", type: "vrat", note: "Fast for spouse's longevity; moon-rise puja." },
-  { name: "Dhanteras", date: "2026-11-07", type: "major", note: "Buy gold/silver; Lakshmi-Kuber pujan.", pooja: { slug: "lakshmi-pooja", label: "Lakshmi Pooja" } },
-  { name: "Diwali — Lakshmi Pujan", date: "2026-11-09", type: "major", note: "Main night of lights; Lakshmi-Ganesh pujan.", pooja: { slug: "lakshmi-pooja", label: "Lakshmi Pooja" } },
-  { name: "Govardhan Puja", date: "2026-11-10", type: "major", note: "Annakut; offerings to Krishna." },
-  { name: "Bhai Dooj", date: "2026-11-11", type: "major", note: "Sister-brother bond; tilak ceremony." },
-  { name: "Tulsi Vivah", date: "2026-11-21", type: "major", note: "Marriage of Tulsi and Vishnu." },
-  { name: "Devutthani Ekadashi", date: "2026-11-19", type: "ekadashi", note: "Vishnu awakens; weddings begin." },
-  { name: "Kartik Purnima", date: "2026-11-23", type: "purnima", note: "Holy bath, deep daan." },
-  { name: "Margashirsha Amavasya", date: "2026-12-08", type: "amavasya", note: "Pitra tarpan day." },
-  { name: "Geeta Jayanti", date: "2026-12-19", type: "major", note: "Birth of Bhagavad Gita." },
-  { name: "Makar Sankranti", date: "2027-01-14", type: "major", note: "Sun enters Capricorn; til-gud daan." },
-  { name: "Vasant Panchami", date: "2027-02-01", type: "major", note: "Saraswati Pujan.", pooja: { slug: "saraswati-pooja", label: "Saraswati Pooja" } },
-  { name: "Maha Shivratri", date: "2027-02-15", type: "major", note: "Night-long Shiva worship.", pooja: { slug: "rudrabhishek", label: "Rudrabhishek" } },
-  { name: "Holika Dahan", date: "2027-03-02", type: "major", note: "Bonfire on Phalguna Purnima." },
-  { name: "Holi", date: "2027-03-03", type: "major", note: "Festival of colours." },
-];
-
-const TYPE_STYLE: Record<Festival["type"], string> = {
+const TYPE_STYLE: Record<FestivalType, string> = {
   major: "bg-primary/15 text-primary",
   vrat: "bg-amber-100 text-amber-800",
   ekadashi: "bg-emerald-100 text-emerald-800",
   amavasya: "bg-slate-200 text-slate-700",
   purnima: "bg-yellow-100 text-yellow-800",
 };
+
+// Local YYYY-MM-DD (avoids UTC drift from toISOString)
+function toLocalISO(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+// Parse YYYY-MM-DD as a local date (not UTC)
+function parseLocalDate(s: string) {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
 
 // Choghadiya periods — auspiciousness
 const CHOG_KIND: Record<string, "good" | "bad" | "neutral"> = {
@@ -59,23 +58,23 @@ const CHOG_KIND: Record<string, "good" | "bad" | "neutral"> = {
 };
 
 const DAY_CHOG: string[][] = [
-  ["Udveg","Char","Labh","Amrit","Kaal","Shubh","Rog","Udveg"], // Sun
-  ["Amrit","Kaal","Shubh","Rog","Udveg","Char","Labh","Amrit"], // Mon
-  ["Rog","Udveg","Char","Labh","Amrit","Kaal","Shubh","Rog"],   // Tue
-  ["Labh","Amrit","Kaal","Shubh","Rog","Udveg","Char","Labh"],  // Wed
-  ["Shubh","Rog","Udveg","Char","Labh","Amrit","Kaal","Shubh"], // Thu
-  ["Char","Labh","Amrit","Kaal","Shubh","Rog","Udveg","Char"],  // Fri
-  ["Kaal","Shubh","Rog","Udveg","Char","Labh","Amrit","Kaal"],  // Sat
+  ["Udveg","Char","Labh","Amrit","Kaal","Shubh","Rog","Udveg"],
+  ["Amrit","Kaal","Shubh","Rog","Udveg","Char","Labh","Amrit"],
+  ["Rog","Udveg","Char","Labh","Amrit","Kaal","Shubh","Rog"],
+  ["Labh","Amrit","Kaal","Shubh","Rog","Udveg","Char","Labh"],
+  ["Shubh","Rog","Udveg","Char","Labh","Amrit","Kaal","Shubh"],
+  ["Char","Labh","Amrit","Kaal","Shubh","Rog","Udveg","Char"],
+  ["Kaal","Shubh","Rog","Udveg","Char","Labh","Amrit","Kaal"],
 ];
 
 const NIGHT_CHOG: string[][] = [
-  ["Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh"], // Sun
-  ["Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char"],  // Mon
-  ["Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal"],  // Tue
-  ["Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg"], // Wed
-  ["Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit"], // Thu
-  ["Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog"],   // Fri
-  ["Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh"],  // Sat
+  ["Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh"],
+  ["Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char"],
+  ["Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal"],
+  ["Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg"],
+  ["Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit"],
+  ["Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog"],
+  ["Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh"],
 ];
 
 function fmtTime(h: number, m: number) {
@@ -89,7 +88,6 @@ function fmtTime(h: number, m: number) {
 
 function buildChoghadiya(date: Date) {
   const dow = date.getDay();
-  // Approximate sunrise 6:00, sunset 18:00 — 1.5 hrs each period
   const day = DAY_CHOG[dow].map((name, i) => {
     const start = 6 * 60 + i * 90;
     const end = start + 90;
@@ -107,17 +105,37 @@ function FestivalsPage() {
   const [date, setDate] = useState<Date>(new Date());
   const [tab, setTab] = useState<"calendar" | "muhurat">("calendar");
 
-  const isoSelected = date.toISOString().slice(0, 10);
-  const selectedFestivals = FESTIVALS.filter((f) => f.date === isoSelected);
+  const { data: festivals = [] } = useQuery({
+    queryKey: ["festivals"],
+    queryFn: async (): Promise<Festival[]> => {
+      const { data, error } = await supabase
+        .from("festivals")
+        .select("*")
+        .eq("visible", true)
+        .order("festival_date");
+      if (error) throw error;
+      return (data ?? []).map((r: any) => ({
+        id: r.id,
+        name: r.name,
+        date: r.festival_date,
+        type: r.type as FestivalType,
+        note: r.note ?? "",
+        pooja: r.pooja_slug ? { slug: r.pooja_slug, label: r.pooja_label ?? r.pooja_slug } : undefined,
+      }));
+    },
+  });
+
+  const isoSelected = toLocalISO(date);
+  const selectedFestivals = festivals.filter((f) => f.date === isoSelected);
   const upcoming = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
-    return FESTIVALS
-      .map((f) => ({ ...f, ts: new Date(f.date).getTime() }))
+    return festivals
+      .map((f) => ({ ...f, ts: parseLocalDate(f.date).getTime() }))
       .filter((f) => f.ts >= today.getTime())
       .sort((a, b) => a.ts - b.ts);
-  }, []);
+  }, [festivals]);
 
-  const festivalDates = useMemo(() => FESTIVALS.map((f) => new Date(f.date)), []);
+  const festivalDates = useMemo(() => festivals.map((f) => parseLocalDate(f.date)), [festivals]);
   const chog = useMemo(() => buildChoghadiya(date), [date]);
 
   return (
@@ -166,7 +184,7 @@ function FestivalsPage() {
             ) : (
               <div className="mt-3 space-y-3">
                 {selectedFestivals.map((f) => (
-                  <FestivalCard key={f.name} f={f} />
+                  <FestivalCard key={f.id} f={f} />
                 ))}
               </div>
             )}
@@ -176,7 +194,7 @@ function FestivalsPage() {
             <h3 className="text-sm font-bold">Upcoming festivals</h3>
             <div className="mt-3 space-y-3">
               {upcoming.slice(0, 8).map((f) => (
-                <FestivalCard key={f.name + f.date} f={f} />
+                <FestivalCard key={f.id} f={f} />
               ))}
             </div>
           </div>
@@ -215,7 +233,7 @@ function FestivalsPage() {
 }
 
 function FestivalCard({ f }: { f: Festival }) {
-  const d = new Date(f.date);
+  const d = parseLocalDate(f.date);
   return (
     <article className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
       <div className="flex items-start justify-between gap-3">
