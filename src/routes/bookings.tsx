@@ -15,22 +15,31 @@ export const Route = createFileRoute("/bookings")({
   component: Bookings,
 });
 
-const mock = [
-  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Confirmed", amount: 1799, address: "204, Sunflower Apartments, Andheri West, Mumbai", phone: "+91 98765 43210", payment: "UPI — Paid", bookedOn: "21 Oct 2025" },
-  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Pending", amount: 2199, address: "12, Gokuldham Society, Goregaon East, Mumbai", phone: "+91 87654 32109", payment: "Cash on Delivery", bookedOn: "18 Oct 2025" },
+type Booking = {
+  id: string; pooja: string; panditId: string; pandit: string; date: string;
+  status: "Completed" | "Cancelled"; amount: number; address: string; phone: string;
+  payment: string; bookedOn: string;
+};
+
+const initialBookings: Booking[] = [
+  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Completed", amount: 1799, address: "204, Sunflower Apartments, Andheri West, Mumbai", phone: "+91 98765 43210", payment: "UPI — Paid", bookedOn: "21 Oct 2025" },
+  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Cancelled", amount: 2199, address: "12, Gokuldham Society, Goregaon East, Mumbai", phone: "+91 87654 32109", payment: "Refunded to Wallet", bookedOn: "18 Oct 2025" },
   { id: "b3", pooja: "Ganesh Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Mon, 8 Sep · 9:00 AM", status: "Completed", amount: 1499, address: "55, Krishna Niwas, Borivali, Mumbai", phone: "+91 76543 21098", payment: "Wallet — Paid", bookedOn: "1 Sep 2025" },
 ];
 
 export function Bookings() {
-  const [tab, setTab] = useState<"Upcoming" | "Completed" | "Cancelled">("Upcoming");
+  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [tab, setTab] = useState<"Completed" | "Cancelled">("Completed");
   const [rating, setRating] = useState<{ panditId: string; bookingId: string } | null>(null);
-  const [details, setDetails] = useState<(typeof mock)[number] | null>(null);
+  const [details, setDetails] = useState<Booking | null>(null);
 
-  const list = mock.filter((b) =>
-    tab === "Upcoming" ? b.status === "Confirmed" || b.status === "Pending" :
-    tab === "Completed" ? b.status === "Completed" :
-    b.status === "Cancelled",
-  );
+  const list = bookings.filter((b) => b.status === tab);
+
+  const cancelBooking = (id: string) => {
+    setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Cancelled", payment: "Refunded to Wallet" } : b)));
+    setDetails(null);
+    setTab("Cancelled");
+  };
 
   return (
     <MobileShell>
