@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
+import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PanditsRouteImport } from './routes/pandits'
 import { Route as OrdersRouteImport } from './routes/orders'
@@ -39,6 +41,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
   path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -47,6 +54,11 @@ const SignupRoute = SignupRouteImport.update({
 const SamagriRoute = SamagriRouteImport.update({
   id: '/samagri',
   path: '/samagri',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferRoute = ReferRouteImport.update({
+  id: '/refer',
+  path: '/refer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -166,8 +178,10 @@ export interface FileRoutesByFullPath {
   '/orders': typeof OrdersRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
+  '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -191,8 +205,10 @@ export interface FileRoutesByTo {
   '/orders': typeof OrdersRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
+  '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -218,8 +234,10 @@ export interface FileRoutesById {
   '/orders': typeof OrdersRoute
   '/pandits': typeof PanditsRoute
   '/profile': typeof ProfileRoute
+  '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -246,8 +264,10 @@ export interface FileRouteTypes {
     | '/orders'
     | '/pandits'
     | '/profile'
+    | '/refer'
     | '/samagri'
     | '/signup'
+    | '/wallet'
     | '/welcome'
     | '/admin/applications'
     | '/admin/orders'
@@ -271,8 +291,10 @@ export interface FileRouteTypes {
     | '/orders'
     | '/pandits'
     | '/profile'
+    | '/refer'
     | '/samagri'
     | '/signup'
+    | '/wallet'
     | '/welcome'
     | '/admin/applications'
     | '/admin/orders'
@@ -297,8 +319,10 @@ export interface FileRouteTypes {
     | '/orders'
     | '/pandits'
     | '/profile'
+    | '/refer'
     | '/samagri'
     | '/signup'
+    | '/wallet'
     | '/welcome'
     | '/admin/applications'
     | '/admin/orders'
@@ -324,8 +348,10 @@ export interface RootRouteChildren {
   OrdersRoute: typeof OrdersRoute
   PanditsRoute: typeof PanditsRoute
   ProfileRoute: typeof ProfileRoute
+  ReferRoute: typeof ReferRoute
   SamagriRoute: typeof SamagriRoute
   SignupRoute: typeof SignupRoute
+  WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
   PoojasSlugRoute: typeof PoojasSlugRoute
   AstrologyIndexRoute: typeof AstrologyIndexRoute
@@ -343,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -355,6 +388,13 @@ declare module '@tanstack/react-router' {
       path: '/samagri'
       fullPath: '/samagri'
       preLoaderRoute: typeof SamagriRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refer': {
+      id: '/refer'
+      path: '/refer'
+      fullPath: '/refer'
+      preLoaderRoute: typeof ReferRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -538,8 +578,10 @@ const rootRouteChildren: RootRouteChildren = {
   OrdersRoute: OrdersRoute,
   PanditsRoute: PanditsRoute,
   ProfileRoute: ProfileRoute,
+  ReferRoute: ReferRoute,
   SamagriRoute: SamagriRoute,
   SignupRoute: SignupRoute,
+  WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
   PoojasSlugRoute: PoojasSlugRoute,
   AstrologyIndexRoute: AstrologyIndexRoute,

@@ -3,6 +3,9 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
