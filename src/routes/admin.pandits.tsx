@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, IndianRupee } from "lucide-react";
 
 export const Route = createFileRoute("/admin/pandits")({ component: AdminPandits });
 
@@ -130,6 +130,13 @@ function PanditRow({ pandit, onSave, onDelete }: {
             </span>
           </div>
           <div className="flex flex-col gap-1">
+            <Link
+              to="/admin/pandits/$id"
+              params={{ id: pandit.id }}
+              className="inline-flex items-center justify-center gap-1 rounded-md bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground"
+            >
+              <IndianRupee className="h-3 w-3" /> Pay
+            </Link>
             <Button size="sm" variant="secondary" onClick={() => setEdit(true)}>Edit</Button>
             <Button size="sm" variant="ghost" onClick={onDelete}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
           </div>

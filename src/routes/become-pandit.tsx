@@ -38,7 +38,7 @@ const SPECIALTIES = [
 ];
 const LANGUAGES = ["Hindi", "Sanskrit", "Marathi", "Gujarati", "Tamil", "Telugu", "Kannada", "Bengali"];
 
-type Step = 0 | 1 | 2 | 3 | 4;
+type Step = 0 | 1 | 2 | 3 | 4 | 5;
 
 function BecomePandit() {
   const navigate = useNavigate();
@@ -52,6 +52,12 @@ function BecomePandit() {
     specialties: [] as string[],
     languages: [] as string[],
     bio: "",
+    payoutMethod: "upi" as "upi" | "bank",
+    upiId: "",
+    accountHolder: "",
+    accountNumber: "",
+    ifsc: "",
+    bankName: "",
     aadhaarUploaded: false,
     credentialUploaded: false,
     selfieUploaded: false,
@@ -82,6 +88,20 @@ function BecomePandit() {
       return setStep(3);
     }
     if (step === 3) {
+      if (form.payoutMethod === "upi") {
+        if (!form.upiId.includes("@")) {
+          toast.error("Enter a valid UPI ID (e.g. name@okhdfc)");
+          return;
+        }
+      } else {
+        if (!form.accountHolder || form.accountNumber.length < 8 || form.ifsc.length !== 11) {
+          toast.error("Please complete all bank fields (IFSC must be 11 chars)");
+          return;
+        }
+      }
+      return setStep(4);
+    }
+    if (step === 4) {
       if (!form.aadhaarUploaded || !form.credentialUploaded || !form.selfieUploaded) {
         toast.error("Upload all 3 documents to continue");
         return;
@@ -102,11 +122,16 @@ function BecomePandit() {
           languages: form.languages.join(", "),
           specialties: form.specialties.join(", "),
           message: form.bio || null,
+          upi_id: form.payoutMethod === "upi" ? form.upiId.trim() : null,
+          account_holder: form.payoutMethod === "bank" ? form.accountHolder.trim() : null,
+          account_number: form.payoutMethod === "bank" ? form.accountNumber.trim() : null,
+          ifsc: form.payoutMethod === "bank" ? form.ifsc.trim().toUpperCase() : null,
+          bank_name: form.payoutMethod === "bank" ? form.bankName.trim() : null,
         });
         if (error) toast.error(error.message);
         else toast.success("Application submitted! Our team will verify within 48 hours.");
       })();
-      return setStep(4);
+      return setStep(5);
     }
   };
 
@@ -124,19 +149,19 @@ function BecomePandit() {
           <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">Partner application</p>
           <h1 className="text-base font-bold">Become a Pranam Pandit</h1>
         </div>
-        {step > 0 && step < 4 && (
+        {step > 0 && step < 5 && (
           <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-accent">
-            Step {step}/3
+            Step {step}/4
           </span>
         )}
       </header>
 
-      {step > 0 && step < 4 && (
+      {step > 0 && step < 5 && (
         <div className="px-5 pt-4">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
             <div
               className="h-full bg-gradient-warm transition-all"
-              style={{ width: `${(step / 3) * 100}%` }}
+              style={{ width: `${(step / 4) * 100}%` }}
             />
           </div>
         </div>
@@ -233,6 +258,71 @@ function BecomePandit() {
 
         {step === 3 && (
           <section className="space-y-4">
+            <H2>Payout details</H2>
+            <p className="-mt-2 text-xs text-muted-foreground">
+              We send instant payments to your UPI or bank account after every completed booking.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {(["upi", "bank"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setForm({ ...form, payoutMethod: m })}
+                  className={`rounded-2xl border p-3 text-left text-sm font-semibold transition ${
+                    form.payoutMethod === m
+                      ? "border-primary bg-secondary/60 text-foreground shadow-glow"
+                      : "border-border bg-card text-muted-foreground"
+                  }`}
+                >
+                  {m === "upi" ? "UPI ID" : "Bank account"}
+                  <p className="mt-0.5 text-[10px] font-normal text-muted-foreground">
+                    {m === "upi" ? "Instant · zero fee" : "NEFT/IMPS · same-day"}
+                  </p>
+                </button>
+              ))}
+            </div>
+
+            {form.payoutMethod === "upi" ? (
+              <Field label="UPI ID">
+                <Input
+                  value={form.upiId}
+                  onChange={(e) => setForm({ ...form, upiId: e.target.value })}
+                  placeholder="ramesh@okhdfc"
+                  autoCapitalize="off"
+                />
+              </Field>
+            ) : (
+              <>
+                <Field label="Account holder name">
+                  <Input value={form.accountHolder} onChange={(e) => setForm({ ...form, accountHolder: e.target.value })} placeholder="Ramesh Sharma" />
+                </Field>
+                <Field label="Account number">
+                  <Input
+                    inputMode="numeric"
+                    value={form.accountNumber}
+                    onChange={(e) => setForm({ ...form, accountNumber: e.target.value.replace(/\D/g, "") })}
+                    placeholder="1234567890"
+                  />
+                </Field>
+                <Field label="IFSC code">
+                  <Input
+                    value={form.ifsc}
+                    onChange={(e) => setForm({ ...form, ifsc: e.target.value.toUpperCase().slice(0, 11) })}
+                    placeholder="HDFC0001234"
+                  />
+                </Field>
+                <Field label="Bank name (optional)">
+                  <Input value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} placeholder="HDFC Bank" />
+                </Field>
+              </>
+            )}
+            <p className="rounded-xl bg-secondary/40 p-3 text-[11px] text-muted-foreground">
+              🔒 Your payout details are encrypted and visible only to our finance team.
+            </p>
+          </section>
+        )}
+
+        {step === 4 && (
+          <section className="space-y-4">
             <H2>Verification documents</H2>
             <p className="-mt-2 text-xs text-muted-foreground">
               Your documents are encrypted and reviewed only by our verification team.
@@ -269,23 +359,23 @@ function BecomePandit() {
           </section>
         )}
 
-        {step === 4 && <Success />}
+        {step === 5 && <Success />}
       </div>
 
       {/* Sticky CTA */}
-      {step < 4 && (
+      {step < 5 && (
         <div className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
           <Button
             onClick={next}
             className="h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
           >
-            {step === 0 ? "Start application" : step === 3 ? "Submit for verification" : "Continue"}
+            {step === 0 ? "Start application" : step === 4 ? "Submit for verification" : "Continue"}
             <ChevronRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
           <Button
             onClick={() => navigate({ to: "/" })}

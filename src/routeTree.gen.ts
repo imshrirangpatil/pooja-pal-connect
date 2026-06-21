@@ -42,6 +42,7 @@ import { Route as AdminFestivalsRouteImport } from './routes/admin.festivals'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AstrologyChatIdRouteImport } from './routes/astrology.chat.$id'
 import { Route as AstrologyCallIdRouteImport } from './routes/astrology.call.$id'
+import { Route as AdminPanditsIdRouteImport } from './routes/admin.pandits.$id'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -208,6 +209,11 @@ const AstrologyCallIdRoute = AstrologyCallIdRouteImport.update({
   path: '/astrology/call/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPanditsIdRoute = AdminPanditsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminPanditsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -230,7 +236,7 @@ export interface FileRoutesByFullPath {
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
-  '/admin/pandits': typeof AdminPanditsRoute
+  '/admin/pandits': typeof AdminPanditsRouteWithChildren
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -241,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/astrology/': typeof AstrologyIndexRoute
   '/pandits/': typeof PanditsIndexRoute
   '/poojas/': typeof PoojasIndexRoute
+  '/admin/pandits/$id': typeof AdminPanditsIdRoute
   '/astrology/call/$id': typeof AstrologyCallIdRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
@@ -264,7 +271,7 @@ export interface FileRoutesByTo {
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
-  '/admin/pandits': typeof AdminPanditsRoute
+  '/admin/pandits': typeof AdminPanditsRouteWithChildren
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -275,6 +282,7 @@ export interface FileRoutesByTo {
   '/astrology': typeof AstrologyIndexRoute
   '/pandits': typeof PanditsIndexRoute
   '/poojas': typeof PoojasIndexRoute
+  '/admin/pandits/$id': typeof AdminPanditsIdRoute
   '/astrology/call/$id': typeof AstrologyCallIdRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
@@ -300,7 +308,7 @@ export interface FileRoutesById {
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
-  '/admin/pandits': typeof AdminPanditsRoute
+  '/admin/pandits': typeof AdminPanditsRouteWithChildren
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/astrology/': typeof AstrologyIndexRoute
   '/pandits/': typeof PanditsIndexRoute
   '/poojas/': typeof PoojasIndexRoute
+  '/admin/pandits/$id': typeof AdminPanditsIdRoute
   '/astrology/call/$id': typeof AstrologyCallIdRoute
   '/astrology/chat/$id': typeof AstrologyChatIdRoute
 }
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
     | '/astrology/'
     | '/pandits/'
     | '/poojas/'
+    | '/admin/pandits/$id'
     | '/astrology/call/$id'
     | '/astrology/chat/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/astrology'
     | '/pandits'
     | '/poojas'
+    | '/admin/pandits/$id'
     | '/astrology/call/$id'
     | '/astrology/chat/$id'
   id:
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/astrology/'
     | '/pandits/'
     | '/poojas/'
+    | '/admin/pandits/$id'
     | '/astrology/call/$id'
     | '/astrology/chat/$id'
   fileRoutesById: FileRoutesById
@@ -682,14 +694,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AstrologyCallIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/pandits/$id': {
+      id: '/admin/pandits/$id'
+      path: '/$id'
+      fullPath: '/admin/pandits/$id'
+      preLoaderRoute: typeof AdminPanditsIdRouteImport
+      parentRoute: typeof AdminPanditsRoute
+    }
   }
 }
+
+interface AdminPanditsRouteChildren {
+  AdminPanditsIdRoute: typeof AdminPanditsIdRoute
+}
+
+const AdminPanditsRouteChildren: AdminPanditsRouteChildren = {
+  AdminPanditsIdRoute: AdminPanditsIdRoute,
+}
+
+const AdminPanditsRouteWithChildren = AdminPanditsRoute._addFileChildren(
+  AdminPanditsRouteChildren,
+)
 
 interface AdminRouteChildren {
   AdminApplicationsRoute: typeof AdminApplicationsRoute
   AdminFestivalsRoute: typeof AdminFestivalsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
-  AdminPanditsRoute: typeof AdminPanditsRoute
+  AdminPanditsRoute: typeof AdminPanditsRouteWithChildren
   AdminPoojasRoute: typeof AdminPoojasRoute
   AdminTicketsRoute: typeof AdminTicketsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -700,7 +731,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminApplicationsRoute: AdminApplicationsRoute,
   AdminFestivalsRoute: AdminFestivalsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
-  AdminPanditsRoute: AdminPanditsRoute,
+  AdminPanditsRoute: AdminPanditsRouteWithChildren,
   AdminPoojasRoute: AdminPoojasRoute,
   AdminTicketsRoute: AdminTicketsRoute,
   AdminUsersRoute: AdminUsersRoute,
