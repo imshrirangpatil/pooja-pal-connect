@@ -130,6 +130,13 @@ function PanditRow({ pandit, onSave, onDelete }: {
             </span>
           </div>
           <div className="flex flex-col gap-1">
+            <Link
+              to="/admin/pandits/$id"
+              params={{ id: pandit.id }}
+              className="inline-flex items-center justify-center gap-1 rounded-md bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground"
+            >
+              <IndianRupee className="h-3 w-3" /> Pay
+            </Link>
             <Button size="sm" variant="secondary" onClick={() => setEdit(true)}>Edit</Button>
             <Button size="sm" variant="ghost" onClick={onDelete}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
           </div>
