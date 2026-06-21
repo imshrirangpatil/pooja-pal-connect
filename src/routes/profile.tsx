@@ -49,7 +49,7 @@ function Profile() {
 
       <section className="mx-5 mt-4 rounded-3xl bg-secondary p-5 text-secondary-foreground shadow-glow">
         <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background/20 text-lg font-bold backdrop-blur">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
             {initial}
           </div>
           <div className="min-w-0">
