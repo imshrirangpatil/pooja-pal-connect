@@ -106,7 +106,7 @@ function PanditProfile() {
           {offered.length === 0 ? (
             <p className="text-xs text-muted-foreground">No poojas listed yet.</p>
           ) : offered.map((p) => (
-            <Link key={p.slug} to="/poojas/$slug" params={{ slug: p.slug }} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-soft">
+            <Link key={p.slug} to="/poojas/$slug" params={{ slug: p.slug }} search={{ pandit: pandit.id }} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-soft">
               <img src={p.image} alt={p.name} className="h-14 w-14 shrink-0 rounded-xl object-cover" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{p.name}</p>
