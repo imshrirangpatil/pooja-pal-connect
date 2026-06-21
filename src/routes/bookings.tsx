@@ -69,7 +69,10 @@ export function Bookings() {
                   <Clock className="h-3.5 w-3.5 text-primary" /> {b.date}
                 </div>
                 <div className="mt-3 flex gap-2">
-                  <button className="flex flex-1 items-center justify-center gap-1 rounded-full bg-secondary py-2 text-xs font-semibold text-secondary-foreground">
+                  <button
+                    onClick={() => setDetails(b)}
+                    className="flex flex-1 items-center justify-center gap-1 rounded-full bg-secondary py-2 text-xs font-semibold text-secondary-foreground"
+                  >
                     Details <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                   {b.status === "Completed" && (
