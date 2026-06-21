@@ -184,7 +184,7 @@ function FestivalsPage() {
             ) : (
               <div className="mt-3 space-y-3">
                 {selectedFestivals.map((f) => (
-                  <FestivalCard key={f.id} f={f} />
+                  <FestivalCard key={f.id} f={f} active />
                 ))}
               </div>
             )}
@@ -232,10 +232,13 @@ function FestivalsPage() {
   );
 }
 
-function FestivalCard({ f }: { f: Festival }) {
+function FestivalCard({ f, active }: { f: Festival; active?: boolean }) {
   const d = parseLocalDate(f.date);
   return (
-    <article className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
+    <article className={cn(
+      "rounded-2xl border p-4 shadow-soft",
+      active ? "border-primary/30 bg-primary/10" : "border-border/60 bg-card"
+    )}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
