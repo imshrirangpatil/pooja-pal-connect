@@ -99,11 +99,11 @@ function Home() {
         <SectionHeader title="Festivals & Muhurat" icon={<Flame className="h-4 w-4" />} action="See all" to="/festivals" />
         <div className="-mx-5 mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {festivals.map((f) => (
-            <div key={f.name} className={`min-w-[160px] rounded-2xl ${f.color} p-4 text-secondary-foreground shadow-soft`}>
+            <Link key={f.name} to="/festivals" className={`min-w-[160px] rounded-2xl ${f.color} p-4 text-secondary-foreground shadow-soft`}>
               <p className="text-[10px] font-semibold uppercase tracking-wider opacity-90">{f.date}</p>
               <p className="mt-2 text-lg font-bold leading-tight">{f.name}</p>
               <p className="mt-3 text-xs opacity-90">{f.days === 0 ? "Today" : `In ${f.days} days`}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
