@@ -140,7 +140,7 @@ export function Bookings() {
             <div className="overflow-y-auto overscroll-contain px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
               <div className="mt-2 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${details.status === "Confirmed" ? "bg-green-100 text-green-700" : details.status === "Completed" ? "bg-secondary text-secondary-foreground" : "bg-secondary text-accent"}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${details.status === "Completed" ? "bg-green-100 text-green-700" : "bg-secondary text-accent"}`}>
                     {details.status}
                   </span>
                   <span className="text-sm font-bold text-accent">₹{details.amount.toLocaleString("en-IN")}</span>
