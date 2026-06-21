@@ -331,26 +331,28 @@ function ChatPage() {
       )}
 
       {ended && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 backdrop-blur-sm">
-          <div className="mx-auto w-full max-w-md rounded-t-3xl bg-card p-5 shadow-soft">
-            <div className="mb-3 text-center">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm">
+          <div className="mx-auto flex max-h-[85vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-soft">
+            <div className="px-5 pb-3 pt-5 text-center">
               <p className="text-base font-bold">How was your session?</p>
               <p className="mt-1 text-xs text-muted-foreground">Your rating helps the next seeker find the right guide.</p>
             </div>
-            <ReviewModule
-              targetKind="astrologer"
-              targetId={astrologer.id}
-              source="astro_chat"
-              referenceId={sessionId}
-              compact
-              onSubmitted={() => setTimeout(() => navigate({ to: "/astrology" }), 800)}
-            />
-            <button
-              onClick={() => navigate({ to: "/astrology" })}
-              className="mt-3 w-full rounded-full border border-border bg-card py-2.5 text-xs font-semibold text-muted-foreground"
-            >
-              Skip for now
-            </button>
+            <div className="overflow-y-auto overscroll-contain px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
+              <ReviewModule
+                targetKind="astrologer"
+                targetId={astrologer.id}
+                source="astro_chat"
+                referenceId={sessionId}
+                compact
+                onSubmitted={() => setTimeout(() => navigate({ to: "/astrology" }), 800)}
+              />
+              <button
+                onClick={() => navigate({ to: "/astrology" })}
+                className="mt-3 w-full rounded-full border border-border bg-card py-2.5 text-xs font-semibold text-muted-foreground"
+              >
+                Skip for now
+              </button>
+            </div>
           </div>
         </div>
       )}

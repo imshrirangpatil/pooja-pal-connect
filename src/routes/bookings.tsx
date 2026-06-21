@@ -87,9 +87,9 @@ export function Bookings() {
       </div>
 
       {rating && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setRating(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="mx-auto w-full max-w-md rounded-t-3xl bg-card p-5 shadow-soft">
-            <div className="mb-3 flex items-center justify-between">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setRating(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="mx-auto flex max-h-[85vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-soft">
+            <div className="flex items-start justify-between gap-3 px-5 pb-3 pt-5">
               <div>
                 <p className="text-base font-bold">Rate {pandits.find((p) => p.id === rating.panditId)?.name ?? "your pandit"}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">Help others find the right acharya.</p>
@@ -98,14 +98,16 @@ export function Bookings() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <ReviewModule
-              targetKind="pandit"
-              targetId={rating.panditId}
-              source="booking"
-              referenceId={rating.bookingId}
-              compact
-              onSubmitted={() => setTimeout(() => setRating(null), 600)}
-            />
+            <div className="overflow-y-auto overscroll-contain px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
+              <ReviewModule
+                targetKind="pandit"
+                targetId={rating.panditId}
+                source="booking"
+                referenceId={rating.bookingId}
+                compact
+                onSubmitted={() => setTimeout(() => setRating(null), 600)}
+              />
+            </div>
           </div>
         </div>
       )}

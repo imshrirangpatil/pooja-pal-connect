@@ -138,50 +138,52 @@ function Pandits() {
 
       {/* Filter sheet */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setOpen(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="mx-auto w-full max-w-md rounded-t-3xl bg-card p-5 shadow-soft">
-            <div className="mb-3 flex items-center justify-between">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="mx-auto flex max-h-[85vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-soft">
+            <div className="flex items-center justify-between px-5 pb-3 pt-5">
               <h3 className="text-base font-bold">Filter pandits</h3>
               <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-muted">
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <FilterGroup label="Language">
-              <div className="flex flex-wrap gap-1.5">
-                <Pill active={!language} onClick={() => setLanguage(null)}>Any</Pill>
-                {ALL_LANGS.map((l) => (
-                  <Pill key={l} active={language === l} onClick={() => setLanguage(l)}>{l}</Pill>
-                ))}
-              </div>
-            </FilterGroup>
+            <div className="overflow-y-auto overscroll-contain px-5">
+              <FilterGroup label="Language">
+                <div className="flex flex-wrap gap-1.5">
+                  <Pill active={!language} onClick={() => setLanguage(null)}>Any</Pill>
+                  {ALL_LANGS.map((l) => (
+                    <Pill key={l} active={language === l} onClick={() => setLanguage(l)}>{l}</Pill>
+                  ))}
+                </div>
+              </FilterGroup>
 
-            <FilterGroup label="Experience">
-              <div className="flex flex-wrap gap-1.5">
-                {EXP_OPTIONS.map((o) => (
-                  <Pill key={o.label} active={expMin === o.min} onClick={() => setExpMin(o.min)}>{o.label}</Pill>
-                ))}
-              </div>
-            </FilterGroup>
+              <FilterGroup label="Experience">
+                <div className="flex flex-wrap gap-1.5">
+                  {EXP_OPTIONS.map((o) => (
+                    <Pill key={o.label} active={expMin === o.min} onClick={() => setExpMin(o.min)}>{o.label}</Pill>
+                  ))}
+                </div>
+              </FilterGroup>
 
-            <FilterGroup label="Rating">
-              <div className="flex flex-wrap gap-1.5">
-                {RATING_OPTIONS.map((o) => (
-                  <Pill key={o.label} active={ratingMin === o.min} onClick={() => setRatingMin(o.min)}>{o.label}</Pill>
-                ))}
-              </div>
-            </FilterGroup>
+              <FilterGroup label="Rating">
+                <div className="flex flex-wrap gap-1.5">
+                  {RATING_OPTIONS.map((o) => (
+                    <Pill key={o.label} active={ratingMin === o.min} onClick={() => setRatingMin(o.min)}>{o.label}</Pill>
+                  ))}
+                </div>
+              </FilterGroup>
 
-            <FilterGroup label="Pooja they perform">
-              <div className="flex flex-wrap gap-1.5">
-                <Pill active={!pooja} onClick={() => setPooja(null)}>Any</Pill>
-                {poojas.map((p) => (
-                  <Pill key={p.slug} active={pooja === p.slug} onClick={() => setPooja(p.slug)}>{p.name}</Pill>
-                ))}
-              </div>
-            </FilterGroup>
+              <FilterGroup label="Pooja they perform">
+                <div className="flex flex-wrap gap-1.5">
+                  <Pill active={!pooja} onClick={() => setPooja(null)}>Any</Pill>
+                  {poojas.map((p) => (
+                    <Pill key={p.slug} active={pooja === p.slug} onClick={() => setPooja(p.slug)}>{p.name}</Pill>
+                  ))}
+                </div>
+              </FilterGroup>
+            </div>
 
-            <div className="mt-5 flex gap-2">
+            <div className="flex gap-2 border-t border-border/60 bg-card px-5 py-4">
               <button onClick={reset} className="flex-1 rounded-full border border-border bg-card py-3 text-xs font-semibold">Reset</button>
               <button onClick={() => setOpen(false)} className="flex-1 rounded-full bg-primary py-3 text-xs font-semibold text-primary-foreground">Show {filtered.length}</button>
             </div>
