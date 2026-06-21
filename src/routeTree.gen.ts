@@ -11,12 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SavedPanditsRouteImport } from './routes/saved-pandits'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as LanguageRouteImport } from './routes/language'
 import { Route as FestivalsRouteImport } from './routes/festivals'
 import { Route as DarshanRouteImport } from './routes/darshan'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -55,6 +58,11 @@ const WalletRoute = WalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
@@ -63,6 +71,11 @@ const SupportRoute = SupportRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedPanditsRoute = SavedPanditsRouteImport.update({
+  id: '/saved-pandits',
+  path: '/saved-pandits',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SamagriRoute = SamagriRouteImport.update({
@@ -83,6 +96,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const OrdersRoute = OrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LanguageRoute = LanguageRouteImport.update({
+  id: '/language',
+  path: '/language',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FestivalsRoute = FestivalsRouteImport.update({
@@ -231,12 +249,15 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/darshan': typeof DarshanRoute
   '/festivals': typeof FestivalsRoute
+  '/language': typeof LanguageRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
+  '/saved-pandits': typeof SavedPanditsRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -267,12 +288,15 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/darshan': typeof DarshanRoute
   '/festivals': typeof FestivalsRoute
+  '/language': typeof LanguageRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
+  '/saved-pandits': typeof SavedPanditsRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -305,12 +329,15 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/darshan': typeof DarshanRoute
   '/festivals': typeof FestivalsRoute
+  '/language': typeof LanguageRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
+  '/saved-pandits': typeof SavedPanditsRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -344,12 +371,15 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/darshan'
     | '/festivals'
+    | '/language'
     | '/orders'
     | '/profile'
     | '/refer'
     | '/samagri'
+    | '/saved-pandits'
     | '/signup'
     | '/support'
+    | '/terms'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -380,12 +410,15 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/darshan'
     | '/festivals'
+    | '/language'
     | '/orders'
     | '/profile'
     | '/refer'
     | '/samagri'
+    | '/saved-pandits'
     | '/signup'
     | '/support'
+    | '/terms'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -417,12 +450,15 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/darshan'
     | '/festivals'
+    | '/language'
     | '/orders'
     | '/profile'
     | '/refer'
     | '/samagri'
+    | '/saved-pandits'
     | '/signup'
     | '/support'
+    | '/terms'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -455,12 +491,15 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   DarshanRoute: typeof DarshanRoute
   FestivalsRoute: typeof FestivalsRoute
+  LanguageRoute: typeof LanguageRoute
   OrdersRoute: typeof OrdersRoute
   ProfileRoute: typeof ProfileRoute
   ReferRoute: typeof ReferRoute
   SamagriRoute: typeof SamagriRoute
+  SavedPanditsRoute: typeof SavedPanditsRoute
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
+  TermsRoute: typeof TermsRoute
   WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
   BookingNewRoute: typeof BookingNewRoute
@@ -489,6 +528,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WalletRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/support': {
       id: '/support'
       path: '/support'
@@ -501,6 +547,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved-pandits': {
+      id: '/saved-pandits'
+      path: '/saved-pandits'
+      fullPath: '/saved-pandits'
+      preLoaderRoute: typeof SavedPanditsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/samagri': {
@@ -529,6 +582,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/language': {
+      id: '/language'
+      path: '/language'
+      fullPath: '/language'
+      preLoaderRoute: typeof LanguageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/festivals': {
@@ -771,12 +831,15 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   DarshanRoute: DarshanRoute,
   FestivalsRoute: FestivalsRoute,
+  LanguageRoute: LanguageRoute,
   OrdersRoute: OrdersRoute,
   ProfileRoute: ProfileRoute,
   ReferRoute: ReferRoute,
   SamagriRoute: SamagriRoute,
+  SavedPanditsRoute: SavedPanditsRoute,
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
+  TermsRoute: TermsRoute,
   WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
   BookingNewRoute: BookingNewRoute,
