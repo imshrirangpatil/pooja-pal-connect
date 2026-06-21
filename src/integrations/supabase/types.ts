@@ -178,6 +178,45 @@ export type Database = {
         }
         Relationships: []
       }
+      festivals: {
+        Row: {
+          created_at: string
+          festival_date: string
+          id: string
+          name: string
+          note: string
+          pooja_label: string | null
+          pooja_slug: string | null
+          type: string
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          created_at?: string
+          festival_date: string
+          id?: string
+          name: string
+          note?: string
+          pooja_label?: string | null
+          pooja_slug?: string | null
+          type: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          created_at?: string
+          festival_date?: string
+          id?: string
+          name?: string
+          note?: string
+          pooja_label?: string | null
+          pooja_slug?: string | null
+          type?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
