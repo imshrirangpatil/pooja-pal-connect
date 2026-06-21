@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { ArrowLeft, BarChart3, Package, Users, Sparkles, UserCheck, Inbox } from "lucide-react";
+import { ArrowLeft, BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 

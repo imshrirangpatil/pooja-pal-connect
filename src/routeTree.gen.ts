@@ -35,6 +35,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminPoojasRouteImport } from './routes/admin.poojas'
 import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminFestivalsRouteImport } from './routes/admin.festivals'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AstrologyChatIdRouteImport } from './routes/astrology.chat.$id'
 import { Route as AstrologyCallIdRouteImport } from './routes/astrology.call.$id'
@@ -169,6 +170,11 @@ const AdminOrdersRoute = AdminOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFestivalsRoute = AdminFestivalsRouteImport.update({
+  id: '/festivals',
+  path: '/festivals',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
   id: '/applications',
   path: '/applications',
@@ -202,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
@@ -297,6 +306,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
+    | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
+    | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
@@ -358,6 +369,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
+    | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
@@ -583,6 +595,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrdersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/festivals': {
+      id: '/admin/festivals'
+      path: '/festivals'
+      fullPath: '/admin/festivals'
+      preLoaderRoute: typeof AdminFestivalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/applications': {
       id: '/admin/applications'
       path: '/applications'
@@ -609,6 +628,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminApplicationsRoute: typeof AdminApplicationsRoute
+  AdminFestivalsRoute: typeof AdminFestivalsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPanditsRoute: typeof AdminPanditsRoute
   AdminPoojasRoute: typeof AdminPoojasRoute
@@ -618,6 +638,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminApplicationsRoute: AdminApplicationsRoute,
+  AdminFestivalsRoute: AdminFestivalsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPanditsRoute: AdminPanditsRoute,
   AdminPoojasRoute: AdminPoojasRoute,
