@@ -16,6 +16,7 @@ import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as FestivalsRouteImport } from './routes/festivals'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BookingsRouteImport } from './routes/bookings'
@@ -71,6 +72,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const OrdersRoute = OrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FestivalsRoute = FestivalsRouteImport.update({
+  id: '/festivals',
+  path: '/festivals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/festivals': typeof FestivalsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
@@ -216,6 +223,7 @@ export interface FileRoutesByTo {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/festivals': typeof FestivalsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/festivals': typeof FestivalsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/festivals'
     | '/orders'
     | '/profile'
     | '/refer'
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/festivals'
     | '/orders'
     | '/profile'
     | '/refer'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/festivals'
     | '/orders'
     | '/profile'
     | '/refer'
@@ -369,6 +381,7 @@ export interface RootRouteChildren {
   BookingsRoute: typeof BookingsRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
+  FestivalsRoute: typeof FestivalsRoute
   OrdersRoute: typeof OrdersRoute
   ProfileRoute: typeof ProfileRoute
   ReferRoute: typeof ReferRoute
@@ -435,6 +448,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/festivals': {
+      id: '/festivals'
+      path: '/festivals'
+      fullPath: '/festivals'
+      preLoaderRoute: typeof FestivalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -615,6 +635,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingsRoute: BookingsRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
+  FestivalsRoute: FestivalsRoute,
   OrdersRoute: OrdersRoute,
   ProfileRoute: ProfileRoute,
   ReferRoute: ReferRoute,
