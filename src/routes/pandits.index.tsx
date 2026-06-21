@@ -4,7 +4,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { pandits, poojas } from "@/lib/data";
 import { ShieldCheck, Star, MapPin, Languages, SlidersHorizontal, X } from "lucide-react";
 
-export const Route = createFileRoute("/pandits")({
+export const Route = createFileRoute("/pandits/")({
   head: () => ({
     meta: [
       { title: "Verified Pandits — Pranam" },
