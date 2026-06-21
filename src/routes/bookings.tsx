@@ -32,12 +32,14 @@ export function Bookings() {
   const [tab, setTab] = useState<"Completed" | "Cancelled">("Completed");
   const [rating, setRating] = useState<{ panditId: string; bookingId: string } | null>(null);
   const [details, setDetails] = useState<Booking | null>(null);
+  const [confirmCancel, setConfirmCancel] = useState<Booking | null>(null);
 
   const list = bookings.filter((b) => b.status === tab);
 
   const cancelBooking = (id: string) => {
     setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Cancelled", payment: "Refunded to Wallet" } : b)));
     setDetails(null);
+    setConfirmCancel(null);
     setTab("Cancelled");
   };
 
