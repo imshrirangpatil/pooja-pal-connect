@@ -4,8 +4,26 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Calendar } from "@/components/ui/calendar";
-import { Sun, Moon, Sparkles, CalendarDays, ChevronRight } from "lucide-react";
+import { Sun, Moon, Sparkles, CalendarDays, ChevronRight, MapPin, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Major Indian cities with coordinates — used for muhurat sunrise/sunset lookup
+const CITIES: { label: string; lat: number; lng: number; tz: string }[] = [
+  { label: "Delhi", lat: 28.6139, lng: 77.209, tz: "Asia/Kolkata" },
+  { label: "Mumbai", lat: 19.076, lng: 72.8777, tz: "Asia/Kolkata" },
+  { label: "Bengaluru", lat: 12.9716, lng: 77.5946, tz: "Asia/Kolkata" },
+  { label: "Kolkata", lat: 22.5726, lng: 88.3639, tz: "Asia/Kolkata" },
+  { label: "Chennai", lat: 13.0827, lng: 80.2707, tz: "Asia/Kolkata" },
+  { label: "Hyderabad", lat: 17.385, lng: 78.4867, tz: "Asia/Kolkata" },
+  { label: "Pune", lat: 18.5204, lng: 73.8567, tz: "Asia/Kolkata" },
+  { label: "Ahmedabad", lat: 23.0225, lng: 72.5714, tz: "Asia/Kolkata" },
+  { label: "Jaipur", lat: 26.9124, lng: 75.7873, tz: "Asia/Kolkata" },
+  { label: "Lucknow", lat: 26.8467, lng: 80.9462, tz: "Asia/Kolkata" },
+  { label: "Varanasi", lat: 25.3176, lng: 82.9739, tz: "Asia/Kolkata" },
+  { label: "Bhopal", lat: 23.2599, lng: 77.4126, tz: "Asia/Kolkata" },
+  { label: "Patna", lat: 25.5941, lng: 85.1376, tz: "Asia/Kolkata" },
+  { label: "Chandigarh", lat: 30.7333, lng: 76.7794, tz: "Asia/Kolkata" },
+];
 
 export const Route = createFileRoute("/festivals")({
   head: () => ({
@@ -77,33 +95,53 @@ const NIGHT_CHOG: string[][] = [
   ["Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh"],
 ];
 
-function fmtTime(h: number, m: number) {
-  const mm = Math.round(m);
-  const totalH = h + Math.floor(mm / 60);
-  const min = mm % 60;
-  const hr12 = ((totalH + 11) % 12) + 1;
-  const ampm = totalH % 24 < 12 ? "AM" : "PM";
-  return `${hr12}:${String(min).padStart(2, "0")} ${ampm}`;
+function fmtTimeFromDate(d: Date) {
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h < 12 ? "AM" : "PM";
+  h = ((h + 11) % 12) + 1;
+  return `${h}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
-function buildChoghadiya(date: Date) {
+// Build choghadiya from actual sunrise/sunset (each period = 1/8 of day or night length)
+function buildChoghadiya(date: Date, sunrise: Date, sunset: Date, nextSunrise: Date) {
   const dow = date.getDay();
+  const dayLen = sunset.getTime() - sunrise.getTime();
+  const nightLen = nextSunrise.getTime() - sunset.getTime();
+  const dayUnit = dayLen / 8;
+  const nightUnit = nightLen / 8;
   const day = DAY_CHOG[dow].map((name, i) => {
-    const start = 6 * 60 + i * 90;
-    const end = start + 90;
-    return { name, kind: CHOG_KIND[name], start: fmtTime(Math.floor(start / 60), start % 60), end: fmtTime(Math.floor(end / 60), end % 60) };
+    const start = new Date(sunrise.getTime() + i * dayUnit);
+    const end = new Date(sunrise.getTime() + (i + 1) * dayUnit);
+    return { name, kind: CHOG_KIND[name], start: fmtTimeFromDate(start), end: fmtTimeFromDate(end) };
   });
   const night = NIGHT_CHOG[dow].map((name, i) => {
-    const start = 18 * 60 + i * 90;
-    const end = start + 90;
-    return { name, kind: CHOG_KIND[name], start: fmtTime(Math.floor(start / 60), start % 60), end: fmtTime(Math.floor(end / 60), end % 60) };
+    const start = new Date(sunset.getTime() + i * nightUnit);
+    const end = new Date(sunset.getTime() + (i + 1) * nightUnit);
+    return { name, kind: CHOG_KIND[name], start: fmtTimeFromDate(start), end: fmtTimeFromDate(end) };
   });
   return { day, night };
+}
+
+async function fetchSunData(lat: number, lng: number, isoDate: string) {
+  const url = `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${isoDate}&formatted=0`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch sunrise data");
+  const json = await res.json();
+  if (json.status !== "OK") throw new Error("Bad sunrise response");
+  return { sunrise: new Date(json.results.sunrise), sunset: new Date(json.results.sunset) };
 }
 
 function FestivalsPage() {
   const [date, setDate] = useState<Date>(new Date());
   const [tab, setTab] = useState<"calendar" | "muhurat">("calendar");
+  const [muhuratDate, setMuhuratDate] = useState<Date>(new Date());
+  const [cityIdx, setCityIdx] = useState<number>(0);
+  const [customLoc, setCustomLoc] = useState<{ label: string; lat: number; lng: number } | null>(null);
+  const [geoLoading, setGeoLoading] = useState(false);
+
+  const location = customLoc ?? CITIES[cityIdx];
+  const muhuratIso = toLocalISO(muhuratDate);
 
   const { data: festivals = [] } = useQuery({
     queryKey: ["festivals"],
@@ -136,7 +174,40 @@ function FestivalsPage() {
   }, [festivals]);
 
   const festivalDates = useMemo(() => festivals.map((f) => parseLocalDate(f.date)), [festivals]);
-  const chog = useMemo(() => buildChoghadiya(date), [date]);
+
+  // Open-source sunrise/sunset for selected date + next day (for night choghadiya)
+  const sunQuery = useQuery({
+    queryKey: ["sun", muhuratIso, location.lat, location.lng],
+    queryFn: async () => {
+      const next = new Date(muhuratDate);
+      next.setDate(next.getDate() + 1);
+      const [today, tomorrow] = await Promise.all([
+        fetchSunData(location.lat, location.lng, muhuratIso),
+        fetchSunData(location.lat, location.lng, toLocalISO(next)),
+      ]);
+      return { sunrise: today.sunrise, sunset: today.sunset, nextSunrise: tomorrow.sunrise };
+    },
+    enabled: tab === "muhurat",
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const chog = useMemo(() => {
+    if (!sunQuery.data) return null;
+    return buildChoghadiya(muhuratDate, sunQuery.data.sunrise, sunQuery.data.sunset, sunQuery.data.nextSunrise);
+  }, [muhuratDate, sunQuery.data]);
+
+  const useMyLocation = () => {
+    if (!navigator.geolocation) return;
+    setGeoLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCustomLoc({ label: "My location", lat: +pos.coords.latitude.toFixed(4), lng: +pos.coords.longitude.toFixed(4) });
+        setGeoLoading(false);
+      },
+      () => setGeoLoading(false),
+      { timeout: 8000 }
+    );
+  };
 
   return (
     <MobileShell>
@@ -201,14 +272,63 @@ function FestivalsPage() {
         </section>
       ) : (
         <section className="px-5 pt-4 pb-6">
-          <div className="rounded-3xl border border-primary/30 bg-primary/5 p-4">
+          {/* Date & location selectors */}
+          <div className="rounded-2xl border border-border/60 bg-card p-3 space-y-3">
+            <div>
+              <label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <CalendarDays className="h-3.5 w-3.5" /> Date
+              </label>
+              <input
+                type="date"
+                value={muhuratIso}
+                onChange={(e) => {
+                  if (e.target.value) setMuhuratDate(parseLocalDate(e.target.value));
+                }}
+                className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5" /> Location
+              </label>
+              <div className="mt-1.5 flex gap-2">
+                <select
+                  value={customLoc ? -1 : cityIdx}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (v >= 0) { setCityIdx(v); setCustomLoc(null); }
+                  }}
+                  className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-sm"
+                >
+                  {customLoc && <option value={-1}>{customLoc.label} ({customLoc.lat}, {customLoc.lng})</option>}
+                  {CITIES.map((c, i) => (
+                    <option key={c.label} value={i}>{c.label}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={useMyLocation}
+                  disabled={geoLoading}
+                  className="rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold disabled:opacity-50"
+                >
+                  {geoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Use my location"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-3xl border border-primary/30 bg-primary/5 p-4">
             <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
               <Sparkles className="h-3.5 w-3.5" /> Choghadiya for
             </div>
             <p className="mt-1 text-base font-bold">
-              {date.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}
+              {muhuratDate.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}
             </p>
-            <p className="mt-1 text-[11px] text-muted-foreground">Based on local sunrise ~6:00 AM, sunset ~6:00 PM. For exact muhurat, consult a pandit.</p>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
+              {location.label} · {sunQuery.data
+                ? `Sunrise ${fmtTimeFromDate(sunQuery.data.sunrise)} · Sunset ${fmtTimeFromDate(sunQuery.data.sunset)}`
+                : "Fetching sunrise / sunset…"}
+            </p>
             <div className="mt-3 flex flex-wrap gap-2 text-[10px]">
               <Legend kind="good" label="Auspicious" />
               <Legend kind="neutral" label="Neutral" />
@@ -216,8 +336,20 @@ function FestivalsPage() {
             </div>
           </div>
 
-          <ChogList title="Day Choghadiya" icon={<Sun className="h-4 w-4 text-marigold" />} items={chog.day} />
-          <ChogList title="Night Choghadiya" icon={<Moon className="h-4 w-4 text-primary" />} items={chog.night} />
+          {sunQuery.isLoading || !chog ? (
+            <div className="mt-6 flex items-center justify-center gap-2 rounded-2xl border border-border/60 bg-card p-6 text-xs text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" /> Calculating choghadiya…
+            </div>
+          ) : sunQuery.isError ? (
+            <div className="mt-6 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-xs text-destructive">
+              Couldn't fetch sunrise data. Check your connection and try again.
+            </div>
+          ) : (
+            <>
+              <ChogList title="Day Choghadiya" icon={<Sun className="h-4 w-4 text-marigold" />} items={chog.day} />
+              <ChogList title="Night Choghadiya" icon={<Moon className="h-4 w-4 text-primary" />} items={chog.night} />
+            </>
+          )}
 
           <div className="mt-6 rounded-2xl border border-border/60 bg-card p-4">
             <p className="text-sm font-bold">Need a personalised muhurat?</p>
