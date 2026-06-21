@@ -85,21 +85,27 @@ export type Pandit = {
   reviews: number;
   languages: string[];
   specialties: string[];
+  poojaSlugs: string[];
+  bio: string;
+  feeFrom: number;
   verified: true;
   initials: string;
 };
 
 export const pandits: Pandit[] = [
-  { id: "p1", name: "Acharya Ramesh Shastri", city: "Varanasi", experience: 22, rating: 4.9, reviews: 412, languages: ["Hindi", "Sanskrit", "English"], specialties: ["Griha Pravesh", "Vivah"], verified: true, initials: "RS" },
-  { id: "p2", name: "Pandit Suresh Joshi", city: "Mumbai", experience: 15, rating: 4.8, reviews: 287, languages: ["Hindi", "Marathi", "Sanskrit"], specialties: ["Ganesh Pooja", "Satyanarayan"], verified: true, initials: "SJ" },
-  { id: "p3", name: "Acharya Venkat Iyer", city: "Bengaluru", experience: 18, rating: 4.9, reviews: 356, languages: ["Tamil", "Kannada", "Sanskrit"], specialties: ["Navagraha", "Rudrabhishek"], verified: true, initials: "VI" },
-  { id: "p4", name: "Pandit Arjun Mishra", city: "Delhi NCR", experience: 12, rating: 4.7, reviews: 198, languages: ["Hindi", "Sanskrit"], specialties: ["Lakshmi Pooja", "Havan"], verified: true, initials: "AM" },
+  { id: "p1", name: "Acharya Ramesh Shastri", city: "Varanasi", experience: 22, rating: 4.9, reviews: 412, languages: ["Hindi", "Sanskrit", "English"], specialties: ["Griha Pravesh", "Vivah"], poojaSlugs: ["griha-pravesh", "satyanarayan-katha", "lakshmi-pooja"], bio: "Born into a lineage of Kashi acharyas, Ramesh Ji has performed 2,000+ ceremonies across India and abroad. Specialises in Griha Pravesh and Vivah sanskar.", feeFrom: 2100, verified: true, initials: "RS" },
+  { id: "p2", name: "Pandit Suresh Joshi", city: "Mumbai", experience: 15, rating: 4.8, reviews: 287, languages: ["Hindi", "Marathi", "Sanskrit"], specialties: ["Ganesh Pooja", "Satyanarayan"], poojaSlugs: ["ganesh-pooja", "satyanarayan-katha", "lakshmi-pooja"], bio: "Maharashtrian gurukul-trained acharya known for warm, family-friendly ceremonies. Fluent across Hindi, Marathi and Sanskrit.", feeFrom: 1499, verified: true, initials: "SJ" },
+  { id: "p3", name: "Acharya Venkat Iyer", city: "Bengaluru", experience: 18, rating: 4.9, reviews: 356, languages: ["Tamil", "Kannada", "Sanskrit"], specialties: ["Navagraha", "Rudrabhishek"], poojaSlugs: ["griha-pravesh", "satyanarayan-katha"], bio: "South-Indian Smartha tradition. Expert in navagraha shanti, rudrabhishek and homam rituals.", feeFrom: 1899, verified: true, initials: "VI" },
+  { id: "p4", name: "Pandit Arjun Mishra", city: "Delhi NCR", experience: 12, rating: 4.7, reviews: 198, languages: ["Hindi", "Sanskrit"], specialties: ["Lakshmi Pooja", "Havan"], poojaSlugs: ["lakshmi-pooja", "ganesh-pooja"], bio: "Young, energetic acharya from Mathura. Known for crisp shloka recitation and on-time arrivals.", feeFrom: 1299, verified: true, initials: "AM" },
 ];
+
+export type AstroCategory = "Vedic" | "Tarot" | "Numerology" | "Vastu" | "Palmistry" | "Nadi";
 
 export type Astrologer = {
   id: string;
   name: string;
   expertise: string;
+  category: AstroCategory;
   experience: number;
   rating: number;
   pricePerMin: number;
@@ -109,10 +115,10 @@ export type Astrologer = {
 };
 
 export const astrologers: Astrologer[] = [
-  { id: "a1", name: "Acharya Mohan Tripathi", expertise: "Vedic & Kundli", experience: 25, rating: 4.9, pricePerMin: 35, languages: ["Hindi", "English"], online: true, initials: "MT" },
-  { id: "a2", name: "Smriti Sharma", expertise: "Tarot & Numerology", experience: 10, rating: 4.8, pricePerMin: 22, languages: ["Hindi", "English"], online: true, initials: "SS" },
-  { id: "a3", name: "Pandit Rajesh Bhatt", expertise: "Vastu & Palmistry", experience: 18, rating: 4.7, pricePerMin: 28, languages: ["Hindi", "Gujarati"], online: false, initials: "RB" },
-  { id: "a4", name: "Dr. Priya Nair", expertise: "Nadi & Prashna", experience: 14, rating: 4.9, pricePerMin: 40, languages: ["English", "Malayalam"], online: true, initials: "PN" },
+  { id: "a1", name: "Acharya Mohan Tripathi", expertise: "Vedic & Kundli", category: "Vedic", experience: 25, rating: 4.9, pricePerMin: 35, languages: ["Hindi", "English"], online: true, initials: "MT" },
+  { id: "a2", name: "Smriti Sharma", expertise: "Tarot & Numerology", category: "Tarot", experience: 10, rating: 4.8, pricePerMin: 22, languages: ["Hindi", "English"], online: true, initials: "SS" },
+  { id: "a3", name: "Pandit Rajesh Bhatt", expertise: "Vastu & Palmistry", category: "Vastu", experience: 18, rating: 4.7, pricePerMin: 28, languages: ["Hindi", "Gujarati"], online: false, initials: "RB" },
+  { id: "a4", name: "Dr. Priya Nair", expertise: "Nadi & Prashna", category: "Nadi", experience: 14, rating: 4.9, pricePerMin: 40, languages: ["English", "Malayalam"], online: true, initials: "PN" },
 ];
 
 export type Samagri = {

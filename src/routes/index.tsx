@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { festivals, pandits } from "@/lib/data";
 import { usePoojas } from "@/lib/poojas-source";
-import { Search, MapPin, Bell, ShieldCheck, Sparkles, Flame, ShoppingBag, ChevronRight, Star } from "lucide-react";
+import { Search, MapPin, Bell, ShieldCheck, Sparkles, Flame, ShoppingBag, ChevronRight, Star, Zap, Package, Hand } from "lucide-react";
 import heroImg from "@/assets/hero-pooja.jpg";
 import astroImg from "@/assets/cat-astrology.jpg";
 import samagriImg from "@/assets/cat-samagri.jpg";
@@ -66,6 +66,33 @@ function Home() {
           <CategoryCard to="/pandits" img={panditImg} label="Pandits" sub={`${pandits.length}+ verified`} />
         </div>
       </section>
+
+      {/* Direct booking shortcut */}
+      <section className="mx-5 mt-6 overflow-hidden rounded-3xl border border-primary/30 bg-primary/5 p-5">
+        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
+          <Zap className="h-3.5 w-3.5" /> Know your pooja already?
+        </div>
+        <h3 className="mt-2 text-lg font-bold leading-tight">Pick a pandit, pick a pooja, book in 60 seconds.</h3>
+        <p className="mt-1 text-xs text-muted-foreground">Skip the browsing — your pandit will call you to confirm timing and details.</p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Link to="/pandits" className="flex items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground">
+            Choose pandit <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+          <Link to="/poojas" className="flex items-center justify-center gap-1.5 rounded-full border border-primary/40 bg-card py-2.5 text-xs font-semibold text-primary">
+            Choose pooja <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
+        <div className="mt-4 rounded-2xl bg-card p-3 text-[11px] text-muted-foreground">
+          <p className="font-semibold text-foreground">For samagri, you choose:</p>
+          <ul className="mt-2 space-y-1.5">
+            <li className="flex items-start gap-2"><Package className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> Order the curated kit on Pranam</li>
+            <li className="flex items-start gap-2"><ShoppingBag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> Order individual items from our store</li>
+            <li className="flex items-start gap-2"><Hand className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> Or bring your own — pandit will guide you</li>
+          </ul>
+        </div>
+      </section>
+
 
       {/* Festival strip */}
       <section className="mt-7 px-5">
