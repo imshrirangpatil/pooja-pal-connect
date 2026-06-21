@@ -148,6 +148,36 @@ export type Database = {
         }
         Relationships: []
       }
+      credits_ledger: {
+        Row: {
+          amount_paise: number
+          created_at: string
+          description: string | null
+          id: string
+          kind: string
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          amount_paise: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind: string
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          amount_paise?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind?: string
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -412,6 +442,8 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          referral_code: string | null
+          referred_by: string | null
           updated_at: string
         }
         Insert: {
@@ -420,6 +452,8 @@ export type Database = {
           full_name?: string | null
           id: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
         }
         Update: {
@@ -428,9 +462,19 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -458,6 +502,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_referral_code: { Args: { _code: string }; Returns: Json }
+      generate_referral_code: { Args: never; Returns: string }
+      get_credit_balance: { Args: { _user_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
