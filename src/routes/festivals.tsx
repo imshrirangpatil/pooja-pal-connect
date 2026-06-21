@@ -184,7 +184,7 @@ function FestivalsPage() {
             ) : (
               <div className="mt-3 space-y-3">
                 {selectedFestivals.map((f) => (
-                  <FestivalCard key={f.id} f={f} />
+                  <FestivalCard key={f.id} f={f} active />
                 ))}
               </div>
             )}
