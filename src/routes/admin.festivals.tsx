@@ -35,6 +35,28 @@ function AdminFestivals() {
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState<FestivalRow>(empty);
 
+  const handleCreate = () => {
+    const cleanedDraft = {
+      ...draft,
+      name: draft.name.trim(),
+      note: draft.note.trim(),
+      pooja_slug: draft.pooja_slug.trim(),
+      pooja_label: draft.pooja_label.trim(),
+    };
+
+    if (!cleanedDraft.name) {
+      toast.error("Please enter the festival name");
+      return;
+    }
+
+    if (!cleanedDraft.festival_date) {
+      toast.error("Please select the festival date");
+      return;
+    }
+
+    save.mutate(cleanedDraft);
+  };
+
   const { data: festivals = [], isLoading } = useQuery({
     queryKey: ["admin-festivals"],
     queryFn: async () => {
@@ -111,8 +133,8 @@ function AdminFestivals() {
           <label className="flex items-center gap-1.5 text-xs">
             <input type="checkbox" checked={draft.visible} onChange={(e) => setDraft({ ...draft, visible: e.target.checked })} /> Visible
           </label>
-          <Button onClick={() => save.mutate(draft)} disabled={save.isPending || !draft.name || !draft.festival_date}>
-            <Save className="h-3.5 w-3.5" /> Create
+          <Button onClick={handleCreate} disabled={save.isPending}>
+            <Save className="h-3.5 w-3.5" /> {save.isPending ? "Creating…" : "Create"}
           </Button>
         </Card>
       )}
