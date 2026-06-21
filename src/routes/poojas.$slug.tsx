@@ -37,6 +37,12 @@ export const Route = createFileRoute("/poojas/$slug")({
 
 function PoojaDetail() {
   const { pooja } = Route.useLoaderData();
+  const { pandit: selectedPanditId } = Route.useSearch();
+  const selectedPandit = selectedPanditId ? pandits.find((p) => p.id === selectedPanditId) : undefined;
+  const suggested = selectedPandit
+    ? [selectedPandit, ...pandits.filter((p) => p.id !== selectedPandit.id).slice(0, 1)]
+    : pandits.slice(0, 2);
+
 
   return (
     <MobileShell>
