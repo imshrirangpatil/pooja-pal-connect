@@ -82,7 +82,7 @@ function Profile() {
         <Row to="/refer" icon={<Gift className="h-4 w-4" />} label="Refer & Earn ₹100" />
         <Row icon={<Bell className="h-4 w-4" />} label="Notifications" />
         <Row icon={<Globe className="h-4 w-4" />} label="Language" hint="English" />
-        <Row icon={<HelpCircle className="h-4 w-4" />} label="Help & Support" />
+        <Row to="/support" icon={<HelpCircle className="h-4 w-4" />} label="Help & Support" />
         <Row icon={<FileText className="h-4 w-4" />} label="Terms & Privacy" />
       </div>
 
