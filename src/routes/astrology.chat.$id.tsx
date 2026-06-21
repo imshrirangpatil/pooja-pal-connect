@@ -14,6 +14,7 @@ import {
   getOrCreateUserSecret,
 } from "@/lib/chat-crypto";
 import { toast } from "sonner";
+import { ReviewModule } from "@/components/ReviewModule";
 
 export const Route = createFileRoute("/astrology/chat/$id")({
   head: () => ({
@@ -240,7 +241,6 @@ function ChatPage() {
       toast.success(billed > 0 ? `Session ended. ₹${billed} billed.` : "Session ended.");
     }
     setEnded(true);
-    setTimeout(() => navigate({ to: "/astrology" }), 600);
   };
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
