@@ -258,6 +258,71 @@ function BecomePandit() {
 
         {step === 3 && (
           <section className="space-y-4">
+            <H2>Payout details</H2>
+            <p className="-mt-2 text-xs text-muted-foreground">
+              We send instant payments to your UPI or bank account after every completed booking.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {(["upi", "bank"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setForm({ ...form, payoutMethod: m })}
+                  className={`rounded-2xl border p-3 text-left text-sm font-semibold transition ${
+                    form.payoutMethod === m
+                      ? "border-primary bg-secondary/60 text-foreground shadow-glow"
+                      : "border-border bg-card text-muted-foreground"
+                  }`}
+                >
+                  {m === "upi" ? "UPI ID" : "Bank account"}
+                  <p className="mt-0.5 text-[10px] font-normal text-muted-foreground">
+                    {m === "upi" ? "Instant · zero fee" : "NEFT/IMPS · same-day"}
+                  </p>
+                </button>
+              ))}
+            </div>
+
+            {form.payoutMethod === "upi" ? (
+              <Field label="UPI ID">
+                <Input
+                  value={form.upiId}
+                  onChange={(e) => setForm({ ...form, upiId: e.target.value })}
+                  placeholder="ramesh@okhdfc"
+                  autoCapitalize="off"
+                />
+              </Field>
+            ) : (
+              <>
+                <Field label="Account holder name">
+                  <Input value={form.accountHolder} onChange={(e) => setForm({ ...form, accountHolder: e.target.value })} placeholder="Ramesh Sharma" />
+                </Field>
+                <Field label="Account number">
+                  <Input
+                    inputMode="numeric"
+                    value={form.accountNumber}
+                    onChange={(e) => setForm({ ...form, accountNumber: e.target.value.replace(/\D/g, "") })}
+                    placeholder="1234567890"
+                  />
+                </Field>
+                <Field label="IFSC code">
+                  <Input
+                    value={form.ifsc}
+                    onChange={(e) => setForm({ ...form, ifsc: e.target.value.toUpperCase().slice(0, 11) })}
+                    placeholder="HDFC0001234"
+                  />
+                </Field>
+                <Field label="Bank name (optional)">
+                  <Input value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} placeholder="HDFC Bank" />
+                </Field>
+              </>
+            )}
+            <p className="rounded-xl bg-secondary/40 p-3 text-[11px] text-muted-foreground">
+              🔒 Your payout details are encrypted and visible only to our finance team.
+            </p>
+          </section>
+        )}
+
+        {step === 4 && (
+          <section className="space-y-4">
             <H2>Verification documents</H2>
             <p className="-mt-2 text-xs text-muted-foreground">
               Your documents are encrypted and reviewed only by our verification team.
@@ -294,23 +359,23 @@ function BecomePandit() {
           </section>
         )}
 
-        {step === 4 && <Success />}
+        {step === 5 && <Success />}
       </div>
 
       {/* Sticky CTA */}
-      {step < 4 && (
+      {step < 5 && (
         <div className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
           <Button
             onClick={next}
             className="h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
           >
-            {step === 0 ? "Start application" : step === 3 ? "Submit for verification" : "Continue"}
+            {step === 0 ? "Start application" : step === 4 ? "Submit for verification" : "Continue"}
             <ChevronRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
           <Button
             onClick={() => navigate({ to: "/" })}
