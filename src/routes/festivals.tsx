@@ -135,6 +135,13 @@ async function fetchSunData(lat: number, lng: number, isoDate: string) {
 function FestivalsPage() {
   const [date, setDate] = useState<Date>(new Date());
   const [tab, setTab] = useState<"calendar" | "muhurat">("calendar");
+  const [muhuratDate, setMuhuratDate] = useState<Date>(new Date());
+  const [cityIdx, setCityIdx] = useState<number>(0);
+  const [customLoc, setCustomLoc] = useState<{ label: string; lat: number; lng: number } | null>(null);
+  const [geoLoading, setGeoLoading] = useState(false);
+
+  const location = customLoc ?? CITIES[cityIdx];
+  const muhuratIso = toLocalISO(muhuratDate);
 
   const { data: festivals = [] } = useQuery({
     queryKey: ["festivals"],
@@ -167,7 +174,40 @@ function FestivalsPage() {
   }, [festivals]);
 
   const festivalDates = useMemo(() => festivals.map((f) => parseLocalDate(f.date)), [festivals]);
-  const chog = useMemo(() => buildChoghadiya(date), [date]);
+
+  // Open-source sunrise/sunset for selected date + next day (for night choghadiya)
+  const sunQuery = useQuery({
+    queryKey: ["sun", muhuratIso, location.lat, location.lng],
+    queryFn: async () => {
+      const next = new Date(muhuratDate);
+      next.setDate(next.getDate() + 1);
+      const [today, tomorrow] = await Promise.all([
+        fetchSunData(location.lat, location.lng, muhuratIso),
+        fetchSunData(location.lat, location.lng, toLocalISO(next)),
+      ]);
+      return { sunrise: today.sunrise, sunset: today.sunset, nextSunrise: tomorrow.sunrise };
+    },
+    enabled: tab === "muhurat",
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const chog = useMemo(() => {
+    if (!sunQuery.data) return null;
+    return buildChoghadiya(muhuratDate, sunQuery.data.sunrise, sunQuery.data.sunset, sunQuery.data.nextSunrise);
+  }, [muhuratDate, sunQuery.data]);
+
+  const useMyLocation = () => {
+    if (!navigator.geolocation) return;
+    setGeoLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCustomLoc({ label: "My location", lat: +pos.coords.latitude.toFixed(4), lng: +pos.coords.longitude.toFixed(4) });
+        setGeoLoading(false);
+      },
+      () => setGeoLoading(false),
+      { timeout: 8000 }
+    );
+  };
 
   return (
     <MobileShell>
