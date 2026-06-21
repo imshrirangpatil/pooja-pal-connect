@@ -28,6 +28,7 @@ import { Route as PoojasIndexRouteImport } from './routes/poojas.index'
 import { Route as AstrologyIndexRouteImport } from './routes/astrology.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
+import { Route as PanditsIdRouteImport } from './routes/pandits.$id'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminPoojasRouteImport } from './routes/admin.poojas'
 import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
@@ -131,6 +132,11 @@ const PoojasSlugRoute = PoojasSlugRouteImport.update({
   path: '/poojas/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanditsIdRoute = PanditsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PanditsRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -176,7 +182,7 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/orders': typeof OrdersRoute
-  '/pandits': typeof PanditsRoute
+  '/pandits': typeof PanditsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/users': typeof AdminUsersRoute
+  '/pandits/$id': typeof PanditsIdRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/astrology/': typeof AstrologyIndexRoute
@@ -203,7 +210,7 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/orders': typeof OrdersRoute
-  '/pandits': typeof PanditsRoute
+  '/pandits': typeof PanditsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/users': typeof AdminUsersRoute
+  '/pandits/$id': typeof PanditsIdRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin': typeof AdminIndexRoute
   '/astrology': typeof AstrologyIndexRoute
@@ -232,7 +240,7 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/orders': typeof OrdersRoute
-  '/pandits': typeof PanditsRoute
+  '/pandits': typeof PanditsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/users': typeof AdminUsersRoute
+  '/pandits/$id': typeof PanditsIdRoute
   '/poojas/$slug': typeof PoojasSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/astrology/': typeof AstrologyIndexRoute
@@ -274,6 +283,7 @@ export interface FileRouteTypes {
     | '/admin/pandits'
     | '/admin/poojas'
     | '/admin/users'
+    | '/pandits/$id'
     | '/poojas/$slug'
     | '/admin/'
     | '/astrology/'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/admin/pandits'
     | '/admin/poojas'
     | '/admin/users'
+    | '/pandits/$id'
     | '/poojas/$slug'
     | '/admin'
     | '/astrology'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/admin/pandits'
     | '/admin/poojas'
     | '/admin/users'
+    | '/pandits/$id'
     | '/poojas/$slug'
     | '/admin/'
     | '/astrology/'
@@ -346,7 +358,7 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
   OrdersRoute: typeof OrdersRoute
-  PanditsRoute: typeof PanditsRoute
+  PanditsRoute: typeof PanditsRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   ReferRoute: typeof ReferRoute
   SamagriRoute: typeof SamagriRoute
@@ -495,6 +507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoojasSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pandits/$id': {
+      id: '/pandits/$id'
+      path: '/$id'
+      fullPath: '/pandits/$id'
+      preLoaderRoute: typeof PanditsIdRouteImport
+      parentRoute: typeof PanditsRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -567,6 +586,17 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface PanditsRouteChildren {
+  PanditsIdRoute: typeof PanditsIdRoute
+}
+
+const PanditsRouteChildren: PanditsRouteChildren = {
+  PanditsIdRoute: PanditsIdRoute,
+}
+
+const PanditsRouteWithChildren =
+  PanditsRoute._addFileChildren(PanditsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddressesRoute: AddressesRoute,
@@ -576,7 +606,7 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
   OrdersRoute: OrdersRoute,
-  PanditsRoute: PanditsRoute,
+  PanditsRoute: PanditsRouteWithChildren,
   ProfileRoute: ProfileRoute,
   ReferRoute: ReferRoute,
   SamagriRoute: SamagriRoute,

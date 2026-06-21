@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { astrologers } from "@/lib/data";
+import { astrologers, type AstroCategory } from "@/lib/data";
 import { Phone, MessageCircle, Star, Sparkles, Video } from "lucide-react";
 
 export const Route = createFileRoute("/astrology/")({
@@ -13,7 +14,15 @@ export const Route = createFileRoute("/astrology/")({
   component: Astrology,
 });
 
+const TYPES: ("All" | AstroCategory)[] = ["All", "Vedic", "Tarot", "Vastu", "Numerology", "Palmistry", "Nadi"];
+
 function Astrology() {
+  const [filter, setFilter] = useState<"All" | AstroCategory>("All");
+  const list = useMemo(
+    () => (filter === "All" ? astrologers : astrologers.filter((a) => a.category === filter)),
+    [filter],
+  );
+
   return (
     <MobileShell>
       <TopBar title="Astrology" subtitle="Chat or call live experts" />
@@ -29,15 +38,21 @@ function Astrology() {
 
       <section className="px-5 pt-6">
         <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {["All", "Vedic", "Tarot", "Vastu", "Numerology", "Palmistry"].map((t, i) => (
-            <button key={t} className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold ${i === 0 ? "bg-foreground text-background" : "border border-border bg-card"}`}>
+          {TYPES.map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilter(t)}
+              className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold ${filter === t ? "bg-foreground text-background" : "border border-border bg-card"}`}
+            >
               {t}
             </button>
           ))}
         </div>
 
         <div className="mt-4 space-y-3">
-          {astrologers.map((a) => (
+          {list.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-border/60 px-4 py-8 text-center text-xs text-muted-foreground">No {filter} astrologers right now.</p>
+          ) : list.map((a) => (
             <article key={a.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
               <div className="flex items-start gap-3">
                 <div className="relative">
