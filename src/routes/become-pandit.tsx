@@ -38,7 +38,7 @@ const SPECIALTIES = [
 ];
 const LANGUAGES = ["Hindi", "Sanskrit", "Marathi", "Gujarati", "Tamil", "Telugu", "Kannada", "Bengali"];
 
-type Step = 0 | 1 | 2 | 3 | 4;
+type Step = 0 | 1 | 2 | 3 | 4 | 5;
 
 function BecomePandit() {
   const navigate = useNavigate();
