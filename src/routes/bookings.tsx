@@ -15,22 +15,31 @@ export const Route = createFileRoute("/bookings")({
   component: Bookings,
 });
 
-const mock = [
-  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Confirmed", amount: 1799, address: "204, Sunflower Apartments, Andheri West, Mumbai", phone: "+91 98765 43210", payment: "UPI — Paid", bookedOn: "21 Oct 2025" },
-  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Pending", amount: 2199, address: "12, Gokuldham Society, Goregaon East, Mumbai", phone: "+91 87654 32109", payment: "Cash on Delivery", bookedOn: "18 Oct 2025" },
+type Booking = {
+  id: string; pooja: string; panditId: string; pandit: string; date: string;
+  status: "Completed" | "Cancelled"; amount: number; address: string; phone: string;
+  payment: string; bookedOn: string;
+};
+
+const initialBookings: Booking[] = [
+  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Completed", amount: 1799, address: "204, Sunflower Apartments, Andheri West, Mumbai", phone: "+91 98765 43210", payment: "UPI — Paid", bookedOn: "21 Oct 2025" },
+  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Cancelled", amount: 2199, address: "12, Gokuldham Society, Goregaon East, Mumbai", phone: "+91 87654 32109", payment: "Refunded to Wallet", bookedOn: "18 Oct 2025" },
   { id: "b3", pooja: "Ganesh Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Mon, 8 Sep · 9:00 AM", status: "Completed", amount: 1499, address: "55, Krishna Niwas, Borivali, Mumbai", phone: "+91 76543 21098", payment: "Wallet — Paid", bookedOn: "1 Sep 2025" },
 ];
 
 export function Bookings() {
-  const [tab, setTab] = useState<"Upcoming" | "Completed" | "Cancelled">("Upcoming");
+  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [tab, setTab] = useState<"Completed" | "Cancelled">("Completed");
   const [rating, setRating] = useState<{ panditId: string; bookingId: string } | null>(null);
-  const [details, setDetails] = useState<(typeof mock)[number] | null>(null);
+  const [details, setDetails] = useState<Booking | null>(null);
 
-  const list = mock.filter((b) =>
-    tab === "Upcoming" ? b.status === "Confirmed" || b.status === "Pending" :
-    tab === "Completed" ? b.status === "Completed" :
-    b.status === "Cancelled",
-  );
+  const list = bookings.filter((b) => b.status === tab);
+
+  const cancelBooking = (id: string) => {
+    setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Cancelled", payment: "Refunded to Wallet" } : b)));
+    setDetails(null);
+    setTab("Cancelled");
+  };
 
   return (
     <MobileShell>
@@ -38,7 +47,7 @@ export function Bookings() {
 
       <div className="px-5 pt-4">
         <div className="flex gap-2 rounded-full border border-border bg-card p-1">
-          {(["Upcoming", "Completed", "Cancelled"] as const).map((t) => (
+          {(["Completed", "Cancelled"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -56,7 +65,7 @@ export function Bookings() {
             {list.map((b) => (
               <article key={b.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
                 <div className="flex items-center justify-between">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${b.status === "Confirmed" ? "bg-green-100 text-green-700" : b.status === "Completed" ? "bg-secondary text-secondary-foreground" : "bg-secondary text-accent"}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${b.status === "Completed" ? "bg-green-100 text-green-700" : "bg-secondary text-accent"}`}>
                     {b.status}
                   </span>
                   <span className="text-sm font-bold text-accent">₹{b.amount.toLocaleString("en-IN")}</span>
@@ -131,7 +140,7 @@ export function Bookings() {
             <div className="overflow-y-auto overscroll-contain px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
               <div className="mt-2 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${details.status === "Confirmed" ? "bg-green-100 text-green-700" : details.status === "Completed" ? "bg-secondary text-secondary-foreground" : "bg-secondary text-accent"}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${details.status === "Completed" ? "bg-green-100 text-green-700" : "bg-secondary text-accent"}`}>
                     {details.status}
                   </span>
                   <span className="text-sm font-bold text-accent">₹{details.amount.toLocaleString("en-IN")}</span>
@@ -184,6 +193,15 @@ export function Bookings() {
                 <div className="rounded-xl bg-muted/50 p-3">
                   <p className="text-[11px] text-muted-foreground">Booked on {details.bookedOn}</p>
                 </div>
+
+                {details.status !== "Cancelled" && (
+                  <button
+                    onClick={() => cancelBooking(details.id)}
+                    className="w-full rounded-full border border-destructive/30 bg-destructive/10 py-2.5 text-xs font-semibold text-destructive hover:bg-destructive/15"
+                  >
+                    Cancel Booking
+                  </button>
+                )}
               </div>
             </div>
           </div>
