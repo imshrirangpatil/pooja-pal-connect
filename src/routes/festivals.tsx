@@ -272,14 +272,63 @@ function FestivalsPage() {
         </section>
       ) : (
         <section className="px-5 pt-4 pb-6">
-          <div className="rounded-3xl border border-primary/30 bg-primary/5 p-4">
+          {/* Date & location selectors */}
+          <div className="rounded-2xl border border-border/60 bg-card p-3 space-y-3">
+            <div>
+              <label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <CalendarDays className="h-3.5 w-3.5" /> Date
+              </label>
+              <input
+                type="date"
+                value={muhuratIso}
+                onChange={(e) => {
+                  if (e.target.value) setMuhuratDate(parseLocalDate(e.target.value));
+                }}
+                className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5" /> Location
+              </label>
+              <div className="mt-1.5 flex gap-2">
+                <select
+                  value={customLoc ? -1 : cityIdx}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (v >= 0) { setCityIdx(v); setCustomLoc(null); }
+                  }}
+                  className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-sm"
+                >
+                  {customLoc && <option value={-1}>{customLoc.label} ({customLoc.lat}, {customLoc.lng})</option>}
+                  {CITIES.map((c, i) => (
+                    <option key={c.label} value={i}>{c.label}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={useMyLocation}
+                  disabled={geoLoading}
+                  className="rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold disabled:opacity-50"
+                >
+                  {geoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Use my location"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-3xl border border-primary/30 bg-primary/5 p-4">
             <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
               <Sparkles className="h-3.5 w-3.5" /> Choghadiya for
             </div>
             <p className="mt-1 text-base font-bold">
-              {date.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}
+              {muhuratDate.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}
             </p>
-            <p className="mt-1 text-[11px] text-muted-foreground">Based on local sunrise ~6:00 AM, sunset ~6:00 PM. For exact muhurat, consult a pandit.</p>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
+              {location.label} · {sunQuery.data
+                ? `Sunrise ${fmtTimeFromDate(sunQuery.data.sunrise)} · Sunset ${fmtTimeFromDate(sunQuery.data.sunset)}`
+                : "Fetching sunrise / sunset…"}
+            </p>
             <div className="mt-3 flex flex-wrap gap-2 text-[10px]">
               <Legend kind="good" label="Auspicious" />
               <Legend kind="neutral" label="Neutral" />
@@ -287,8 +336,20 @@ function FestivalsPage() {
             </div>
           </div>
 
-          <ChogList title="Day Choghadiya" icon={<Sun className="h-4 w-4 text-marigold" />} items={chog.day} />
-          <ChogList title="Night Choghadiya" icon={<Moon className="h-4 w-4 text-primary" />} items={chog.night} />
+          {sunQuery.isLoading || !chog ? (
+            <div className="mt-6 flex items-center justify-center gap-2 rounded-2xl border border-border/60 bg-card p-6 text-xs text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" /> Calculating choghadiya…
+            </div>
+          ) : sunQuery.isError ? (
+            <div className="mt-6 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-xs text-destructive">
+              Couldn't fetch sunrise data. Check your connection and try again.
+            </div>
+          ) : (
+            <>
+              <ChogList title="Day Choghadiya" icon={<Sun className="h-4 w-4 text-marigold" />} items={chog.day} />
+              <ChogList title="Night Choghadiya" icon={<Moon className="h-4 w-4 text-primary" />} items={chog.night} />
+            </>
+          )}
 
           <div className="mt-6 rounded-2xl border border-border/60 bg-card p-4">
             <p className="text-sm font-bold">Need a personalised muhurat?</p>
