@@ -16,6 +16,7 @@ const TABS = [
   { to: "/admin/poojas", label: "Poojas", icon: Sparkles, exact: false },
   { to: "/admin/pandits", label: "Pandits", icon: UserCheck, exact: false },
   { to: "/admin/applications", label: "Applications", icon: Inbox, exact: false },
+  { to: "/admin/festivals", label: "Festivals", icon: CalendarDays, exact: false },
 ] as const;
 
 function AdminLayout() {
