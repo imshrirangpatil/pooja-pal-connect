@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { festivals, pandits } from "@/lib/data";
 import { usePoojas } from "@/lib/poojas-source";
-import { Search, MapPin, Bell, ShieldCheck, Sparkles, Flame, ShoppingBag, ChevronRight, Star, Zap, Package, Hand, Video, HeartHandshake } from "lucide-react";
+import { Search, MapPin, Bell, Sparkles, Flame, ShoppingBag, ChevronRight, Star, Zap, Package, Hand, Video } from "lucide-react";
 import heroImg from "@/assets/hero-pooja.jpg";
 import astroImg from "@/assets/cat-astrology.jpg";
 import samagriImg from "@/assets/cat-samagri.jpg";
