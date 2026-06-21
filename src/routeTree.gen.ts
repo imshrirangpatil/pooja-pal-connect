@@ -33,6 +33,7 @@ import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
 import { Route as PanditsIdRouteImport } from './routes/pandits.$id'
 import { Route as BookingNewRouteImport } from './routes/booking.new'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminTicketsRouteImport } from './routes/admin.tickets'
 import { Route as AdminPoojasRouteImport } from './routes/admin.poojas'
 import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -161,6 +162,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTicketsRoute = AdminTicketsRouteImport.update({
+  id: '/tickets',
+  path: '/tickets',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPoojasRoute = AdminPoojasRouteImport.update({
   id: '/poojas',
   path: '/poojas',
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
+  '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
@@ -251,6 +258,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
+  '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
@@ -285,6 +293,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
+  '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
+    | '/admin/tickets'
     | '/admin/users'
     | '/booking/new'
     | '/pandits/$id'
@@ -352,6 +362,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
+    | '/admin/tickets'
     | '/admin/users'
     | '/booking/new'
     | '/pandits/$id'
@@ -385,6 +396,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
+    | '/admin/tickets'
     | '/admin/users'
     | '/booking/new'
     | '/pandits/$id'
@@ -594,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/tickets': {
+      id: '/admin/tickets'
+      path: '/tickets'
+      fullPath: '/admin/tickets'
+      preLoaderRoute: typeof AdminTicketsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/poojas': {
       id: '/admin/poojas'
       path: '/poojas'
@@ -652,6 +671,7 @@ interface AdminRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPanditsRoute: typeof AdminPanditsRoute
   AdminPoojasRoute: typeof AdminPoojasRoute
+  AdminTicketsRoute: typeof AdminTicketsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -662,6 +682,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPanditsRoute: AdminPanditsRoute,
   AdminPoojasRoute: AdminPoojasRoute,
+  AdminTicketsRoute: AdminTicketsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
