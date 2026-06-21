@@ -193,6 +193,15 @@ export function Bookings() {
                 <div className="rounded-xl bg-muted/50 p-3">
                   <p className="text-[11px] text-muted-foreground">Booked on {details.bookedOn}</p>
                 </div>
+
+                {details.status !== "Cancelled" && (
+                  <button
+                    onClick={() => cancelBooking(details.id)}
+                    className="w-full rounded-full border border-destructive/30 bg-destructive/10 py-2.5 text-xs font-semibold text-destructive hover:bg-destructive/15"
+                  >
+                    Cancel Booking
+                  </button>
+                )}
               </div>
             </div>
           </div>
