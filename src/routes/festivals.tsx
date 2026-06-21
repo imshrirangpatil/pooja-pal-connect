@@ -95,28 +95,41 @@ const NIGHT_CHOG: string[][] = [
   ["Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh"],
 ];
 
-function fmtTime(h: number, m: number) {
-  const mm = Math.round(m);
-  const totalH = h + Math.floor(mm / 60);
-  const min = mm % 60;
-  const hr12 = ((totalH + 11) % 12) + 1;
-  const ampm = totalH % 24 < 12 ? "AM" : "PM";
-  return `${hr12}:${String(min).padStart(2, "0")} ${ampm}`;
+function fmtTimeFromDate(d: Date) {
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h < 12 ? "AM" : "PM";
+  h = ((h + 11) % 12) + 1;
+  return `${h}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
-function buildChoghadiya(date: Date) {
+// Build choghadiya from actual sunrise/sunset (each period = 1/8 of day or night length)
+function buildChoghadiya(date: Date, sunrise: Date, sunset: Date, nextSunrise: Date) {
   const dow = date.getDay();
+  const dayLen = sunset.getTime() - sunrise.getTime();
+  const nightLen = nextSunrise.getTime() - sunset.getTime();
+  const dayUnit = dayLen / 8;
+  const nightUnit = nightLen / 8;
   const day = DAY_CHOG[dow].map((name, i) => {
-    const start = 6 * 60 + i * 90;
-    const end = start + 90;
-    return { name, kind: CHOG_KIND[name], start: fmtTime(Math.floor(start / 60), start % 60), end: fmtTime(Math.floor(end / 60), end % 60) };
+    const start = new Date(sunrise.getTime() + i * dayUnit);
+    const end = new Date(sunrise.getTime() + (i + 1) * dayUnit);
+    return { name, kind: CHOG_KIND[name], start: fmtTimeFromDate(start), end: fmtTimeFromDate(end) };
   });
   const night = NIGHT_CHOG[dow].map((name, i) => {
-    const start = 18 * 60 + i * 90;
-    const end = start + 90;
-    return { name, kind: CHOG_KIND[name], start: fmtTime(Math.floor(start / 60), start % 60), end: fmtTime(Math.floor(end / 60), end % 60) };
+    const start = new Date(sunset.getTime() + i * nightUnit);
+    const end = new Date(sunset.getTime() + (i + 1) * nightUnit);
+    return { name, kind: CHOG_KIND[name], start: fmtTimeFromDate(start), end: fmtTimeFromDate(end) };
   });
   return { day, night };
+}
+
+async function fetchSunData(lat: number, lng: number, isoDate: string) {
+  const url = `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${isoDate}&formatted=0`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch sunrise data");
+  const json = await res.json();
+  if (json.status !== "OK") throw new Error("Bad sunrise response");
+  return { sunrise: new Date(json.results.sunrise), sunset: new Date(json.results.sunset) };
 }
 
 function FestivalsPage() {
