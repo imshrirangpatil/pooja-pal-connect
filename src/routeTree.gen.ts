@@ -18,6 +18,7 @@ import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as FestivalsRouteImport } from './routes/festivals'
+import { Route as DarshanRouteImport } from './routes/darshan'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BookingsRouteImport } from './routes/bookings'
@@ -85,6 +86,11 @@ const OrdersRoute = OrdersRouteImport.update({
 const FestivalsRoute = FestivalsRouteImport.update({
   id: '/festivals',
   path: '/festivals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DarshanRoute = DarshanRouteImport.update({
+  id: '/darshan',
+  path: '/darshan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -211,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/darshan': typeof DarshanRoute
   '/festivals': typeof FestivalsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/darshan': typeof DarshanRoute
   '/festivals': typeof FestivalsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
@@ -279,6 +287,7 @@ export interface FileRoutesById {
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/darshan': typeof DarshanRoute
   '/festivals': typeof FestivalsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/darshan'
     | '/festivals'
     | '/orders'
     | '/profile'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/darshan'
     | '/festivals'
     | '/orders'
     | '/profile'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/cart'
     | '/checkout'
+    | '/darshan'
     | '/festivals'
     | '/orders'
     | '/profile'
@@ -417,6 +429,7 @@ export interface RootRouteChildren {
   BookingsRoute: typeof BookingsRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
+  DarshanRoute: typeof DarshanRoute
   FestivalsRoute: typeof FestivalsRoute
   OrdersRoute: typeof OrdersRoute
   ProfileRoute: typeof ProfileRoute
@@ -499,6 +512,13 @@ declare module '@tanstack/react-router' {
       path: '/festivals'
       fullPath: '/festivals'
       preLoaderRoute: typeof FestivalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/darshan': {
+      id: '/darshan'
+      path: '/darshan'
+      fullPath: '/darshan'
+      preLoaderRoute: typeof DarshanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -697,6 +717,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingsRoute: BookingsRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
+  DarshanRoute: DarshanRoute,
   FestivalsRoute: FestivalsRoute,
   OrdersRoute: OrdersRoute,
   ProfileRoute: ProfileRoute,
