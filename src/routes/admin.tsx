@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { ArrowLeft, BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays } from "lucide-react";
+import { ArrowLeft, BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays, LifeBuoy } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 
@@ -17,6 +17,7 @@ const TABS = [
   { to: "/admin/pandits", label: "Pandits", icon: UserCheck, exact: false },
   { to: "/admin/applications", label: "Applications", icon: Inbox, exact: false },
   { to: "/admin/festivals", label: "Festivals", icon: CalendarDays, exact: false },
+  { to: "/admin/tickets", label: "Tickets", icon: LifeBuoy, exact: false },
 ] as const;
 
 function AdminLayout() {

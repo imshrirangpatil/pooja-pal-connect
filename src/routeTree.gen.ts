@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ReferRouteImport } from './routes/refer'
@@ -32,6 +33,7 @@ import { Route as PoojasSlugRouteImport } from './routes/poojas.$slug'
 import { Route as PanditsIdRouteImport } from './routes/pandits.$id'
 import { Route as BookingNewRouteImport } from './routes/booking.new'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminTicketsRouteImport } from './routes/admin.tickets'
 import { Route as AdminPoojasRouteImport } from './routes/admin.poojas'
 import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -48,6 +50,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -155,6 +162,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTicketsRoute = AdminTicketsRouteImport.update({
+  id: '/tickets',
+  path: '/tickets',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPoojasRoute = AdminPoojasRouteImport.update({
   id: '/poojas',
   path: '/poojas',
@@ -205,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -212,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
+  '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
@@ -236,6 +250,7 @@ export interface FileRoutesByTo {
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -243,6 +258,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
+  '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
@@ -269,6 +285,7 @@ export interface FileRoutesById {
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -276,6 +293,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRoute
   '/admin/poojas': typeof AdminPoojasRoute
+  '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/new': typeof BookingNewRoute
   '/pandits/$id': typeof PanditsIdRoute
@@ -303,6 +321,7 @@ export interface FileRouteTypes {
     | '/refer'
     | '/samagri'
     | '/signup'
+    | '/support'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -310,6 +329,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
+    | '/admin/tickets'
     | '/admin/users'
     | '/booking/new'
     | '/pandits/$id'
@@ -334,6 +354,7 @@ export interface FileRouteTypes {
     | '/refer'
     | '/samagri'
     | '/signup'
+    | '/support'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -341,6 +362,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
+    | '/admin/tickets'
     | '/admin/users'
     | '/booking/new'
     | '/pandits/$id'
@@ -366,6 +388,7 @@ export interface FileRouteTypes {
     | '/refer'
     | '/samagri'
     | '/signup'
+    | '/support'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -373,6 +396,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/pandits'
     | '/admin/poojas'
+    | '/admin/tickets'
     | '/admin/users'
     | '/booking/new'
     | '/pandits/$id'
@@ -399,6 +423,7 @@ export interface RootRouteChildren {
   ReferRoute: typeof ReferRoute
   SamagriRoute: typeof SamagriRoute
   SignupRoute: typeof SignupRoute
+  SupportRoute: typeof SupportRoute
   WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
   BookingNewRoute: typeof BookingNewRoute
@@ -425,6 +450,13 @@ declare module '@tanstack/react-router' {
       path: '/wallet'
       fullPath: '/wallet'
       preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -574,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/tickets': {
+      id: '/admin/tickets'
+      path: '/tickets'
+      fullPath: '/admin/tickets'
+      preLoaderRoute: typeof AdminTicketsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/poojas': {
       id: '/admin/poojas'
       path: '/poojas'
@@ -632,6 +671,7 @@ interface AdminRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPanditsRoute: typeof AdminPanditsRoute
   AdminPoojasRoute: typeof AdminPoojasRoute
+  AdminTicketsRoute: typeof AdminTicketsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -642,6 +682,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPanditsRoute: AdminPanditsRoute,
   AdminPoojasRoute: AdminPoojasRoute,
+  AdminTicketsRoute: AdminTicketsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -662,6 +703,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReferRoute: ReferRoute,
   SamagriRoute: SamagriRoute,
   SignupRoute: SignupRoute,
+  SupportRoute: SupportRoute,
   WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
   BookingNewRoute: BookingNewRoute,
