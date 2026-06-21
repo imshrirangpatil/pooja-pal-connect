@@ -652,6 +652,57 @@ export type Database = {
         }
         Relationships: []
       }
+      store_skus: {
+        Row: {
+          active: boolean
+          category: Database["public"]["Enums"]["sku_category"]
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          mrp_paise: number
+          name: string
+          price_paise: number
+          slug: string
+          sort_order: number
+          stock: number
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: Database["public"]["Enums"]["sku_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          mrp_paise: number
+          name: string
+          price_paise: number
+          slug: string
+          sort_order?: number
+          stock?: number
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: Database["public"]["Enums"]["sku_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          mrp_paise?: number
+          name?: string
+          price_paise?: number
+          slug?: string
+          sort_order?: number
+          stock?: number
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           admin_response: string | null
@@ -736,6 +787,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "pandit" | "user"
+      sku_category: "kit" | "samagri" | "blessed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -864,6 +916,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "pandit", "user"],
+      sku_category: ["kit", "samagri", "blessed"],
     },
   },
 } as const
