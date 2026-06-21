@@ -26,6 +26,18 @@ function Profile() {
   const name = user?.user_metadata?.full_name || user?.user_metadata?.name || (user?.email?.split("@")[0] ?? "Guest");
   const phone = user?.phone ? `+${user.phone}` : (user?.email ?? "Not signed in");
 
+  const balanceQ = useQuery({
+    queryKey: ["credit-balance", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_credit_balance", { _user_id: user!.id });
+      if (error) throw error;
+      return (data as number) ?? 0;
+    },
+  });
+  const walletDisplay = user ? `₹${((balanceQ.data ?? 0) / 100).toLocaleString("en-IN")}` : "₹0";
+
+
   const handleLogout = async () => {
     await signOut();
     navigate({ to: "/welcome" });
