@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { pandits, poojas } from "@/lib/data";
-import { ArrowLeft, ShieldCheck, Star, MapPin, Languages, Award, Calendar, ChevronRight } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Star, MapPin, Languages, Award, Calendar, ChevronRight, Heart } from "lucide-react";
 import { ReviewModule } from "@/components/ReviewModule";
+import { useSavedPandits } from "@/lib/saved-pandits";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pandits/$id")({
   head: ({ params }) => {
@@ -28,6 +30,9 @@ function PanditProfile() {
   const pandit = pandits.find((p) => p.id === id);
   if (!pandit) throw notFound();
 
+  const { isSaved, toggle } = useSavedPandits();
+  const saved = isSaved(pandit.id);
+
   const offered = poojas.filter((p) => pandit.poojaSlugs.includes(p.slug));
 
   return (
@@ -37,7 +42,19 @@ function PanditProfile() {
           <Link to="/pandits" className="rounded-full p-1.5 hover:bg-muted">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-sm font-semibold">Pandit profile</h1>
+          <h1 className="flex-1 text-sm font-semibold">Pandit profile</h1>
+          <button
+            onClick={() => {
+              const next = toggle(pandit.id);
+              toast.success(next ? `Saved ${pandit.name.split(" ").slice(-1)[0]} Ji` : "Removed from saved");
+            }}
+            className={`flex h-9 w-9 items-center justify-center rounded-full border transition ${
+              saved ? "border-primary bg-primary/10 text-primary" : "border-border bg-card text-muted-foreground"
+            }`}
+            aria-label={saved ? "Unsave pandit" : "Save pandit"}
+          >
+            <Heart className={`h-4 w-4 ${saved ? "fill-current" : ""}`} />
+          </button>
         </div>
       </header>
 

@@ -5,6 +5,8 @@ import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n, LANGUAGES } from "@/lib/i18n";
+import { useSavedPandits } from "@/lib/saved-pandits";
 
 
 export const Route = createFileRoute("/profile")({
@@ -21,6 +23,8 @@ function Profile() {
   const { user, signOut } = useAuth();
   const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
+  const { lang, t } = useI18n();
+  const { ids: savedPanditIds } = useSavedPandits();
 
   const initial = (user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "G")[0]?.toUpperCase();
   const name = user?.user_metadata?.full_name || user?.user_metadata?.name || (user?.email?.split("@")[0] ?? "Guest");
@@ -37,6 +41,7 @@ function Profile() {
   });
   const walletDisplay = user ? `₹${((balanceQ.data ?? 0) / 100).toLocaleString("en-IN")}` : "₹0";
 
+  const langNative = LANGUAGES.find((l) => l.code === lang)?.native ?? "English";
 
   const handleLogout = async () => {
     await signOut();
@@ -45,7 +50,7 @@ function Profile() {
 
   return (
     <MobileShell>
-      <TopBar title="Profile" />
+      <TopBar title={t("profile.title")} />
 
       <section className="mx-5 mt-4 rounded-3xl bg-secondary p-5 text-secondary-foreground shadow-glow">
         <div className="flex items-center gap-3">
@@ -58,9 +63,9 @@ function Profile() {
           </div>
         </div>
         <div className="mt-4 flex gap-3">
-          <Stat label="Bookings" value="07" />
-          <Stat label="Wallet" value={walletDisplay} />
-          <Stat label="Saved" value="₹1.2k" />
+          <Stat label={t("profile.bookings")} value="07" />
+          <Stat label={t("profile.wallet")} value={walletDisplay} />
+          <Stat label={t("profile.saved")} value="₹1.2k" />
         </div>
       </section>
 
@@ -69,34 +74,34 @@ function Profile() {
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/15">
             <ShieldCheck className="h-4 w-4" />
           </span>
-          <span className="flex-1 text-sm font-semibold">Admin Dashboard</span>
+          <span className="flex-1 text-sm font-semibold">{t("profile.admin")}</span>
           <ChevronRight className="h-4 w-4" />
         </Link>
       )}
 
       <div className="mt-5 space-y-1 px-5">
-        <Row to="/orders" icon={<Package className="h-4 w-4" />} label="My Orders" />
-        <Row to="/addresses" icon={<MapPin className="h-4 w-4" />} label="Saved Addresses" />
-        <Row to="/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet & Credits" hint={walletDisplay} />
-        <Row icon={<Heart className="h-4 w-4" />} label="Saved Pandits" />
-        <Row to="/refer" icon={<Gift className="h-4 w-4" />} label="Refer & Earn ₹100" />
-        <Row icon={<Bell className="h-4 w-4" />} label="Notifications" />
-        <Row icon={<Globe className="h-4 w-4" />} label="Language" hint="English" />
-        <Row to="/support" icon={<HelpCircle className="h-4 w-4" />} label="Help & Support" />
-        <Row icon={<FileText className="h-4 w-4" />} label="Terms & Privacy" />
+        <Row to="/orders" icon={<Package className="h-4 w-4" />} label={t("profile.orders")} />
+        <Row to="/addresses" icon={<MapPin className="h-4 w-4" />} label={t("profile.addresses")} />
+        <Row to="/wallet" icon={<Wallet className="h-4 w-4" />} label={t("profile.walletCredits")} hint={walletDisplay} />
+        <Row to="/saved-pandits" icon={<Heart className="h-4 w-4" />} label={t("profile.savedPandits")} hint={savedPanditIds.length ? String(savedPanditIds.length) : undefined} />
+        <Row to="/refer" icon={<Gift className="h-4 w-4" />} label={t("profile.refer")} />
+        <Row icon={<Bell className="h-4 w-4" />} label={t("profile.notifications")} />
+        <Row to="/language" icon={<Globe className="h-4 w-4" />} label={t("profile.language")} hint={langNative} />
+        <Row to="/support" icon={<HelpCircle className="h-4 w-4" />} label={t("profile.support")} />
+        <Row to="/terms" icon={<FileText className="h-4 w-4" />} label={t("profile.terms")} />
       </div>
 
 
       <div className="mx-5 mt-6 rounded-2xl border border-border/60 bg-card p-4 text-center shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-wider text-primary">Become a partner</p>
-        <h3 className="mt-1 text-base font-bold">Are you a pandit or astrologer?</h3>
-        <p className="mt-1 text-xs text-muted-foreground">Apply to join Pranam's verified network.</p>
-        <Link to="/become-pandit" className="mt-3 block w-full rounded-full bg-foreground py-2.5 text-center text-xs font-semibold text-background">Apply now</Link>
+        <p className="text-xs font-semibold uppercase tracking-wider text-primary">{t("profile.becomePartner")}</p>
+        <h3 className="mt-1 text-base font-bold">{t("profile.partnerCta")}</h3>
+        <p className="mt-1 text-xs text-muted-foreground">{t("profile.partnerSub")}</p>
+        <Link to="/become-pandit" className="mt-3 block w-full rounded-full bg-foreground py-2.5 text-center text-xs font-semibold text-background">{t("profile.applyNow")}</Link>
       </div>
 
       {user && (
         <button onClick={handleLogout} className="mx-auto mt-6 flex items-center gap-2 text-sm font-medium text-accent">
-          <LogOut className="h-4 w-4" /> Log out
+          <LogOut className="h-4 w-4" /> {t("profile.logout")}
         </button>
       )}
       <p className="mt-3 pb-2 text-center text-[10px] text-muted-foreground">Pranam v1.0 · Made in India</p>
@@ -113,7 +118,9 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Row({ icon, label, hint, to }: { icon: React.ReactNode; label: string; hint?: string; to?: "/orders" | "/addresses" | "/wallet" | "/refer" | "/support" }) {
+type RowTo = "/orders" | "/addresses" | "/wallet" | "/refer" | "/support" | "/saved-pandits" | "/language" | "/terms";
+
+function Row({ icon, label, hint, to }: { icon: React.ReactNode; label: string; hint?: string; to?: RowTo }) {
   const inner = (
     <>
       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-accent">{icon}</span>
