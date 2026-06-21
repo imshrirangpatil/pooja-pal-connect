@@ -47,7 +47,7 @@ export function Bookings() {
 
       <div className="px-5 pt-4">
         <div className="flex gap-2 rounded-full border border-border bg-card p-1">
-          {(["Upcoming", "Completed", "Cancelled"] as const).map((t) => (
+          {(["Completed", "Cancelled"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
