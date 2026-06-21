@@ -65,7 +65,7 @@ export function Bookings() {
             {list.map((b) => (
               <article key={b.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
                 <div className="flex items-center justify-between">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${b.status === "Confirmed" ? "bg-green-100 text-green-700" : b.status === "Completed" ? "bg-secondary text-secondary-foreground" : "bg-secondary text-accent"}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${b.status === "Completed" ? "bg-green-100 text-green-700" : "bg-secondary text-accent"}`}>
                     {b.status}
                   </span>
                   <span className="text-sm font-bold text-accent">₹{b.amount.toLocaleString("en-IN")}</span>
