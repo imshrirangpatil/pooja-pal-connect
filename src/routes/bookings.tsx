@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { CalendarCheck, Clock, ChevronRight, Star, X } from "lucide-react";
+import { CalendarCheck, Clock, ChevronRight, Star, X, MapPin, Phone, CreditCard, Calendar } from "lucide-react";
 import { ReviewModule } from "@/components/ReviewModule";
 import { pandits } from "@/lib/data";
 
@@ -16,14 +16,15 @@ export const Route = createFileRoute("/bookings")({
 });
 
 const mock = [
-  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Confirmed", amount: 1799 },
-  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Pending", amount: 2199 },
-  { id: "b3", pooja: "Ganesh Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Mon, 8 Sep · 9:00 AM", status: "Completed", amount: 1499 },
+  { id: "b1", pooja: "Lakshmi Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Sat, 1 Nov · 6:30 PM", status: "Confirmed", amount: 1799, address: "204, Sunflower Apartments, Andheri West, Mumbai", phone: "+91 98765 43210", payment: "UPI — Paid", bookedOn: "21 Oct 2025" },
+  { id: "b2", pooja: "Satyanarayan Katha", panditId: "p3", pandit: "Acharya Venkat Iyer", date: "Sun, 16 Nov · 10:00 AM", status: "Pending", amount: 2199, address: "12, Gokuldham Society, Goregaon East, Mumbai", phone: "+91 87654 32109", payment: "Cash on Delivery", bookedOn: "18 Oct 2025" },
+  { id: "b3", pooja: "Ganesh Pooja", panditId: "p2", pandit: "Pandit Suresh Joshi", date: "Mon, 8 Sep · 9:00 AM", status: "Completed", amount: 1499, address: "55, Krishna Niwas, Borivali, Mumbai", phone: "+91 76543 21098", payment: "Wallet — Paid", bookedOn: "1 Sep 2025" },
 ];
 
 export function Bookings() {
   const [tab, setTab] = useState<"Upcoming" | "Completed" | "Cancelled">("Upcoming");
   const [rating, setRating] = useState<{ panditId: string; bookingId: string } | null>(null);
+  const [details, setDetails] = useState<(typeof mock)[number] | null>(null);
 
   const list = mock.filter((b) =>
     tab === "Upcoming" ? b.status === "Confirmed" || b.status === "Pending" :
@@ -68,7 +69,10 @@ export function Bookings() {
                   <Clock className="h-3.5 w-3.5 text-primary" /> {b.date}
                 </div>
                 <div className="mt-3 flex gap-2">
-                  <button className="flex flex-1 items-center justify-center gap-1 rounded-full bg-secondary py-2 text-xs font-semibold text-secondary-foreground">
+                  <button
+                    onClick={() => setDetails(b)}
+                    className="flex flex-1 items-center justify-center gap-1 rounded-full bg-secondary py-2 text-xs font-semibold text-secondary-foreground"
+                  >
                     Details <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                   {b.status === "Completed" && (
@@ -107,6 +111,80 @@ export function Bookings() {
                 compact
                 onSubmitted={() => setTimeout(() => setRating(null), 600)}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {details && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setDetails(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="mx-auto flex max-h-[85vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-soft">
+            <div className="flex items-start justify-between gap-3 px-5 pb-3 pt-5">
+              <div>
+                <p className="text-base font-bold">Booking Details</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">ID: {details.id}</p>
+              </div>
+              <button onClick={() => setDetails(null)} className="rounded-full p-1 hover:bg-muted">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="overflow-y-auto overscroll-contain px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
+              <div className="mt-2 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${details.status === "Confirmed" ? "bg-green-100 text-green-700" : details.status === "Completed" ? "bg-secondary text-secondary-foreground" : "bg-secondary text-accent"}`}>
+                    {details.status}
+                  </span>
+                  <span className="text-sm font-bold text-accent">₹{details.amount.toLocaleString("en-IN")}</span>
+                </div>
+
+                <div>
+                  <p className="text-xs text-muted-foreground">Pooja</p>
+                  <p className="mt-0.5 text-sm font-semibold">{details.pooja}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-muted-foreground">Pandit</p>
+                  <Link to="/pandits/$id" params={{ id: details.panditId }} className="mt-0.5 inline-block text-sm font-semibold text-primary underline-offset-2 hover:underline">
+                    {details.pandit}
+                  </Link>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Date & Time</p>
+                    <p className="text-sm font-medium">{details.date}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Address</p>
+                    <p className="text-sm font-medium">{details.address}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Contact</p>
+                    <p className="text-sm font-medium">{details.phone}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <CreditCard className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Payment</p>
+                    <p className="text-sm font-medium">{details.payment}</p>
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-muted/50 p-3">
+                  <p className="text-[11px] text-muted-foreground">Booked on {details.bookedOn}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
