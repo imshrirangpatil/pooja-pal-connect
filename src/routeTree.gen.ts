@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ReferRouteImport } from './routes/refer'
@@ -48,6 +49,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
@@ -303,6 +312,7 @@ export interface FileRouteTypes {
     | '/refer'
     | '/samagri'
     | '/signup'
+    | '/support'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/refer'
     | '/samagri'
     | '/signup'
+    | '/support'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/refer'
     | '/samagri'
     | '/signup'
+    | '/support'
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
@@ -399,6 +411,7 @@ export interface RootRouteChildren {
   ReferRoute: typeof ReferRoute
   SamagriRoute: typeof SamagriRoute
   SignupRoute: typeof SignupRoute
+  SupportRoute: typeof SupportRoute
   WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
   BookingNewRoute: typeof BookingNewRoute
@@ -425,6 +438,13 @@ declare module '@tanstack/react-router' {
       path: '/wallet'
       fullPath: '/wallet'
       preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -662,6 +682,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReferRoute: ReferRoute,
   SamagriRoute: SamagriRoute,
   SignupRoute: SignupRoute,
+  SupportRoute: SupportRoute,
   WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
   BookingNewRoute: BookingNewRoute,
