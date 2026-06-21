@@ -101,20 +101,39 @@ function PoojaDetail() {
           ))}
         </div>
 
-        <h2 className="mt-7 text-base font-semibold">Suggested pandits</h2>
+        <h2 className="mt-7 text-base font-semibold">{selectedPandit ? "Selected pandit" : "Suggested pandits"}</h2>
         <div className="mt-3 space-y-2.5">
-          {pandits.slice(0, 2).map((p) => (
-            <div key={p.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-warm text-sm font-bold text-primary-foreground">{p.initials}</div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{p.name}</p>
-                <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                  <MapPin className="h-3 w-3" /> {p.city} · {p.experience}y · ⭐ {p.rating}
-                </p>
+          {suggested.map((p) => {
+            const isSelected = selectedPandit?.id === p.id;
+            return (
+              <div key={p.id} className={`flex items-center gap-3 rounded-2xl border p-3 ${isSelected ? "border-primary bg-secondary" : "border-border/60 bg-card"}`}>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground">{p.initials}</div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">{p.name}</p>
+                  <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                    <MapPin className="h-3 w-3" /> {p.city} · {p.experience}y · ⭐ {p.rating}
+                  </p>
+                </div>
+                {isSelected ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground">
+                    <Check className="h-3 w-3" /> Picked
+                  </span>
+                ) : (
+                  <Link
+                    to="/poojas/$slug"
+                    params={{ slug: pooja.slug }}
+                    search={{ pandit: p.id }}
+                    className="rounded-full bg-secondary px-3 py-1.5 text-[11px] font-semibold text-secondary-foreground"
+                  >
+                    Pick
+                  </Link>
+                )}
               </div>
-              <button className="rounded-full bg-secondary px-3 py-1.5 text-[11px] font-semibold text-secondary-foreground">Pick</button>
-            </div>
-          ))}
+            );
+          })}
+          <Link to="/pandits" className="block rounded-2xl border border-dashed border-border bg-card p-3 text-center text-xs font-semibold text-primary">
+            Browse all verified pandits →
+          </Link>
         </div>
 
         <div className="h-6" />
@@ -125,11 +144,15 @@ function PoojaDetail() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</p>
-            <p className="text-lg font-bold text-accent">₹{pooja.priceFrom.toLocaleString("en-IN")}</p>
+            <p className="text-lg font-bold text-accent">₹{(selectedPandit?.feeFrom ?? pooja.priceFrom).toLocaleString("en-IN")}</p>
           </div>
-          <button className="flex-1 rounded-full bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-glow">
-            Book Pandit Now
-          </button>
+          <Link
+            to="/booking/new"
+            search={{ slug: pooja.slug, pandit: selectedPandit?.id }}
+            className="flex-1 rounded-full bg-primary py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-glow"
+          >
+            {selectedPandit ? `Book ${selectedPandit.name.split(" ").slice(-1)[0]} Ji` : "Book Pandit Now"}
+          </Link>
         </div>
       </div>
     </MobileShell>
