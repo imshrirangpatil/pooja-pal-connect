@@ -9,7 +9,7 @@ type CartCtx = {
   subtotal: number;
   shipping: number;
   total: number;
-  add: (id: string) => void;
+  add: (idOrItem: string | Samagri) => void;
   remove: (id: string) => void;
   setQty: (id: string, qty: number) => void;
   clear: () => void;
@@ -17,9 +17,11 @@ type CartCtx = {
 
 const Ctx = createContext<CartCtx | null>(null);
 
-const STORAGE_KEY = "pranam.cart.v1";
+const STORAGE_KEY = "pranam.cart.v2";
 
-function loadInitial(): Record<string, number> {
+type StoredEntry = { item: Samagri; qty: number };
+
+function loadInitial(): Record<string, StoredEntry> {
   if (typeof window === "undefined") return {};
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -32,14 +34,12 @@ function loadInitial(): Record<string, number> {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [map, setMap] = useState<Record<string, number>>({});
+  const [map, setMap] = useState<Record<string, StoredEntry>>({});
 
-  // Hydrate from localStorage after mount (SSR-safe)
   useEffect(() => {
     setMap(loadInitial());
   }, []);
 
-  // Persist on every change
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -50,12 +50,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [map]);
 
   const value = useMemo<CartCtx>(() => {
-    const items: CartItem[] = Object.entries(map)
-      .map(([id, qty]) => {
-        const item = samagri.find((s) => s.id === id);
-        return item ? { item, qty } : null;
-      })
-      .filter((x): x is CartItem => !!x);
+    const items: CartItem[] = Object.values(map).map((e) => ({ item: e.item, qty: e.qty }));
     const count = items.reduce((n, i) => n + i.qty, 0);
     const subtotal = items.reduce((n, i) => n + i.qty * i.item.price, 0);
     const shipping = subtotal === 0 || subtotal >= 499 ? 0 : 49;
@@ -65,7 +60,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotal,
       shipping,
       total: subtotal + shipping,
-      add: (id) => setMap((m) => ({ ...m, [id]: (m[id] ?? 0) + 1 })),
+      add: (idOrItem) =>
+        setMap((m) => {
+          let item: Samagri | undefined;
+          let id: string;
+          if (typeof idOrItem === "string") {
+            id = idOrItem;
+            item = m[id]?.item ?? samagri.find((s) => s.id === id);
+          } else {
+            id = idOrItem.id;
+            item = idOrItem;
+          }
+          if (!item) return m;
+          const prev = m[id];
+          return { ...m, [id]: { item, qty: (prev?.qty ?? 0) + 1 } };
+        }),
       remove: (id) =>
         setMap((m) => {
           const next = { ...m };
@@ -76,7 +85,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setMap((m) => {
           const next = { ...m };
           if (qty <= 0) delete next[id];
-          else next[id] = qty;
+          else if (next[id]) next[id] = { ...next[id], qty };
           return next;
         }),
       clear: () => setMap({}),

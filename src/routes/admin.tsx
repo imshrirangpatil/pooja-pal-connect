@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { ArrowLeft, BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays, LifeBuoy } from "lucide-react";
+import { ArrowLeft, BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays, LifeBuoy, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 
@@ -14,6 +14,7 @@ const TABS = [
   { to: "/admin/orders", label: "Orders", icon: Package, exact: false },
   { to: "/admin/users", label: "Users", icon: Users, exact: false },
   { to: "/admin/poojas", label: "Poojas", icon: Sparkles, exact: false },
+  { to: "/admin/skus", label: "Store SKUs", icon: ShoppingBag, exact: false },
   { to: "/admin/pandits", label: "Pandits", icon: UserCheck, exact: false },
   { to: "/admin/applications", label: "Applications", icon: Inbox, exact: false },
   { to: "/admin/festivals", label: "Festivals", icon: CalendarDays, exact: false },
