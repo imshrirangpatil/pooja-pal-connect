@@ -271,6 +271,7 @@ export type Database = {
           line1: string
           line2: string | null
           notes: string | null
+          pandit_id: string | null
           payment_method: string
           payment_status: string
           phone: string
@@ -293,6 +294,7 @@ export type Database = {
           line1: string
           line2?: string | null
           notes?: string | null
+          pandit_id?: string | null
           payment_method?: string
           payment_status?: string
           phone: string
@@ -315,6 +317,7 @@ export type Database = {
           line1?: string
           line2?: string | null
           notes?: string | null
+          pandit_id?: string | null
           payment_method?: string
           payment_status?: string
           phone?: string
@@ -328,59 +331,143 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_pandit_id_fkey"
+            columns: ["pandit_id"]
+            isOneToOne: false
+            referencedRelation: "pandits"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pandit_applications: {
         Row: {
+          account_holder: string | null
+          account_number: string | null
+          bank_name: string | null
           city: string
           created_at: string
           experience: number
           full_name: string
           id: string
+          ifsc: string | null
           languages: string
           message: string | null
           phone: string
           specialties: string
           status: string
           updated_at: string
+          upi_id: string | null
           user_id: string | null
         }
         Insert: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
           city?: string
           created_at?: string
           experience?: number
           full_name: string
           id?: string
+          ifsc?: string | null
           languages?: string
           message?: string | null
           phone: string
           specialties?: string
           status?: string
           updated_at?: string
+          upi_id?: string | null
           user_id?: string | null
         }
         Update: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
           city?: string
           created_at?: string
           experience?: number
           full_name?: string
           id?: string
+          ifsc?: string | null
           languages?: string
           message?: string | null
           phone?: string
           specialties?: string
           status?: string
           updated_at?: string
+          upi_id?: string | null
           user_id?: string | null
         }
         Relationships: []
       }
+      pandit_payouts: {
+        Row: {
+          amount_paise: number
+          created_at: string
+          id: string
+          method: string
+          notes: string | null
+          order_id: string | null
+          paid_at: string | null
+          pandit_id: string
+          reference: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_paise: number
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          pandit_id: string
+          reference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_paise?: number
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          pandit_id?: string
+          reference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pandit_payouts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pandit_payouts_pandit_id_fkey"
+            columns: ["pandit_id"]
+            isOneToOne: false
+            referencedRelation: "pandits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pandits: {
         Row: {
+          account_holder: string | null
+          account_number: string | null
+          bank_name: string | null
           city: string
           created_at: string
           experience: number
           id: string
+          ifsc: string | null
           initials: string
           languages: Json
           name: string
@@ -388,14 +475,19 @@ export type Database = {
           reviews: number
           specialties: Json
           updated_at: string
+          upi_id: string | null
           verified: boolean
           visible: boolean
         }
         Insert: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
           city?: string
           created_at?: string
           experience?: number
           id?: string
+          ifsc?: string | null
           initials?: string
           languages?: Json
           name: string
@@ -403,14 +495,19 @@ export type Database = {
           reviews?: number
           specialties?: Json
           updated_at?: string
+          upi_id?: string | null
           verified?: boolean
           visible?: boolean
         }
         Update: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
           city?: string
           created_at?: string
           experience?: number
           id?: string
+          ifsc?: string | null
           initials?: string
           languages?: Json
           name?: string
@@ -418,6 +515,7 @@ export type Database = {
           reviews?: number
           specialties?: Json
           updated_at?: string
+          upi_id?: string | null
           verified?: boolean
           visible?: boolean
         }
