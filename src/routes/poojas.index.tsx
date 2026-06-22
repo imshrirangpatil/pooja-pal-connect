@@ -47,11 +47,11 @@ function PoojasList() {
         </div>
 
         {/* Cards */}
-        <div className="mt-5 flex flex-col gap-5">
+        <div className="mt-4 flex flex-col gap-3">
           {loading && (
             <>
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="h-80 animate-pulse rounded-3xl bg-muted" />
+                <div key={i} className="h-64 animate-pulse rounded-3xl bg-muted" />
               ))}
             </>
           )}
@@ -67,10 +67,10 @@ function PoojasList() {
                   <img
                     src={p.image}
                     alt={p.name}
-                    width={800}
-                    height={500}
+                    width={600}
+                    height={350}
                     loading="lazy"
-                    className="h-52 w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
 
@@ -87,33 +87,33 @@ function PoojasList() {
                   )}
                 </div>
 
-                <div className="p-4 pt-5">
-                  <h3 className="text-xl font-bold leading-tight tracking-tight text-foreground font-display">{p.name}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground line-clamp-2">{p.tagline}</p>
+                <div className="p-3.5 pt-4">
+                  <h3 className="text-base font-bold leading-tight tracking-tight text-foreground font-display">{p.name}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">{p.tagline}</p>
 
-                  <div className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="mt-3 flex items-center gap-2 text-[11px] text-muted-foreground">
                     {p.duration && (
-                      <span className="flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1">
+                      <span className="flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
                         <Clock className="h-3 w-3" />
                         {p.duration}
                       </span>
                     )}
                     {p.includes && p.includes.length > 0 && (
-                      <span className="rounded-full bg-secondary px-2.5 py-1">
-                        {p.includes.length} items included
+                      <span className="rounded-full bg-secondary px-2 py-0.5">
+                        {p.includes.length} items
                       </span>
                     )}
                   </div>
 
-                  <div className="mt-4 flex items-end justify-between">
+                  <div className="mt-3 flex items-end justify-between">
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Starts at</p>
-                      <p className="mt-0.5 text-2xl font-extrabold text-accent font-display">
+                      <p className="mt-0.5 text-xl font-extrabold text-accent font-display">
                         ₹{p.priceFrom.toLocaleString("en-IN")}
                       </p>
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-warm px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition group-hover:shadow-glow">
-                      Book Now
+                    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-warm px-4 py-2 text-sm font-semibold text-cream shadow-soft transition group-hover:shadow-glow">
+                      Book
                       <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                     </span>
                   </div>
