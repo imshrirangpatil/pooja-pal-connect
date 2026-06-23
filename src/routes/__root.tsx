@@ -15,6 +15,20 @@ import { CartProvider } from "../lib/cart";
 import { AuthProvider } from "../lib/auth";
 import { I18nProvider } from "../lib/i18n";
 import { Toaster } from "../components/ui/sonner";
+import { recordNavigation } from "../lib/nav-stack";
+
+function NavStackTracker() {
+  const router = useRouter();
+  useEffect(() => {
+    // Record the initial location, then every subsequent resolved navigation.
+    recordNavigation(router.state.location.pathname);
+    const unsub = router.subscribe("onResolved", ({ toLocation }) => {
+      recordNavigation(toLocation.pathname);
+    });
+    return () => unsub();
+  }, [router]);
+  return null;
+}
 
 function NotFoundComponent() {
   return (
