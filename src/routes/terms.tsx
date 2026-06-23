@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { ArrowLeft, FileText, Lock, Mail } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
+import { FileText, Lock, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -21,13 +22,7 @@ function TermsPage() {
         title="Terms & Privacy"
         subtitle={`Last updated · ${UPDATED}`}
         right={
-          <Link
-            to="/profile"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+          <BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />
         }
       />
 

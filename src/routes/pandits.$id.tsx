@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { pandits, poojas } from "@/lib/data";
 import { ArrowLeft, ShieldCheck, Star, MapPin, Languages, Award, Calendar, ChevronRight, Heart } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { ReviewModule } from "@/components/ReviewModule";
 import { useSavedPandits } from "@/lib/saved-pandits";
 import { toast } from "sonner";
@@ -39,9 +40,7 @@ function PanditProfile() {
     <MobileShell>
       <header className="sticky top-0 z-30 border-b border-border/60 bg-card/95 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <Link to="/pandits" className="rounded-full p-1.5 hover:bg-muted">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+          <BackButton fallback="/pandits" className="h-8 w-8 bg-transparent hover:bg-muted" iconClassName="h-5 w-5" />
           <h1 className="flex-1 text-sm font-semibold">Pandit profile</h1>
           <button
             onClick={() => {

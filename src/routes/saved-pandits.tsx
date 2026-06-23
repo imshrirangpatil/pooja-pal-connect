@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { useSavedPandits } from "@/lib/saved-pandits";
 import { pandits } from "@/lib/data";
-import { Heart, ShieldCheck, Star, MapPin, ChevronRight, ArrowLeft } from "lucide-react";
+import { Heart, ShieldCheck, Star, MapPin, ChevronRight } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/saved-pandits")({
@@ -26,13 +27,7 @@ function SavedPandits() {
         title={t("saved.title")}
         subtitle={list.length ? `${list.length} saved` : t("saved.empty")}
         right={
-          <Link
-            to="/profile"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+          <BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />
         }
       />
 
