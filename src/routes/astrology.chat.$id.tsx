@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Phone, Send, Sparkles, Shield, Star, Loader2, LogIn, Video } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { astrologers } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -253,9 +254,7 @@ function ChatPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-card/95 backdrop-blur-xl">
         <div className="flex items-center gap-3 px-3 py-3">
-          <Link to="/astrology" className="rounded-full p-1.5 hover:bg-muted">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+          <BackButton fallback="/astrology" className="h-8 w-8 bg-transparent hover:bg-muted" />
           <div className="relative">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-warm text-sm font-bold text-primary-foreground">
               {astrologer.initials}

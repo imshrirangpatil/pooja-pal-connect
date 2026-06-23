@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, MapPin, Plus, Star, Trash2 } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -188,13 +189,10 @@ function AddressesPage() {
         title="Saved Addresses"
         subtitle={addresses.length ? `${addresses.length} saved` : "None yet"}
         right={
-          <Link
-            to={search.redirect ? (search.redirect as "/checkout") : "/profile"}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+          <BackButton
+            fallback={(search.redirect as string | undefined) ?? "/profile"}
+            className="h-10 w-10 border border-border bg-card"
+          />
         }
       />
 

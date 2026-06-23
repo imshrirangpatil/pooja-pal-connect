@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { z } from "zod";
 import { MobileShell } from "@/components/MobileShell";
+import { BackButton } from "@/components/BackButton";
 import { poojas as seedPoojas, pandits } from "@/lib/data";
 import { rowToPooja } from "@/lib/poojas-source";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,9 +50,10 @@ function PoojaDetail() {
       <div className="relative">
         <img src={pooja.image} alt={pooja.name} width={1024} height={700} className="h-72 w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/30 via-transparent to-background" />
-        <Link to="/poojas" className="absolute left-4 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 shadow-soft backdrop-blur">
-          <ArrowLeft className="h-4 w-4" />
-        </Link>
+        <BackButton
+          fallback="/poojas"
+          className="absolute left-4 top-5 h-10 w-10 bg-background/90 shadow-soft backdrop-blur"
+        />
         {pooja.season && (
           <span className="absolute right-4 top-5 rounded-full bg-accent px-3 py-1.5 text-[11px] font-semibold text-accent-foreground shadow-soft">
             ⭐ {pooja.season}

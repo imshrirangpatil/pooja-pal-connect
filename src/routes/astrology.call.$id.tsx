@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Mic, MicOff, Phone, Video, VideoOff, Volume2, MessageCircle, Sparkles, Signal } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { astrologers } from "@/lib/data";
 import { z } from "zod";
 import { playRingback, playConnectChime, playEndChime } from "@/lib/ringtone";
@@ -197,9 +198,7 @@ function CallPage() {
 
       {/* Header */}
       <header className="relative z-10 flex items-center gap-3 px-3 pt-4 pb-3">
-        <Link to="/astrology" className="rounded-full p-1.5 hover:bg-white/10">
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
+        <BackButton fallback="/astrology" className="h-8 w-8 bg-white/10 text-white hover:bg-white/20" />
         <div className="flex-1 text-center">
           <p className="text-[11px] uppercase tracking-wider text-white/70">
             {isVideo ? "Video call" : "Voice call"} • End-to-end encrypted

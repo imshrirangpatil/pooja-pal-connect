@@ -4,6 +4,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Package, Clock } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 
 export const Route = createFileRoute("/orders")({
   head: () => ({
@@ -69,13 +70,7 @@ function OrdersPage() {
         title="My Orders"
         subtitle={orders.length ? `${orders.length} order${orders.length === 1 ? "" : "s"}` : "Samagri & essentials"}
         right={
-          <button
-            onClick={() => navigate({ to: "/profile" })}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
+          <BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />
         }
       />
 

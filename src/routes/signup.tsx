@@ -96,7 +96,14 @@ function SignUp() {
       <div className="relative h-56 overflow-hidden bg-gradient-warm">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_60%)]" />
         <button
-          onClick={() => (step === "otp" ? setStep("phone") : window.history.back())}
+          onClick={() => {
+            if (step === "otp") {
+              setStep("phone");
+              return;
+            }
+            if (window.history.length > 1) window.history.back();
+            else navigate({ to: "/" });
+          }}
           className="absolute left-4 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-background/20 text-primary-foreground backdrop-blur"
           aria-label="Back"
         >

@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { MobileShell } from "@/components/MobileShell";
+import { BackButton } from "@/components/BackButton";
 import { poojas, pandits } from "@/lib/data";
 import { ArrowLeft, Calendar, Check, Clock, MapPin, ShieldCheck, Wallet } from "lucide-react";
 
@@ -49,9 +50,7 @@ function BookingCheckout() {
     <MobileShell>
       <header className="sticky top-0 z-30 border-b border-border/60 bg-card/95 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <Link to="/poojas/$slug" params={{ slug }} className="rounded-full p-1.5 hover:bg-muted">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+          <BackButton fallback="/poojas" className="h-8 w-8 bg-transparent hover:bg-muted" />
           <h1 className="text-sm font-semibold">Confirm & pay</h1>
         </div>
       </header>

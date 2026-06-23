@@ -6,6 +6,7 @@ import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, MapPin, Plus, Check, Wallet, Banknote } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout")({
@@ -132,13 +133,7 @@ function CheckoutPage() {
         title="Checkout"
         subtitle={`${cart.count} item${cart.count === 1 ? "" : "s"} · ₹${cart.total}`}
         right={
-          <button
-            onClick={() => navigate({ to: "/cart" })}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
+          <BackButton fallback="/cart" className="h-10 w-10 border border-border bg-card" />
         }
       />
 

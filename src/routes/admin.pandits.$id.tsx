@@ -64,9 +64,13 @@ function AdminPanditDetail() {
 
   return (
     <div className="space-y-3">
-      <Link to="/admin/pandits" className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+      <button
+        type="button"
+        onClick={() => window.history.back()}
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back to pandits
-      </Link>
+      </button>
 
       <Card className="space-y-1 p-4">
         <p className="font-bold">{pandit.name} {pandit.verified && "✓"}</p>

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { ArrowLeft, BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays, LifeBuoy, ShoppingBag } from "lucide-react";
+import { BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays, LifeBuoy, ShoppingBag } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 
@@ -49,7 +50,7 @@ function AdminLayout() {
     <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col bg-background">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur">
         <div className="flex items-center gap-3">
-          <Link to="/profile" className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary"><ArrowLeft className="h-4 w-4" /></Link>
+          <BackButton fallback="/profile" />
           <div>
             <h1 className="text-base font-bold">Admin Dashboard</h1>
             <p className="text-[11px] text-muted-foreground">Pranam Console</p>
