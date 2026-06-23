@@ -138,6 +138,7 @@ function RootComponent() {
       <AuthProvider>
         <I18nProvider>
           <CartProvider>
+            <NavStackTracker />
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
             <Toaster />
