@@ -140,8 +140,16 @@ function BecomePandit() {
       {/* Header */}
       <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-border/50 bg-background/90 px-4 py-3 backdrop-blur-xl">
         <button
-          onClick={() => (step === 0 ? window.history.back() : setStep((s) => Math.max(0, s - 1) as Step))}
+          onClick={() => {
+            if (step !== 0) {
+              setStep((s) => Math.max(0, s - 1) as Step);
+              return;
+            }
+            if (window.history.length > 1) window.history.back();
+            else navigate({ to: "/" });
+          }}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary"
+          aria-label="Back"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
