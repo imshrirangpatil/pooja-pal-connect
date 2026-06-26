@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { MobileShell, TopBar } from "@/components/MobileShell";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { CalendarCheck, Clock, ChevronRight, Star, X, MapPin, Phone, CreditCard, Calendar, Loader2, LogIn } from "lucide-react";
 import { ReviewModule } from "@/components/ReviewModule";
 import { toast } from "sonner";
@@ -75,21 +76,30 @@ export function Bookings() {
   });
 
   const cancel = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: string): Promise<number> => {
       const { error } = await (supabase.from("orders") as any).update({ status: "cancelled" }).eq("id", id);
       if (error) throw error;
+      const { data: refunded } = await (supabase as any).rpc("refund_order_credits", { _order_id: id });
+      return (refunded as number) ?? 0;
     },
-    onSuccess: () => {
+    onSuccess: (refunded) => {
       qc.invalidateQueries({ queryKey: ["bookings", user?.id] });
+      qc.invalidateQueries({ queryKey: ["credit-balance", user?.id] });
       setDetails(null);
       setConfirmCancel(null);
       setTab("Cancelled");
-      toast.success("Booking cancelled");
+      toast.success(
+        refunded > 0
+          ? `Booking cancelled. ₹${(refunded / 100).toLocaleString("en-IN")} returned to your wallet.`
+          : "Booking cancelled",
+      );
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const list = bookings.filter((b) => tabFor(b.status) === tab);
+
+  const refreshBookings = () => qc.invalidateQueries({ queryKey: ["bookings", user?.id] });
 
   const rebook = (b: OrderRow) => {
     if (b.pooja_slug) navigate({ to: "/poojas/$slug", params: { slug: b.pooja_slug } });
@@ -121,6 +131,7 @@ export function Bookings() {
     <MobileShell>
       <TopBar title="My Bookings" subtitle="Upcoming & past poojas" />
 
+      <PullToRefresh onRefresh={refreshBookings}>
       <div className="px-5 pt-4">
         <div className="flex gap-2 rounded-full border border-border bg-card p-1">
           {TABS.map((t) => (
@@ -185,6 +196,7 @@ export function Bookings() {
           </div>
         )}
       </div>
+      </PullToRefresh>
 
       {rating && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setRating(null)}>

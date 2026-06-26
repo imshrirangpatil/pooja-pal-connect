@@ -2,9 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { useAuth } from "@/lib/auth";
+import { useCart } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Package, Clock } from "lucide-react";
+import { Package, Clock, RotateCcw } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
+import { PullToRefresh } from "@/components/PullToRefresh";
+import { haptic } from "@/lib/haptics";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/orders")({
   head: () => ({
@@ -25,7 +29,7 @@ type OrderRow = {
   created_at: string;
   city: string;
   state: string;
-  order_items: { id: string; name: string; emoji: string | null; qty: number }[];
+  order_items: { id: string; samagri_id: string; name: string; emoji: string | null; qty: number; unit_price: number }[];
 };
 
 function statusColor(status: string) {
@@ -45,8 +49,17 @@ function statusColor(status: string) {
 function OrdersPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const cart = useCart();
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("id, status, payment_method, payment_status, total, created_at, city, state, order_items(id, samagri_id, name, emoji, qty, unit_price)")
+      .order("created_at", { ascending: false });
+    if (!error) setOrders((data as OrderRow[]) ?? []);
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -54,15 +67,19 @@ function OrdersPage() {
       navigate({ to: "/signup" });
       return;
     }
-    (async () => {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("id, status, payment_method, payment_status, total, created_at, city, state, order_items(id, name, emoji, qty)")
-        .order("created_at", { ascending: false });
-      if (!error) setOrders((data as OrderRow[]) ?? []);
-      setLoading(false);
-    })();
+    load().finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, user, navigate]);
+
+  const reorder = (o: OrderRow) => {
+    for (const it of o.order_items ?? []) {
+      cart.add({ id: it.samagri_id, name: it.name, desc: "", price: it.unit_price, mrp: it.unit_price, image: it.emoji ?? "" });
+      cart.setQty(it.samagri_id, it.qty);
+    }
+    haptic();
+    toast.success("Added to cart");
+    navigate({ to: "/cart" });
+  };
 
   return (
     <MobileShell>
@@ -74,6 +91,7 @@ function OrdersPage() {
         }
       />
 
+      <PullToRefresh onRefresh={load}>
       <div className="px-5 pt-4">
         {loading ? (
           <div className="space-y-2">
@@ -136,12 +154,19 @@ function OrdersPage() {
                       {o.payment_status === "paid" ? " · Paid" : ""}
                     </span>
                   </div>
+                  <button
+                    onClick={() => reorder(o)}
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" /> Reorder
+                  </button>
                 </article>
               );
             })}
           </div>
         )}
       </div>
+      </PullToRefresh>
     </MobileShell>
   );
 }

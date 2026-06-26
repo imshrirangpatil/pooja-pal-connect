@@ -1,0 +1,16 @@
+# Normalize line endings to LF for all text files so the repo is consistent
+# across Windows/macOS/Linux and Prettier stops flagging CRLF.
+* text=auto eol=lf
+
+# Treat binary assets as binary (never line-ending normalized).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.svg text eol=lf
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary

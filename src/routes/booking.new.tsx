@@ -141,6 +141,17 @@ function BookingCheckout() {
         const { data: pr } = await supabase.from("pandits").select("id").eq("name", pandit.name).limit(1).maybeSingle();
         dbPanditId = (pr as { id: string } | null)?.id ?? null;
       }
+      // Prevent double-booking the same pandit at the same time.
+      if (dbPanditId && scheduledAt) {
+        const { data: free } = await (supabase as any).rpc("is_pandit_available", {
+          _pandit_id: dbPanditId,
+          _scheduled_at: scheduledAt.toISOString(),
+        });
+        if (free === false) {
+          toast.error("This pandit is already booked at that time. Please pick another slot.");
+          return;
+        }
+      }
       const { data: order, error } = await (supabase.from("orders") as any)
         .insert({
           user_id: user.id,
