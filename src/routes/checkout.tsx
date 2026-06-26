@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MapPin, Plus, Check, Wallet, Banknote } from "lucide-react";
+import { MapPin, Plus, Check, Wallet, Banknote, LogIn } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { toast } from "sonner";
+import { haptic } from "@/lib/haptics";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -69,12 +70,13 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) {
-      navigate({ to: "/signup", search: { redirect: "/checkout" } as never });
-      return;
-    }
     if (cart.items.length === 0) {
       navigate({ to: "/cart" });
+      return;
+    }
+    if (!user) {
+      // Let signed-out users review the order; sign-in is requested at place-order.
+      setLoading(false);
       return;
     }
     (async () => {
@@ -95,7 +97,10 @@ function CheckoutPage() {
   }, [authLoading, user, cart.items.length, navigate]);
 
   const placeOrder = async () => {
-    if (!user) return;
+    if (!user) {
+      navigate({ to: "/signup", search: { redirect: "/checkout" } as never });
+      return;
+    }
     const addr = addresses.find((a) => a.id === selectedId);
     if (!addr) {
       toast.error("Please select a delivery address");
@@ -153,6 +158,7 @@ function CheckoutPage() {
       }
 
       cart.clear();
+      haptic([12, 30, 12]);
       toast.success("Order placed! We'll notify you when it's on the way.");
       navigate({ to: "/orders" });
     } catch (e) {
@@ -187,6 +193,20 @@ function CheckoutPage() {
 
         {loading ? (
           <div className="mt-3 h-24 animate-pulse rounded-2xl bg-secondary/60" />
+        ) : !user ? (
+          <Link
+            to="/signup"
+            search={{ redirect: "/checkout" } as never}
+            className="mt-3 flex items-center gap-3 rounded-2xl border border-dashed border-border bg-card p-4 text-sm shadow-soft"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent">
+              <LogIn className="h-4 w-4" />
+            </span>
+            <div>
+              <p className="font-semibold">Sign in to add your address</p>
+              <p className="text-xs text-muted-foreground">Your cart is saved.</p>
+            </div>
+          </Link>
         ) : addresses.length === 0 ? (
           <Link
             to="/addresses"
@@ -315,10 +335,10 @@ function CheckoutPage() {
       <div className="fixed bottom-16 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-card/95 p-4 backdrop-blur-xl">
         <Button
           onClick={placeOrder}
-          disabled={placing || !selectedId || cart.items.length === 0}
+          disabled={placing || cart.items.length === 0 || (!!user && !selectedId)}
           className="h-12 w-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
         >
-          {placing ? "Placing order…" : `Place Order · ₹${(payablePaise / 100).toLocaleString("en-IN")}`}
+          {placing ? "Placing order…" : !user ? "Sign in to place order" : `Place Order · ₹${(payablePaise / 100).toLocaleString("en-IN")}`}
         </Button>
       </div>
     </MobileShell>

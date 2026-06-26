@@ -3,6 +3,8 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { BackButton } from "@/components/BackButton";
 import { useAuth } from "@/lib/auth";
 import { useNotifications } from "@/lib/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Bell, CheckCheck, BellOff, LogIn } from "lucide-react";
 
 export const Route = createFileRoute("/notifications")({
@@ -31,6 +33,8 @@ function NotificationsPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { items, unreadCount, loading, markRead, markAllRead } = useNotifications();
+  const qc = useQueryClient();
+  const refresh = () => qc.invalidateQueries({ queryKey: ["notifications", user?.id] });
 
   if (!authLoading && !user) {
     return (
@@ -61,6 +65,7 @@ function NotificationsPage() {
         right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />}
       />
 
+      <PullToRefresh onRefresh={refresh}>
       <div className="px-5 pt-3 pb-10">
         {unreadCount > 0 && (
           <button
@@ -111,6 +116,7 @@ function NotificationsPage() {
           </div>
         )}
       </div>
+      </PullToRefresh>
     </MobileShell>
   );
 }

@@ -5,7 +5,7 @@ import { BackButton } from "@/components/BackButton";
 import { poojas as seedPoojas, pandits } from "@/lib/data";
 import { rowToPooja } from "@/lib/poojas-source";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Check, Clock, Star, ShieldCheck, Calendar, MapPin } from "lucide-react";
+import { Check, Clock, ShieldCheck, Calendar, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/poojas/$slug")({
   validateSearch: (s) => z.object({ pandit: z.string().optional() }).parse(s),
@@ -67,7 +67,7 @@ function PoojaDetail() {
 
         <div className="mt-4 flex flex-wrap gap-2">
           <Chip icon={<Clock className="h-3 w-3" />} text={pooja.duration} />
-          <Chip icon={<Star className="h-3 w-3 fill-primary text-primary" />} text="4.9 (2.1k)" />
+          {pooja.samagriIncluded && <Chip icon={<Check className="h-3 w-3" />} text="Samagri included" />}
           <Chip icon={<ShieldCheck className="h-3 w-3" />} text="Verified pandit" />
         </div>
 

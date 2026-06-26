@@ -5,6 +5,7 @@ import { ArrowLeft, ShieldCheck, Star, MapPin, Languages, Award, Calendar, Chevr
 import { BackButton } from "@/components/BackButton";
 import { ReviewModule } from "@/components/ReviewModule";
 import { useSavedPandits } from "@/lib/saved-pandits";
+import { usePanditRatings } from "@/lib/ratings";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pandits/$id")({
@@ -33,6 +34,8 @@ function PanditProfile() {
 
   const { isSaved, toggle } = useSavedPandits();
   const saved = isSaved(pandit.id);
+  const ratings = usePanditRatings();
+  const r = ratings[pandit.id];
 
   const offered = poojas.filter((p) => pandit.poojaSlugs.includes(p.slug));
 
@@ -73,10 +76,16 @@ function PanditProfile() {
                 <MapPin className="h-3 w-3" /> {pandit.city}
               </p>
               <div className="mt-2 flex items-center gap-3 text-xs">
-                <span className="inline-flex items-center gap-0.5 font-semibold">
-                  <Star className="h-3.5 w-3.5 fill-primary text-primary" /> {pandit.rating}
-                </span>
-                <span className="text-muted-foreground">({pandit.reviews} reviews)</span>
+                {r?.count ? (
+                  <>
+                    <span className="inline-flex items-center gap-0.5 font-semibold">
+                      <Star className="h-3.5 w-3.5 fill-primary text-primary" /> {r.avg.toFixed(1)}
+                    </span>
+                    <span className="text-muted-foreground">({r.count} review{r.count === 1 ? "" : "s"})</span>
+                  </>
+                ) : (
+                  <span className="text-muted-foreground">New on Pranam</span>
+                )}
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { ImageUpload } from "@/components/ImageUpload";
 import { toast } from "sonner";
 import { Plus, Trash2, Save, Package } from "lucide-react";
 
@@ -173,8 +174,11 @@ function AdminSkus() {
               <Input type="number" value={editing.mrp} onChange={(e) => setEditing({ ...editing, mrp: Number(e.target.value) })} />
             </div>
             <div className="col-span-2">
-              <label className="text-xs font-medium">Image URL</label>
-              <Input value={editing.image_url} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} placeholder="https://…" />
+              <label className="text-xs font-medium">Image</label>
+              <div className="mt-1">
+                <ImageUpload value={editing.image_url} onChange={(url) => setEditing({ ...editing, image_url: url })} folder="skus" />
+              </div>
+              <Input className="mt-2" value={editing.image_url} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} placeholder="or paste an image URL" />
             </div>
             <div>
               <label className="text-xs font-medium">Stock</label>

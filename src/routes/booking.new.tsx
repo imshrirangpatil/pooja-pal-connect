@@ -8,6 +8,7 @@ import { poojas, pandits } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { haptic } from "@/lib/haptics";
 import { Calendar, Check, Clock, MapPin, ShieldCheck, Wallet, LogIn, Plus } from "lucide-react";
 
 type Addr = {
@@ -179,6 +180,7 @@ function BookingCheckout() {
         if (redeemErr) console.error("[booking] redeem failed", redeemErr);
         qc.invalidateQueries({ queryKey: ["credit-balance", user.id] });
       }
+      haptic([12, 30, 12]);
       toast.success("Booking confirmed. We will reach out to schedule.");
       navigate({ to: "/bookings" });
     } catch (e) {

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { pandits, poojas } from "@/lib/data";
+import { usePanditRatings } from "@/lib/ratings";
 import { ShieldCheck, Star, MapPin, Languages, SlidersHorizontal, X } from "lucide-react";
 
 export const Route = createFileRoute("/pandits/")({
@@ -30,6 +31,7 @@ const RATING_OPTIONS = [
 ];
 
 function Pandits() {
+  const ratings = usePanditRatings();
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState<string | null>(null);
   const [expMin, setExpMin] = useState(0);
@@ -114,10 +116,16 @@ function Pandits() {
                       <MapPin className="h-3 w-3" /> {p.city}
                     </p>
                     <div className="mt-1 flex items-center gap-2 text-[11px]">
-                      <span className="inline-flex items-center gap-0.5 font-semibold">
-                        <Star className="h-3 w-3 fill-primary text-primary" /> {p.rating}
-                      </span>
-                      <span className="text-muted-foreground">({p.reviews}) · {p.experience} yrs</span>
+                      {ratings[p.id]?.count ? (
+                        <>
+                          <span className="inline-flex items-center gap-0.5 font-semibold">
+                            <Star className="h-3 w-3 fill-primary text-primary" /> {ratings[p.id].avg.toFixed(1)}
+                          </span>
+                          <span className="text-muted-foreground">({ratings[p.id].count}) · {p.experience} yrs</span>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">New · {p.experience} yrs experience</span>
+                      )}
                     </div>
                   </div>
                 </div>

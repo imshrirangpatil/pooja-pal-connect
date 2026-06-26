@@ -9,6 +9,7 @@ import samagriDiwali from "@/assets/samagri-diwali.jpg";
 import { useCart } from "@/lib/cart";
 import { ShoppingCart, Plus, Minus, Truck, Package, Sparkles, Gem, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
+import { haptic } from "@/lib/haptics";
 
 export const Route = createFileRoute("/samagri")({
   head: () => ({
@@ -151,6 +152,7 @@ function Samagri() {
                       <button
                         onClick={() => {
                           cart.add({ id: s.id, name: s.name, desc: s.desc, price: s.price, mrp: s.mrp, image: s.image });
+                          haptic();
                           toast.success(`${s.name} added to cart`);
                         }}
                         aria-label={`Add ${s.name} to cart`}

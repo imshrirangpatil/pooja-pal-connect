@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { ImageUpload } from "@/components/ImageUpload";
 import { toast } from "sonner";
 import { Plus, Trash2, Save } from "lucide-react";
 
@@ -21,11 +22,12 @@ type PoojaForm = {
   season: string;
   popular: boolean;
   visible: boolean;
+  image_url: string;
 };
 
 const empty: PoojaForm = {
   slug: "", name: "", tagline: "", duration: "", price_from: 0,
-  description: "", season: "", popular: false, visible: true,
+  description: "", season: "", popular: false, visible: true, image_url: "",
 };
 
 function AdminPoojas() {
@@ -47,7 +49,7 @@ function AdminPoojas() {
       const { error } = await supabase.from("poojas").upsert({
         slug: p.slug, name: p.name, tagline: p.tagline, duration: p.duration,
         price_from: p.price_from, description: p.description, season: p.season || null,
-        popular: p.popular, visible: p.visible,
+        popular: p.popular, visible: p.visible, image_url: p.image_url || null,
       });
       if (error) throw error;
     },
@@ -125,7 +127,7 @@ function AdminPoojas() {
           pooja={{
             slug: p.slug, name: p.name, tagline: p.tagline, duration: p.duration,
             price_from: p.price_from, description: p.description, season: p.season ?? "",
-            popular: p.popular, visible: p.visible,
+            popular: p.popular, visible: p.visible, image_url: p.image_url ?? "",
           }}
           onSave={(d) => save.mutate(d)}
           onDelete={() => del.mutate(p.slug)}
@@ -167,6 +169,7 @@ function PoojaRow({ pooja, onSave, onDelete }: {
         </div>
       ) : (
         <div className="space-y-2">
+          <ImageUpload value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} folder="poojas" />
           <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <Input value={form.tagline} onChange={(e) => setForm({ ...form, tagline: e.target.value })} />
           <Input value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} />
