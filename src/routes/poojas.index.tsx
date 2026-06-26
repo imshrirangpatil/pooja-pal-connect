@@ -6,6 +6,9 @@ import type { Pooja } from "@/lib/data";
 import { ChevronRight, Clock, Sparkles, Search } from "lucide-react";
 
 export const Route = createFileRoute("/poojas/")({
+  validateSearch: (s: Record<string, unknown>): { q?: string } => ({
+    q: typeof s.q === "string" ? s.q : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "All Poojas - Pranam" },
@@ -43,8 +46,9 @@ function matchesTheme(p: Pooja, theme: FilterKey): boolean {
 
 function PoojasList() {
   const { poojas, loading } = usePoojas();
+  const { q } = Route.useSearch();
   const [active, setActive] = useState<FilterKey>("All");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(q ?? "");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

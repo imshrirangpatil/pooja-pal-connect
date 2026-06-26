@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { pandits } from "@/lib/data";
 import { usePoojas } from "@/lib/poojas-source";
@@ -26,6 +27,12 @@ function Home() {
   const { poojas } = usePoojas();
   const { festivals } = useUpcomingFestivals(8);
   const unread = useUnreadCount();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const runSearch = () => {
+    const q = search.trim();
+    navigate({ to: "/poojas", search: q ? { q } : {} });
+  };
   return (
     <MobileShell>
       {/* Hero */}
@@ -61,10 +68,20 @@ function Home() {
           </div>
 
           <div className="relative mt-6">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <button
+              type="button"
+              onClick={runSearch}
+              aria-label="Search"
+              className="absolute left-1.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground"
+            >
+              <Search className="h-4 w-4" />
+            </button>
             <input
-              placeholder="Search pooja, pandit or astrologer…"
-              className="h-12 w-full rounded-full border border-border/40 bg-card pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") runSearch(); }}
+              placeholder="Search poojas by name or type…"
+              className="h-12 w-full rounded-full border border-border/40 bg-card pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         </div>
