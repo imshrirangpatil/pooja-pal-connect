@@ -425,12 +425,14 @@ function ChatPage() {
               }
             }}
             placeholder={ended ? "Session ended" : "Type your question..."}
+            aria-label="Type your message"
             disabled={ended || typing}
             className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary disabled:opacity-60"
           />
           <button
             onClick={() => void send()}
             disabled={!draft.trim() || typing || ended}
+            aria-label="Send message"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow disabled:opacity-40"
           >
             {typing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

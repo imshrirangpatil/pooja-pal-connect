@@ -71,6 +71,7 @@ function PoojasList() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search poojas, e.g. Ganesh, Navagraha, Griha Pravesh"
+            aria-label="Search poojas"
             className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>

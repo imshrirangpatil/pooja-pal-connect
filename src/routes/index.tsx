@@ -117,6 +117,7 @@ function Home() {
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") runSearch(); }}
               placeholder="Search poojas by name or type…"
+              aria-label="Search poojas"
               className="h-12 w-full rounded-full border border-border/40 bg-card pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>

@@ -280,9 +280,10 @@ function SupportChat() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
           placeholder="Type your question…"
+          aria-label="Type your question"
           disabled={pending}
         />
-        <Button onClick={send} disabled={pending || !input.trim()} size="icon">
+        <Button onClick={send} disabled={pending || !input.trim()} size="icon" aria-label="Send message">
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </Button>
       </div>

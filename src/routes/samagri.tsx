@@ -80,6 +80,7 @@ function Samagri() {
         right={
           <Link
             to="/cart"
+            aria-label={cart.count > 0 ? `View cart, ${cart.count} item${cart.count === 1 ? "" : "s"}` : "View cart"}
             className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card"
           >
             <ShoppingCart className="h-4 w-4" />
