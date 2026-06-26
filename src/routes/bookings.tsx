@@ -233,6 +233,8 @@ export function Bookings() {
                   <span className="text-sm font-bold text-accent">₹{(details.total ?? 0).toLocaleString("en-IN")}</span>
                 </div>
 
+                {tabFor(details.status) !== "Cancelled" && <BookingSteps status={details.status} />}
+
                 <DetailRow label="Pooja" value={details.pooja_name ?? "Pooja booking"} />
                 <DetailRow label="Pandit" value={details.pandit_name ?? "To be assigned"} />
 
@@ -288,6 +290,26 @@ export function Bookings() {
         </div>
       )}
     </MobileShell>
+  );
+}
+
+function BookingSteps({ status }: { status: string }) {
+  const steps = ["Placed", "Confirmed", "Done"];
+  const current = status === "completed" || status === "delivered" ? 2 : status === "confirmed" || status === "shipped" ? 1 : 0;
+  return (
+    <div className="flex items-center">
+      {steps.map((label, i) => (
+        <div key={label} className={`flex items-center ${i < steps.length - 1 ? "flex-1" : ""}`}>
+          <div className="flex flex-col items-center">
+            <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ${i <= current ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              {i + 1}
+            </span>
+            <span className={`mt-1 text-[10px] ${i <= current ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{label}</span>
+          </div>
+          {i < steps.length - 1 && <span className={`mx-1 mb-4 h-0.5 flex-1 rounded ${i < current ? "bg-primary" : "bg-border"}`} />}
+        </div>
+      ))}
+    </div>
   );
 }
 
