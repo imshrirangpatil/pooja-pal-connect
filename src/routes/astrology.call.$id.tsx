@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Mic, MicOff, Phone, Video, VideoOff, Volume2, MessageCircle, Sparkles, Signal } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
-import { astrologers } from "@/lib/data";
+import { useAstrologers } from "@/lib/astrologers-source";
 import { z } from "zod";
 import { playRingback, playConnectChime, playEndChime } from "@/lib/ringtone";
 import { startLoopback, type LoopbackHandle } from "@/lib/webrtc-loop";
@@ -27,6 +27,7 @@ function CallPage() {
   const { id } = Route.useParams();
   const { mode } = Route.useSearch();
   const navigate = useNavigate();
+  const { astrologers } = useAstrologers();
   const astrologer = astrologers.find((a) => a.id === id);
   if (!astrologer) throw notFound();
 

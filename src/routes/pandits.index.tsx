@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { pandits, poojas } from "@/lib/data";
+import { poojas } from "@/lib/data";
+import { usePandits } from "@/lib/pandits-source";
 import { usePanditRatings } from "@/lib/ratings";
 import { ShieldCheck, Star, MapPin, Languages, SlidersHorizontal, X } from "lucide-react";
 
@@ -15,7 +16,6 @@ export const Route = createFileRoute("/pandits/")({
   component: Pandits,
 });
 
-const ALL_LANGS = Array.from(new Set(pandits.flatMap((p) => p.languages))).sort();
 const EXP_OPTIONS = [
   { label: "Any", min: 0 },
   { label: "5+ yrs", min: 5 },
@@ -31,12 +31,15 @@ const RATING_OPTIONS = [
 ];
 
 function Pandits() {
+  const { pandits } = usePandits();
   const ratings = usePanditRatings();
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState<string | null>(null);
   const [expMin, setExpMin] = useState(0);
   const [ratingMin, setRatingMin] = useState(0);
   const [pooja, setPooja] = useState<string | null>(null);
+
+  const ALL_LANGS = useMemo(() => Array.from(new Set(pandits.flatMap((p) => p.languages))).sort(), [pandits]);
 
   const filtered = useMemo(
     () =>
@@ -47,7 +50,7 @@ function Pandits() {
           p.rating >= ratingMin &&
           (!pooja || p.poojaSlugs.includes(pooja)),
       ),
-    [language, expMin, ratingMin, pooja],
+    [pandits, language, expMin, ratingMin, pooja],
   );
 
   const activeCount = (language ? 1 : 0) + (expMin ? 1 : 0) + (ratingMin ? 1 : 0) + (pooja ? 1 : 0);

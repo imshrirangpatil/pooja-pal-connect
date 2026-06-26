@@ -2,8 +2,9 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { z } from "zod";
 import { MobileShell } from "@/components/MobileShell";
 import { BackButton } from "@/components/BackButton";
-import { poojas as seedPoojas, pandits } from "@/lib/data";
+import { poojas as seedPoojas } from "@/lib/data";
 import { rowToPooja } from "@/lib/poojas-source";
+import { usePandits } from "@/lib/pandits-source";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, Clock, ShieldCheck, Calendar, MapPin } from "lucide-react";
 
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/poojas/$slug")({
 function PoojaDetail() {
   const { pooja } = Route.useLoaderData();
   const { pandit: selectedPanditId } = Route.useSearch();
+  const { pandits } = usePandits();
   const selectedPandit = selectedPanditId ? pandits.find((p) => p.id === selectedPanditId) : undefined;
   const suggested = selectedPandit
     ? [selectedPandit, ...pandits.filter((p) => p.id !== selectedPandit.id).slice(0, 1)]

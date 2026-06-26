@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Phone, Send, Sparkles, Shield, Star, Loader2, LogIn, Video } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
-import { astrologers } from "@/lib/data";
+import { useAstrologers } from "@/lib/astrologers-source";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
@@ -40,6 +40,7 @@ function ChatPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { astrologers } = useAstrologers();
   const astrologer = astrologers.find((a) => a.id === id);
   if (!astrologer) throw notFound();
 

@@ -4,7 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { MobileShell } from "@/components/MobileShell";
 import { BackButton } from "@/components/BackButton";
-import { poojas, pandits } from "@/lib/data";
+import { usePoojas } from "@/lib/poojas-source";
+import { usePandits } from "@/lib/pandits-source";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -57,6 +58,8 @@ function BookingCheckout() {
   const { slug, pandit: panditId } = Route.useSearch();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { poojas, loading: poojasLoading } = usePoojas();
+  const { pandits } = usePandits();
   const pooja = poojas.find((p) => p.slug === slug);
   const pandit = panditId ? pandits.find((p) => p.id === panditId) : undefined;
   const [pay, setPay] = useState<"upi" | "cod" | "wallet">("upi");
@@ -103,6 +106,13 @@ function BookingCheckout() {
   });
 
   if (!pooja) {
+    if (poojasLoading) {
+      return (
+        <MobileShell>
+          <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
+        </MobileShell>
+      );
+    }
     return (
       <MobileShell>
         <div className="p-8 text-center text-sm text-muted-foreground">

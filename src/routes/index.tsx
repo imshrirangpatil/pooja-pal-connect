@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
-import { pandits } from "@/lib/data";
 import { usePoojas } from "@/lib/poojas-source";
+import { usePandits } from "@/lib/pandits-source";
 import { useUpcomingFestivals } from "@/lib/festivals-source";
 import { useUnreadCount } from "@/lib/notifications";
 import { useAuth } from "@/lib/auth";
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { poojas } = usePoojas();
+  const { pandits } = usePandits();
   const { festivals } = useUpcomingFestivals(8);
   const unread = useUnreadCount();
   const navigate = useNavigate();

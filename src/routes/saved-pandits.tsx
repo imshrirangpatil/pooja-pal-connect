@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { useSavedPandits } from "@/lib/saved-pandits";
-import { pandits } from "@/lib/data";
+import { usePandits } from "@/lib/pandits-source";
 import { Heart, ShieldCheck, Star, MapPin, ChevronRight } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { useI18n } from "@/lib/i18n";
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/saved-pandits")({
 function SavedPandits() {
   const { ids, remove } = useSavedPandits();
   const { t } = useI18n();
+  const { pandits } = usePandits();
   const list = pandits.filter((p) => ids.includes(p.id));
 
   return (

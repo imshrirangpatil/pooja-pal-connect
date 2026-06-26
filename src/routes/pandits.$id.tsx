@@ -1,10 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { pandits, poojas } from "@/lib/data";
-import { ArrowLeft, ShieldCheck, Star, MapPin, Languages, Award, Calendar, ChevronRight, Heart } from "lucide-react";
+import { ShieldCheck, Star, MapPin, Languages, Award, Calendar, ChevronRight, Heart } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { ReviewModule } from "@/components/ReviewModule";
 import { useSavedPandits } from "@/lib/saved-pandits";
+import { usePandits } from "@/lib/pandits-source";
 import { usePanditRatings } from "@/lib/ratings";
 import { toast } from "sonner";
 
@@ -29,12 +30,21 @@ export const Route = createFileRoute("/pandits/$id")({
 
 function PanditProfile() {
   const { id } = Route.useParams();
-  const pandit = pandits.find((p) => p.id === id);
-  if (!pandit) throw notFound();
-
+  const { pandits: dbPandits, loading } = usePandits();
   const { isSaved, toggle } = useSavedPandits();
-  const saved = isSaved(pandit.id);
   const ratings = usePanditRatings();
+  const pandit = dbPandits.find((p) => p.id === id);
+  if (!pandit) {
+    if (loading) {
+      return (
+        <MobileShell>
+          <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
+        </MobileShell>
+      );
+    }
+    throw notFound();
+  }
+  const saved = isSaved(pandit.id);
   const r = ratings[pandit.id];
 
   const offered = poojas.filter((p) => pandit.poojaSlugs.includes(p.slug));

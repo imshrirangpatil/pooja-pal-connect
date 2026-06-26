@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { astrologers, type AstroCategory } from "@/lib/data";
+import { type AstroCategory } from "@/lib/data";
+import { useAstrologers } from "@/lib/astrologers-source";
 import { Phone, MessageCircle, Star, Sparkles, Video } from "lucide-react";
 
 export const Route = createFileRoute("/astrology/")({
@@ -17,12 +18,13 @@ export const Route = createFileRoute("/astrology/")({
 const TYPES: ("All" | AstroCategory)[] = ["All", "Vedic", "Tarot", "Vastu", "Numerology", "Palmistry", "Nadi"];
 
 function Astrology() {
+  const { astrologers } = useAstrologers();
   const [filter, setFilter] = useState<"All" | AstroCategory>("All");
   const list = useMemo(
     () => (filter === "All" ? astrologers : astrologers.filter((a) => a.category === filter)),
-    [filter],
+    [filter, astrologers],
   );
-  const firstOnline = useMemo(() => astrologers.find((a) => a.online), []);
+  const firstOnline = useMemo(() => astrologers.find((a) => a.online), [astrologers]);
 
   return (
     <MobileShell>
