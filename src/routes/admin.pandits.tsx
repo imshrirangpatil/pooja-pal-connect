@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Plus, Trash2, IndianRupee } from "lucide-react";
@@ -21,8 +22,11 @@ type Form = {
   initials: string;
   verified: boolean;
   visible: boolean;
+  bio: string;
+  feeFrom: number;
+  poojaSlugs: string;
 };
-const empty: Form = { name: "", city: "", experience: 0, rating: 4.5, reviews: 0, languages: "", specialties: "", initials: "", verified: true, visible: true };
+const empty: Form = { name: "", city: "", experience: 0, rating: 4.5, reviews: 0, languages: "", specialties: "", initials: "", verified: true, visible: true, bio: "", feeFrom: 0, poojaSlugs: "" };
 
 function AdminPandits() {
   const qc = useQueryClient();
@@ -46,12 +50,15 @@ function AdminPandits() {
         specialties: f.specialties.split(",").map((s) => s.trim()).filter(Boolean),
         initials: f.initials || f.name.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase(),
         verified: f.verified, visible: f.visible,
+        bio: f.bio || null,
+        fee_from: f.feeFrom,
+        pooja_slugs: f.poojaSlugs.split(",").map((s) => s.trim()).filter(Boolean),
       };
       if (id) {
-        const { error } = await supabase.from("pandits").update(payload).eq("id", id);
+        const { error } = await (supabase.from("pandits") as any).update(payload).eq("id", id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("pandits").insert(payload);
+        const { error } = await (supabase.from("pandits") as any).insert(payload);
         if (error) throw error;
       }
     },
@@ -88,6 +95,9 @@ function AdminPandits() {
           <Input type="number" placeholder="Reviews" value={draft.reviews} onChange={(e) => setDraft({ ...draft, reviews: Number(e.target.value) })} />
           <Input placeholder="Languages (comma-separated)" value={draft.languages} onChange={(e) => setDraft({ ...draft, languages: e.target.value })} />
           <Input placeholder="Specialties (comma-separated)" value={draft.specialties} onChange={(e) => setDraft({ ...draft, specialties: e.target.value })} />
+          <Input type="number" placeholder="Fee from (₹)" value={draft.feeFrom || ""} onChange={(e) => setDraft({ ...draft, feeFrom: Number(e.target.value) })} />
+          <Input placeholder="Pooja slugs (comma-separated, e.g. ganesh-pooja)" value={draft.poojaSlugs} onChange={(e) => setDraft({ ...draft, poojaSlugs: e.target.value })} />
+          <Textarea placeholder="Bio" value={draft.bio} onChange={(e) => setDraft({ ...draft, bio: e.target.value })} />
           <Button onClick={() => save.mutate({ f: draft })} disabled={save.isPending || !draft.name}>Create</Button>
         </Card>
       )}
@@ -102,18 +112,20 @@ function AdminPandits() {
 }
 
 function PanditRow({ pandit, onSave, onDelete }: {
-  pandit: { id: string; name: string; city: string; experience: number; rating: number; reviews: number; languages: unknown; specialties: unknown; initials: string; verified: boolean; visible: boolean };
+  pandit: { id: string; name: string; city: string; experience: number; rating: number; reviews: number; languages: unknown; specialties: unknown; initials: string; verified: boolean; visible: boolean; bio?: string | null; fee_from?: number | null; pooja_slugs?: unknown };
   onSave: (f: Form) => void;
   onDelete: () => void;
 }) {
   const [edit, setEdit] = useState(false);
   const langs = Array.isArray(pandit.languages) ? (pandit.languages as string[]) : [];
   const specs = Array.isArray(pandit.specialties) ? (pandit.specialties as string[]) : [];
+  const slugs = Array.isArray(pandit.pooja_slugs) ? (pandit.pooja_slugs as string[]) : [];
   const [form, setForm] = useState<Form>({
     name: pandit.name, city: pandit.city, experience: pandit.experience,
     rating: Number(pandit.rating), reviews: pandit.reviews,
     languages: langs.join(", "), specialties: specs.join(", "),
     initials: pandit.initials, verified: pandit.verified, visible: pandit.visible,
+    bio: pandit.bio ?? "", feeFrom: pandit.fee_from ?? 0, poojaSlugs: slugs.join(", "),
   });
 
   return (
@@ -150,6 +162,9 @@ function PanditRow({ pandit, onSave, onDelete }: {
           <Input type="number" value={form.reviews} onChange={(e) => setForm({ ...form, reviews: Number(e.target.value) })} />
           <Input value={form.languages} onChange={(e) => setForm({ ...form, languages: e.target.value })} placeholder="Languages" />
           <Input value={form.specialties} onChange={(e) => setForm({ ...form, specialties: e.target.value })} placeholder="Specialties" />
+          <Input type="number" value={form.feeFrom} onChange={(e) => setForm({ ...form, feeFrom: Number(e.target.value) })} placeholder="Fee from (₹)" />
+          <Input value={form.poojaSlugs} onChange={(e) => setForm({ ...form, poojaSlugs: e.target.value })} placeholder="Pooja slugs (comma-separated)" />
+          <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="Bio" />
           <div className="flex gap-3 text-xs">
             <label className="flex items-center gap-1.5"><input type="checkbox" checked={form.verified} onChange={(e) => setForm({ ...form, verified: e.target.checked })} /> Verified</label>
             <label className="flex items-center gap-1.5"><input type="checkbox" checked={form.visible} onChange={(e) => setForm({ ...form, visible: e.target.checked })} /> Visible</label>

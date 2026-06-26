@@ -46,6 +46,7 @@ import { Route as AdminPayoutsRouteImport } from './routes/admin.payouts'
 import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminFestivalsRouteImport } from './routes/admin.festivals'
+import { Route as AdminAstrologersRouteImport } from './routes/admin.astrologers'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AstrologyChatIdRouteImport } from './routes/astrology.chat.$id'
 import { Route as AstrologyCallIdRouteImport } from './routes/astrology.call.$id'
@@ -236,6 +237,11 @@ const AdminFestivalsRoute = AdminFestivalsRouteImport.update({
   path: '/festivals',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAstrologersRoute = AdminAstrologersRouteImport.update({
+  id: '/astrologers',
+  path: '/astrologers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
   id: '/applications',
   path: '/applications',
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/astrologers': typeof AdminAstrologersRoute
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRouteWithChildren
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/astrologers': typeof AdminAstrologersRoute
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRouteWithChildren
@@ -367,6 +375,7 @@ export interface FileRoutesById {
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/astrologers': typeof AdminAstrologersRoute
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRouteWithChildren
@@ -412,6 +421,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
+    | '/admin/astrologers'
     | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
@@ -454,6 +464,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
+    | '/admin/astrologers'
     | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
@@ -497,6 +508,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/welcome'
     | '/admin/applications'
+    | '/admin/astrologers'
     | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
@@ -811,6 +823,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFestivalsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/astrologers': {
+      id: '/admin/astrologers'
+      path: '/astrologers'
+      fullPath: '/admin/astrologers'
+      preLoaderRoute: typeof AdminAstrologersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/applications': {
       id: '/admin/applications'
       path: '/applications'
@@ -856,6 +875,7 @@ const AdminPanditsRouteWithChildren = AdminPanditsRoute._addFileChildren(
 
 interface AdminRouteChildren {
   AdminApplicationsRoute: typeof AdminApplicationsRoute
+  AdminAstrologersRoute: typeof AdminAstrologersRoute
   AdminFestivalsRoute: typeof AdminFestivalsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPanditsRoute: typeof AdminPanditsRouteWithChildren
@@ -869,6 +889,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminApplicationsRoute: AdminApplicationsRoute,
+  AdminAstrologersRoute: AdminAstrologersRoute,
   AdminFestivalsRoute: AdminFestivalsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPanditsRoute: AdminPanditsRouteWithChildren,

@@ -49,6 +49,11 @@ const en: Dict = {
   "language.sub": "Choose your preferred language",
   "language.saved": "Language updated",
   "terms.title": "Terms & Privacy",
+  "nav.home": "Home",
+  "nav.astro": "Astrology",
+  "nav.store": "Store",
+  "nav.bookings": "Bookings",
+  "nav.me": "Me",
 };
 
 const hi: Dict = {
@@ -83,6 +88,11 @@ const hi: Dict = {
   "language.sub": "अपनी पसंदीदा भाषा चुनें",
   "language.saved": "भाषा अपडेट हो गई",
   "terms.title": "नियम और गोपनीयता",
+  "nav.home": "होम",
+  "nav.astro": "ज्योतिष",
+  "nav.store": "स्टोर",
+  "nav.bookings": "बुकिंग",
+  "nav.me": "मैं",
 };
 
 // Light fallbacks for other languages: native key labels (real translations can be added later).

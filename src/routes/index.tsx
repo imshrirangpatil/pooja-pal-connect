@@ -50,7 +50,7 @@ function Home() {
           <div onClick={(e) => e.stopPropagation()} className="mx-auto w-full max-w-md rounded-t-3xl bg-card p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-soft">
             <div className="flex items-center justify-between">
               <p className="text-base font-bold">Choose your city</p>
-              <button onClick={() => setCityOpen(false)} aria-label="Close" className="rounded-full p-1 hover:bg-muted">
+              <button onClick={() => setCityOpen(false)} aria-label="Close" className="rounded-full p-2 hover:bg-muted">
                 <X className="h-4 w-4" />
               </button>
             </div>

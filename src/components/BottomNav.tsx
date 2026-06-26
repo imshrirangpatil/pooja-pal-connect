@@ -1,20 +1,22 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, Sparkles, ShoppingBag, CalendarCheck, User } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 const items = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/astrology", label: "Astro", icon: Sparkles },
-  { to: "/samagri", label: "Store", icon: ShoppingBag },
-  { to: "/bookings", label: "Bookings", icon: CalendarCheck },
-  { to: "/profile", label: "Me", icon: User },
+  { to: "/", key: "nav.home", icon: Home },
+  { to: "/astrology", key: "nav.astro", icon: Sparkles },
+  { to: "/samagri", key: "nav.store", icon: ShoppingBag },
+  { to: "/bookings", key: "nav.bookings", icon: CalendarCheck },
+  { to: "/profile", key: "nav.me", icon: User },
 ] as const;
 
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t } = useI18n();
   return (
     <nav className="fixed bottom-0 left-1/2 z-50 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-card/90 backdrop-blur-xl">
       <ul className="grid grid-cols-5">
-        {items.map(({ to, label, icon: Icon }) => {
+        {items.map(({ to, key, icon: Icon }) => {
           const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
           return (
             <li key={to}>
@@ -30,7 +32,7 @@ export function BottomNav() {
                   <Icon className="h-4 w-4" />
                 </span>
                 <span className={active ? "font-medium text-foreground" : "text-muted-foreground"}>
-                  {label}
+                  {t(key)}
                 </span>
               </Link>
             </li>
