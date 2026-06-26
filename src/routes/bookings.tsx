@@ -20,6 +20,7 @@ export const Route = createFileRoute("/bookings")({
 
 type OrderRow = {
   id: string;
+  pooja_slug: string | null;
   pooja_name: string | null;
   pandit_name: string | null;
   pandit_ref: string | null;
@@ -65,7 +66,7 @@ export function Bookings() {
     queryFn: async (): Promise<OrderRow[]> => {
       const { data, error } = await (supabase as any)
         .from("orders")
-        .select("id, pooja_name, pandit_name, pandit_ref, muhurat, total, status, payment_method, payment_status, recipient_name, phone, line1, line2, city, state, pincode, created_at")
+        .select("id, pooja_slug, pooja_name, pandit_name, pandit_ref, muhurat, total, status, payment_method, payment_status, recipient_name, phone, line1, line2, city, state, pincode, created_at")
         .not("pooja_slug", "is", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -89,6 +90,11 @@ export function Bookings() {
   });
 
   const list = bookings.filter((b) => tabFor(b.status) === tab);
+
+  const rebook = (b: OrderRow) => {
+    if (b.pooja_slug) navigate({ to: "/poojas/$slug", params: { slug: b.pooja_slug } });
+    else navigate({ to: "/poojas" });
+  };
 
   if (!authLoading && !user) {
     return (
@@ -163,6 +169,14 @@ export function Bookings() {
                       className="flex flex-1 items-center justify-center gap-1 rounded-full bg-primary py-2 text-xs font-semibold text-primary-foreground"
                     >
                       <Star className="h-3.5 w-3.5" /> Rate Pandit
+                    </button>
+                  )}
+                  {tab !== "Upcoming" && (
+                    <button
+                      onClick={() => rebook(b)}
+                      className="flex flex-1 items-center justify-center gap-1 rounded-full border border-primary/40 bg-primary/10 py-2 text-xs font-semibold text-primary"
+                    >
+                      Book again
                     </button>
                   )}
                 </div>

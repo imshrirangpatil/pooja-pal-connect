@@ -9,6 +9,9 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    // Prefetch a route's code/data when the user shows intent (hover/touch),
+    // so taps feel instant.
+    defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
   });
 

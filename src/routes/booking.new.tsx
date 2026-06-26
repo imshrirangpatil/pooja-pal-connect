@@ -255,6 +255,7 @@ function BookingCheckout() {
             </button>
           ))}
         </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">Free cancellation up to 24 hours before your chosen time. Eligible refunds return to your Pranam wallet.</p>
       </section>
 
       <section className="px-5 pt-5">

@@ -5,7 +5,9 @@ import { pandits } from "@/lib/data";
 import { usePoojas } from "@/lib/poojas-source";
 import { useUpcomingFestivals } from "@/lib/festivals-source";
 import { useUnreadCount } from "@/lib/notifications";
-import { Search, MapPin, Bell, Sparkles, Flame, ShoppingBag, ChevronRight, Star, Zap, Video } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { useCity, CITIES } from "@/lib/city";
+import { Search, MapPin, Bell, Sparkles, Flame, ShoppingBag, ChevronRight, Star, Zap, Video, X, Check } from "lucide-react";
 import logoAsset from "@/assets/pranam-logo.png.asset.json";
 import heroImg from "@/assets/hero-pooja.jpg";
 import astroImg from "@/assets/cat-astrology.jpg";
@@ -28,13 +30,44 @@ function Home() {
   const { festivals } = useUpcomingFestivals(8);
   const unread = useUnreadCount();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { city, setCity } = useCity();
+  const [cityOpen, setCityOpen] = useState(false);
   const [search, setSearch] = useState("");
   const runSearch = () => {
     const q = search.trim();
     navigate({ to: "/poojas", search: q ? { q } : {} });
   };
+
+  const fullName = (user?.user_metadata?.full_name as string) || (user?.user_metadata?.name as string) || "";
+  const firstName = fullName.trim().split(/\s+/)[0] || "";
+
   return (
     <MobileShell>
+      {cityOpen && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 backdrop-blur-sm" onClick={() => setCityOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="mx-auto w-full max-w-md rounded-t-3xl bg-card p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-soft">
+            <div className="flex items-center justify-between">
+              <p className="text-base font-bold">Choose your city</p>
+              <button onClick={() => setCityOpen(false)} aria-label="Close" className="rounded-full p-1 hover:bg-muted">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {CITIES.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => { setCity(c); setCityOpen(false); }}
+                  className={`flex items-center justify-between rounded-xl border px-3 py-2.5 text-sm font-medium ${city === c ? "border-primary bg-secondary" : "border-border bg-card"}`}
+                >
+                  {c} {city === c && <Check className="h-3.5 w-3.5 text-primary" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <img src={heroImg} alt="Sacred pooja ritual" width={1024} height={1280} className="absolute inset-0 h-[420px] w-full object-cover" />
@@ -43,9 +76,10 @@ function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img src={logoAsset.url} alt="Pranam" width={32} height={32} className="h-8 w-8 rounded-lg bg-white/90 object-contain p-0.5" />
-              <span className="inline-flex items-center gap-1 text-xs font-medium">
-                <MapPin className="h-3.5 w-3.5" /> Mumbai, MH
-              </span>
+              <button onClick={() => setCityOpen(true)} className="inline-flex items-center gap-1 text-xs font-medium">
+                <MapPin className="h-3.5 w-3.5" /> {city ?? "Set your city"}
+                <ChevronRight className="h-3 w-3 rotate-90 opacity-80" />
+              </button>
             </div>
             <Link to="/notifications" aria-label="Notifications" className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur">
               <Bell className="h-4 w-4" />
@@ -58,7 +92,9 @@ function Home() {
           </div>
 
           <div className="mt-16">
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-marigold/90">Namaste 🙏</p>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-marigold/90">
+              {firstName ? `Namaste ${firstName} 🙏` : "Namaste 🙏"}
+            </p>
             <h1 className="mt-2 text-3xl font-bold leading-tight text-balance">
               Every ritual,<br />done right.
             </h1>

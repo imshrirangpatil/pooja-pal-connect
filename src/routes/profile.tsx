@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin, ShieldCheck, BadgeIndianRupee } from "lucide-react";
+import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin, ShieldCheck, BadgeIndianRupee, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 import { useQuery } from "@tanstack/react-query";
@@ -31,6 +32,7 @@ function Profile() {
   const { ids: savedPanditIds } = useSavedPandits();
   const unread = useUnreadCount();
   const { pandit: myPandit } = useMyPandit();
+  const { theme, toggle: toggleTheme } = useTheme();
 
   const fullName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "";
   const initial = getInitials(fullName) || "G";
@@ -128,6 +130,13 @@ function Profile() {
         <Row to="/saved-pandits" icon={<Heart className="h-4 w-4" />} label={t("profile.savedPandits")} hint={savedPanditIds.length ? String(savedPanditIds.length) : undefined} />
         <Row to="/refer" icon={<Gift className="h-4 w-4" />} label={t("profile.refer")} />
         <Row to="/notifications" icon={<Bell className="h-4 w-4" />} label={t("profile.notifications")} hint={unread ? String(unread) : undefined} />
+        <button onClick={toggleTheme} className="flex w-full items-center gap-3 rounded-2xl bg-card p-3.5 text-left shadow-soft">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-accent">
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </span>
+          <span className="flex-1 text-sm font-medium">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
+          <span className="text-xs text-muted-foreground">{theme === "dark" ? "On" : "Off"}</span>
+        </button>
         <Row to="/language" icon={<Globe className="h-4 w-4" />} label={t("profile.language")} hint={langNative} />
         <Row to="/support" icon={<HelpCircle className="h-4 w-4" />} label={t("profile.support")} />
         <Row to="/terms" icon={<FileText className="h-4 w-4" />} label={t("profile.terms")} />

@@ -129,6 +129,24 @@ function AddressesPage() {
     });
   };
 
+  // Auto-fill city and state from a 6-digit pincode via the public India Post API.
+  const fillFromPincode = async (pin: string) => {
+    if (pin.length !== 6) return;
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+      const json = await res.json();
+      const po = json?.[0]?.PostOffice?.[0];
+      if (!po) return;
+      const matchedState = INDIAN_STATES.find((s) => s.toLowerCase() === String(po.State).toLowerCase());
+      update({
+        ...(po.District ? { city: po.District } : {}),
+        ...(matchedState ? { state: matchedState } : {}),
+      });
+    } catch {
+      /* offline or lookup failed; user can fill manually */
+    }
+  };
+
   const save = async () => {
     if (!user) return;
     const parsed = formSchema.safeParse(form);
@@ -315,7 +333,11 @@ function AddressesPage() {
                   inputMode="numeric"
                   maxLength={6}
                   value={form.pincode}
-                  onChange={(e) => update({ pincode: e.target.value.replace(/\D/g, "") })}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    update({ pincode: v });
+                    if (v.length === 6) void fillFromPincode(v);
+                  }}
                   placeholder="560001"
                 />
               </Field>
