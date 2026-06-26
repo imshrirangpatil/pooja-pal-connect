@@ -9,7 +9,7 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/saved-pandits")({
   head: () => ({
     meta: [
-      { title: "Saved Pandits — Pranam" },
+      { title: "Saved Pandits - Pranam" },
       { name: "description", content: "Your saved pandits, ready to book." },
     ],
   }),

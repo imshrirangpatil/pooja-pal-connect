@@ -5,18 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MapPin, Plus, Star, Trash2 } from "lucide-react";
+import { MapPin, Plus, Star, Trash2, Map as MapIcon } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
+import { LocationPicker, type PickedLocation } from "@/components/LocationPicker";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export const Route = createFileRoute("/addresses")({
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => ({
     redirect: typeof s.redirect === "string" ? s.redirect : undefined,
   }),
   head: () => ({
     meta: [
-      { title: "Saved Addresses — Pranam" },
+      { title: "Saved Addresses - Pranam" },
       { name: "description", content: "Manage your delivery addresses." },
     ],
   }),
@@ -87,6 +88,18 @@ function AddressesPage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [saving, setSaving] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(null);
+
+  const onPick = (loc: PickedLocation) => {
+    setPicked({ lat: loc.lat, lng: loc.lng });
+    update({
+      ...(loc.line1 ? { line1: loc.line1 } : {}),
+      ...(loc.city ? { city: loc.city } : {}),
+      ...(loc.state && INDIAN_STATES.includes(loc.state) ? { state: loc.state } : {}),
+      ...(loc.pincode ? { pincode: loc.pincode } : {}),
+    });
+  };
 
   const refresh = async () => {
     const { data, error } = await supabase
@@ -132,7 +145,7 @@ function AddressesPage() {
     setSaving(true);
     try {
       const isFirst = addresses.length === 0;
-      const { error } = await supabase.from("addresses").insert({
+      const { error } = await (supabase.from("addresses") as any).insert({
         user_id: user.id,
         label: parsed.data.label,
         recipient_name: parsed.data.recipient_name,
@@ -144,11 +157,21 @@ function AddressesPage() {
         pincode: parsed.data.pincode,
         landmark: parsed.data.landmark || null,
         is_default: parsed.data.is_default || isFirst,
+        latitude: picked?.lat ?? null,
+        longitude: picked?.lng ?? null,
       });
       if (error) throw error;
+      // Mirror the chosen location onto the profile so other forms can prefill it.
+      if (picked) {
+        await (supabase.from("profiles") as any)
+          .update({ latitude: picked.lat, longitude: picked.lng, city: parsed.data.city })
+          .eq("id", user.id);
+      }
       toast.success("Address saved");
       setForm(emptyForm);
       setErrors({});
+      setPicked(null);
+      setShowMap(false);
       setAdding(false);
       await refresh();
       if (search.redirect) {
@@ -271,6 +294,14 @@ function AddressesPage() {
           </button>
         ) : (
           <div className="mt-4 space-y-3 rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
+            <button
+              type="button"
+              onClick={() => setShowMap((v) => !v)}
+              className="flex w-full items-center gap-2 rounded-xl border border-primary/40 bg-primary/5 px-3 py-2.5 text-xs font-semibold text-primary"
+            >
+              <MapIcon className="h-4 w-4" /> {showMap ? "Hide map" : "Pick location on map"}
+            </button>
+            {showMap && <LocationPicker value={picked} onChange={onPick} />}
             <div className="grid grid-cols-2 gap-2">
               <Field label="Label" error={errors.label}>
                 <Input
@@ -369,6 +400,8 @@ function AddressesPage() {
                   setAdding(false);
                   setForm(emptyForm);
                   setErrors({});
+                  setPicked(null);
+                  setShowMap(false);
                 }}
               >
                 Cancel

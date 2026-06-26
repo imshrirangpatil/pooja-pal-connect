@@ -23,9 +23,9 @@ export const Route = createFileRoute("/poojas/$slug")({
   head: ({ loaderData }) => ({
     meta: loaderData?.pooja
       ? [
-          { title: `${loaderData.pooja.name} — Book on Pranam` },
+          { title: `${loaderData.pooja.name} - Book on Pranam` },
           { name: "description", content: loaderData.pooja.description },
-          { property: "og:title", content: `${loaderData.pooja.name} — Book on Pranam` },
+          { property: "og:title", content: `${loaderData.pooja.name} - Book on Pranam` },
           { property: "og:description", content: loaderData.pooja.description },
           { property: "og:image", content: loaderData.pooja.image },
         ]

@@ -1,5 +1,5 @@
 // Client-side AES-GCM encryption for astrology chat messages.
-// Plaintext never lives on the server in stored form — only ciphertext + iv land in the DB.
+// Plaintext never lives on the server in stored form - only ciphertext + iv land in the DB.
 
 const enc = new TextEncoder();
 const dec = new TextDecoder();
@@ -81,6 +81,6 @@ export async function decryptText(key: CryptoKey, ciphertext: string, iv: string
     );
     return dec.decode(pt);
   } catch {
-    return "🔒 [encrypted — unavailable on this device]";
+    return "🔒 [encrypted - unavailable on this device]";
   }
 }

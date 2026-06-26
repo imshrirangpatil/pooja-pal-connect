@@ -13,8 +13,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/samagri")({
   head: () => ({
     meta: [
-      { title: "Samagri Store — Pranam" },
-      { name: "description", content: "Pooja kits, individual samagri, rudraksh & blessed items — delivered." },
+      { title: "Samagri Store - Pranam" },
+      { name: "description", content: "Pooja kits, individual samagri, rudraksh & blessed items - delivered." },
     ],
   }),
   component: Samagri,

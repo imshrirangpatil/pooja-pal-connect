@@ -10,7 +10,7 @@ import { Gift, Copy, Share2, Users, Check } from "lucide-react";
 export const Route = createFileRoute("/refer")({
   head: () => ({
     meta: [
-      { title: "Refer & Earn — Pranam" },
+      { title: "Refer & Earn - Pranam" },
       { name: "description", content: "Refer friends to Pranam and earn ₹100 in credits per signup." },
     ],
   }),
@@ -115,10 +115,10 @@ function ReferPage() {
   };
 
   const onShare = async () => {
-    const text = `Join me on Pranam — book pandits, poojas & astrology. Use my code ${myCode} to get ₹50 off your first order. ${shareUrl}`;
+    const text = `Join me on Pranam - book pandits, poojas & astrology. Use my code ${myCode} to get ₹50 off your first order. ${shareUrl}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Pranam — Refer & Earn", text, url: shareUrl });
+        await navigator.share({ title: "Pranam - Refer & Earn", text, url: shareUrl });
       } catch { /* cancelled */ }
     } else {
       await navigator.clipboard.writeText(text);
@@ -142,7 +142,7 @@ function ReferPage() {
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Your referral code</p>
         <div className="mt-2 flex items-center gap-2">
           <div className="flex-1 rounded-xl border-2 border-dashed border-primary/40 bg-secondary px-4 py-3 text-center text-lg font-bold tracking-[0.2em] text-secondary-foreground">
-            {myCode || "—"}
+            {myCode || " - "}
           </div>
           <button
             onClick={onCopy}
@@ -203,7 +203,7 @@ function ReferPage() {
         <ol className="mt-2 space-y-2 text-xs text-secondary-foreground/90">
           <li><span className="font-semibold">1.</span> Share your code with friends & family.</li>
           <li><span className="font-semibold">2.</span> They sign up and apply your code.</li>
-          <li><span className="font-semibold">3.</span> They get ₹50, you get ₹100 — instantly.</li>
+          <li><span className="font-semibold">3.</span> They get ₹50, you get ₹100 - instantly.</li>
         </ol>
       </section>
 

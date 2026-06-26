@@ -1,18 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
-import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin, ShieldCheck } from "lucide-react";
+import { Gift, HelpCircle, FileText, Globe, Bell, ChevronRight, LogOut, Heart, Wallet, Package, MapPin, ShieldCheck, BadgeIndianRupee } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, LANGUAGES } from "@/lib/i18n";
 import { useSavedPandits } from "@/lib/saved-pandits";
+import { getInitials } from "@/lib/utils";
+import { useUnreadCount } from "@/lib/notifications";
+import { useMyPandit } from "@/lib/my-pandit";
+import { LogIn } from "lucide-react";
 
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — Pranam" },
+      { title: "Profile - Pranam" },
       { name: "description", content: "Your Pranam account, wallet and preferences." },
     ],
   }),
@@ -25,8 +29,11 @@ function Profile() {
   const navigate = useNavigate();
   const { lang, t } = useI18n();
   const { ids: savedPanditIds } = useSavedPandits();
+  const unread = useUnreadCount();
+  const { pandit: myPandit } = useMyPandit();
 
-  const initial = (user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "G")[0]?.toUpperCase();
+  const fullName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "";
+  const initial = getInitials(fullName) || "G";
   const name = user?.user_metadata?.full_name || user?.user_metadata?.name || (user?.email?.split("@")[0] ?? "Guest");
   const phone = user?.phone ? `+${user.phone}` : (user?.email ?? "Not signed in");
 
@@ -40,6 +47,18 @@ function Profile() {
     },
   });
   const walletDisplay = user ? `₹${((balanceQ.data ?? 0) / 100).toLocaleString("en-IN")}` : "₹0";
+
+  const ordersCountQ = useQuery({
+    queryKey: ["orders-count", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { count, error } = await supabase.from("orders").select("id", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+  const bookingsValue = user ? String(ordersCountQ.data ?? 0) : "0";
+  const savedValue = String(savedPanditIds.length);
 
   const langNative = LANGUAGES.find((l) => l.code === lang)?.native ?? "English";
 
@@ -63,11 +82,24 @@ function Profile() {
           </div>
         </div>
         <div className="mt-4 flex gap-3">
-          <Stat label={t("profile.bookings")} value="07" />
+          <Stat label={t("profile.bookings")} value={bookingsValue} />
           <Stat label={t("profile.wallet")} value={walletDisplay} />
-          <Stat label={t("profile.saved")} value="₹1.2k" />
+          <Stat label={t("profile.saved")} value={savedValue} />
         </div>
       </section>
+
+      {!user && (
+        <Link to="/welcome" className="mx-5 mt-4 flex items-center gap-3 rounded-2xl bg-primary p-4 text-primary-foreground shadow-glow">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-foreground/15">
+            <LogIn className="h-5 w-5" />
+          </span>
+          <div className="flex-1">
+            <p className="text-sm font-bold">Sign in to Pranam</p>
+            <p className="text-xs opacity-90">Save bookings, orders and chats across your devices.</p>
+          </div>
+          <ChevronRight className="h-4 w-4" />
+        </Link>
+      )}
 
       {isAdmin && (
         <Link to="/admin" className="mx-5 mt-4 flex items-center gap-3 rounded-2xl bg-primary p-3.5 text-primary-foreground shadow-glow">
@@ -79,13 +111,23 @@ function Profile() {
         </Link>
       )}
 
+      {myPandit && (
+        <Link to="/earnings" className="mx-5 mt-4 flex items-center gap-3 rounded-2xl border border-accent/40 bg-accent/10 p-3.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 text-accent">
+            <BadgeIndianRupee className="h-4 w-4" />
+          </span>
+          <span className="flex-1 text-sm font-semibold">My earnings and payouts</span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
+      )}
+
       <div className="mt-5 space-y-1 px-5">
         <Row to="/orders" icon={<Package className="h-4 w-4" />} label={t("profile.orders")} />
         <Row to="/addresses" icon={<MapPin className="h-4 w-4" />} label={t("profile.addresses")} />
         <Row to="/wallet" icon={<Wallet className="h-4 w-4" />} label={t("profile.walletCredits")} hint={walletDisplay} />
         <Row to="/saved-pandits" icon={<Heart className="h-4 w-4" />} label={t("profile.savedPandits")} hint={savedPanditIds.length ? String(savedPanditIds.length) : undefined} />
         <Row to="/refer" icon={<Gift className="h-4 w-4" />} label={t("profile.refer")} />
-        <Row icon={<Bell className="h-4 w-4" />} label={t("profile.notifications")} />
+        <Row to="/notifications" icon={<Bell className="h-4 w-4" />} label={t("profile.notifications")} hint={unread ? String(unread) : undefined} />
         <Row to="/language" icon={<Globe className="h-4 w-4" />} label={t("profile.language")} hint={langNative} />
         <Row to="/support" icon={<HelpCircle className="h-4 w-4" />} label={t("profile.support")} />
         <Row to="/terms" icon={<FileText className="h-4 w-4" />} label={t("profile.terms")} />
@@ -118,7 +160,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-type RowTo = "/orders" | "/addresses" | "/wallet" | "/refer" | "/support" | "/saved-pandits" | "/language" | "/terms";
+type RowTo = "/orders" | "/addresses" | "/wallet" | "/refer" | "/support" | "/saved-pandits" | "/language" | "/terms" | "/notifications";
 
 function Row({ icon, label, hint, to }: { icon: React.ReactNode; label: string; hint?: string; to?: RowTo }) {
   const inner = (

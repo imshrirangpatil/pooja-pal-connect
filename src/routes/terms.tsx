@@ -6,7 +6,7 @@ import { FileText, Lock, Mail } from "lucide-react";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms & Privacy — Pranam" },
+      { title: "Terms & Privacy - Pranam" },
       { name: "description", content: "How Pranam protects your data and the rules of using the app." },
     ],
   }),
@@ -108,7 +108,7 @@ function TermsPage() {
             <ul className="list-disc pl-4 space-y-1">
               <li>Account: name, phone, email, profile photo</li>
               <li>Booking details: pooja, address, muhurat preferences</li>
-              <li>Birth details for astrology (date, time, place) — only when you submit them</li>
+              <li>Birth details for astrology (date, time, place) - only when you submit them</li>
               <li>Payment status (we never store full card numbers)</li>
               <li>Device and basic usage analytics for reliability</li>
             </ul>

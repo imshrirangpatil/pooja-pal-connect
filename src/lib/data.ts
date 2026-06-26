@@ -34,7 +34,7 @@ export const poojas: Pooja[] = [
     image: ganesh,
     popular: true,
     season: "Ganesh Chaturthi",
-    description: "Invoke Lord Ganesha for auspicious beginnings — ideal before new ventures, exams, or any important event.",
+    description: "Invoke Lord Ganesha for auspicious beginnings - ideal before new ventures, exams, or any important event.",
     includes: ["Verified Pandit Ji", "Full samagri kit", "Sankalp & aarti", "Prasad blessing"],
   },
   {
@@ -139,9 +139,6 @@ export const samagri: Samagri[] = [
   { id: "s6", name: "Pooja Thali Premium", desc: "Engraved brass with bell", price: 1199, mrp: 1499, image: samagriThali },
 ];
 
-export const festivals = [
-  { name: "Diwali", date: "Nov 1", days: 12, color: "bg-secondary" },
-  { name: "Karwa Chauth", date: "Oct 20", days: 0, color: "bg-secondary" },
-  { name: "Govardhan", date: "Nov 2", days: 13, color: "bg-secondary" },
-  { name: "Tulsi Vivah", date: "Nov 12", days: 23, color: "bg-secondary" },
-];
+// Festival data now lives in the Supabase festivals table and is read through
+// useUpcomingFestivals (src/lib/festivals-source.ts) so dates and day counts
+// stay accurate against a real panchang.

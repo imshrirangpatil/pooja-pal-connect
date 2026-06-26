@@ -15,11 +15,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { isValidEmail } from "@/lib/utils";
 
 export const Route = createFileRoute("/become-pandit")({
   head: () => ({
     meta: [
-      { title: "Become a Pandit — Pranam" },
+      { title: "Become a Pandit - Pranam" },
       { name: "description", content: "Join Pranam's verified network of pandits. Apply, complete KYC and start receiving bookings." },
     ],
   }),
@@ -74,8 +75,20 @@ function BecomePandit() {
   const next = () => {
     if (step === 0) return setStep(1);
     if (step === 1) {
-      if (!form.fullName || form.phone.length !== 10 || !form.city) {
-        toast.error("Please complete all fields");
+      if (!form.fullName.trim()) {
+        toast.error("Please enter your full name");
+        return;
+      }
+      if (form.phone.length !== 10) {
+        toast.error("Enter a valid 10-digit phone number");
+        return;
+      }
+      if (form.email.trim() && !isValidEmail(form.email)) {
+        toast.error("Enter a valid email address, or leave it blank");
+        return;
+      }
+      if (!form.city.trim()) {
+        toast.error("Please enter the city you serve");
         return;
       }
       return setStep(2);
@@ -266,9 +279,9 @@ function BecomePandit() {
 
         {step === 3 && (
           <section className="space-y-4">
-            <H2>Payout details</H2>
+            <H2>How you get paid</H2>
             <p className="-mt-2 text-xs text-muted-foreground">
-              We send instant payments to your UPI or bank account after every completed booking.
+              Your sewa reaches your UPI or bank account soon after every completed booking.
             </p>
             <div className="grid grid-cols-2 gap-2">
               {(["upi", "bank"] as const).map((m) => (
@@ -331,9 +344,9 @@ function BecomePandit() {
 
         {step === 4 && (
           <section className="space-y-4">
-            <H2>Verification documents</H2>
+            <H2>Let's verify you</H2>
             <p className="-mt-2 text-xs text-muted-foreground">
-              Your documents are encrypted and reviewed only by our verification team.
+              Your documents are encrypted and seen only by our verification team.
             </p>
             <DocUpload
               label="Aadhaar / Government ID"

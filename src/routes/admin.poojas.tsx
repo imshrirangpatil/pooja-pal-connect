@@ -72,6 +72,20 @@ function AdminPoojas() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const bulkVisible = useMutation({
+    mutationFn: async (makeVisible: boolean) => {
+      const { error } = await supabase.from("poojas").update({ visible: makeVisible }).eq("visible", !makeVisible);
+      if (error) throw error;
+    },
+    onSuccess: (_d, makeVisible) => {
+      toast.success(makeVisible ? "Published all hidden poojas" : "Hid all visible poojas");
+      qc.invalidateQueries({ queryKey: ["admin-poojas"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const hiddenCount = poojas.filter((p) => !p.visible).length;
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -80,6 +94,13 @@ function AdminPoojas() {
           <Plus className="h-3.5 w-3.5" /> {adding ? "Cancel" : "Add"}
         </Button>
       </div>
+
+      {hiddenCount > 0 && (
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-primary/30 bg-primary/5 p-3">
+          <p className="text-xs"><span className="font-semibold">{hiddenCount}</span> hidden {hiddenCount === 1 ? "pooja is" : "poojas are"} not live. Set prices and images, then publish.</p>
+          <Button size="sm" disabled={bulkVisible.isPending} onClick={() => bulkVisible.mutate(true)}>Publish all</Button>
+        </div>
+      )}
 
       {adding && (
         <Card className="space-y-2 p-4">

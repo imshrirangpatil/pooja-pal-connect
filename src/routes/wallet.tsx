@@ -8,7 +8,7 @@ import { Wallet, Gift, ArrowDownRight, ArrowUpRight, Sparkles } from "lucide-rea
 export const Route = createFileRoute("/wallet")({
   head: () => ({
     meta: [
-      { title: "Wallet — Pranam" },
+      { title: "Wallet - Pranam" },
       { name: "description", content: "View your Pranam credits balance and history." },
     ],
   }),
@@ -95,7 +95,7 @@ function WalletPage() {
           to="/refer"
           className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary-foreground/15 px-4 py-2 text-xs font-semibold backdrop-blur"
         >
-          <Gift className="h-3.5 w-3.5" /> Earn more — Refer a friend
+          <Gift className="h-3.5 w-3.5" /> Earn more - Refer a friend
         </Link>
       </section>
 

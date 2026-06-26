@@ -19,8 +19,10 @@ import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LanguageRouteImport } from './routes/language'
 import { Route as FestivalsRouteImport } from './routes/festivals'
+import { Route as EarningsRouteImport } from './routes/earnings'
 import { Route as DarshanRouteImport } from './routes/darshan'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
@@ -40,6 +42,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTicketsRouteImport } from './routes/admin.tickets'
 import { Route as AdminSkusRouteImport } from './routes/admin.skus'
 import { Route as AdminPoojasRouteImport } from './routes/admin.poojas'
+import { Route as AdminPayoutsRouteImport } from './routes/admin.payouts'
 import { Route as AdminPanditsRouteImport } from './routes/admin.pandits'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminFestivalsRouteImport } from './routes/admin.festivals'
@@ -98,6 +101,11 @@ const OrdersRoute = OrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LanguageRoute = LanguageRouteImport.update({
   id: '/language',
   path: '/language',
@@ -106,6 +114,11 @@ const LanguageRoute = LanguageRouteImport.update({
 const FestivalsRoute = FestivalsRouteImport.update({
   id: '/festivals',
   path: '/festivals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EarningsRoute = EarningsRouteImport.update({
+  id: '/earnings',
+  path: '/earnings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DarshanRoute = DarshanRouteImport.update({
@@ -203,6 +216,11 @@ const AdminPoojasRoute = AdminPoojasRouteImport.update({
   path: '/poojas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPayoutsRoute = AdminPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPanditsRoute = AdminPanditsRouteImport.update({
   id: '/pandits',
   path: '/pandits',
@@ -248,8 +266,10 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/darshan': typeof DarshanRoute
+  '/earnings': typeof EarningsRoute
   '/festivals': typeof FestivalsRoute
   '/language': typeof LanguageRoute
+  '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
@@ -264,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRouteWithChildren
+  '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/skus': typeof AdminSkusRoute
   '/admin/tickets': typeof AdminTicketsRoute
@@ -287,8 +308,10 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/darshan': typeof DarshanRoute
+  '/earnings': typeof EarningsRoute
   '/festivals': typeof FestivalsRoute
   '/language': typeof LanguageRoute
+  '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
@@ -303,6 +326,7 @@ export interface FileRoutesByTo {
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRouteWithChildren
+  '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/skus': typeof AdminSkusRoute
   '/admin/tickets': typeof AdminTicketsRoute
@@ -328,8 +352,10 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/darshan': typeof DarshanRoute
+  '/earnings': typeof EarningsRoute
   '/festivals': typeof FestivalsRoute
   '/language': typeof LanguageRoute
+  '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
@@ -344,6 +370,7 @@ export interface FileRoutesById {
   '/admin/festivals': typeof AdminFestivalsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/pandits': typeof AdminPanditsRouteWithChildren
+  '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/poojas': typeof AdminPoojasRoute
   '/admin/skus': typeof AdminSkusRoute
   '/admin/tickets': typeof AdminTicketsRoute
@@ -370,8 +397,10 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/darshan'
+    | '/earnings'
     | '/festivals'
     | '/language'
+    | '/notifications'
     | '/orders'
     | '/profile'
     | '/refer'
@@ -386,6 +415,7 @@ export interface FileRouteTypes {
     | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
+    | '/admin/payouts'
     | '/admin/poojas'
     | '/admin/skus'
     | '/admin/tickets'
@@ -409,8 +439,10 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/darshan'
+    | '/earnings'
     | '/festivals'
     | '/language'
+    | '/notifications'
     | '/orders'
     | '/profile'
     | '/refer'
@@ -425,6 +457,7 @@ export interface FileRouteTypes {
     | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
+    | '/admin/payouts'
     | '/admin/poojas'
     | '/admin/skus'
     | '/admin/tickets'
@@ -449,8 +482,10 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/darshan'
+    | '/earnings'
     | '/festivals'
     | '/language'
+    | '/notifications'
     | '/orders'
     | '/profile'
     | '/refer'
@@ -465,6 +500,7 @@ export interface FileRouteTypes {
     | '/admin/festivals'
     | '/admin/orders'
     | '/admin/pandits'
+    | '/admin/payouts'
     | '/admin/poojas'
     | '/admin/skus'
     | '/admin/tickets'
@@ -490,8 +526,10 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
   DarshanRoute: typeof DarshanRoute
+  EarningsRoute: typeof EarningsRoute
   FestivalsRoute: typeof FestivalsRoute
   LanguageRoute: typeof LanguageRoute
+  NotificationsRoute: typeof NotificationsRoute
   OrdersRoute: typeof OrdersRoute
   ProfileRoute: typeof ProfileRoute
   ReferRoute: typeof ReferRoute
@@ -584,6 +622,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/language': {
       id: '/language'
       path: '/language'
@@ -596,6 +641,13 @@ declare module '@tanstack/react-router' {
       path: '/festivals'
       fullPath: '/festivals'
       preLoaderRoute: typeof FestivalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/earnings': {
+      id: '/earnings'
+      path: '/earnings'
+      fullPath: '/earnings'
+      preLoaderRoute: typeof EarningsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/darshan': {
@@ -731,6 +783,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPoojasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/payouts': {
+      id: '/admin/payouts'
+      path: '/payouts'
+      fullPath: '/admin/payouts'
+      preLoaderRoute: typeof AdminPayoutsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/pandits': {
       id: '/admin/pandits'
       path: '/pandits'
@@ -800,6 +859,7 @@ interface AdminRouteChildren {
   AdminFestivalsRoute: typeof AdminFestivalsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPanditsRoute: typeof AdminPanditsRouteWithChildren
+  AdminPayoutsRoute: typeof AdminPayoutsRoute
   AdminPoojasRoute: typeof AdminPoojasRoute
   AdminSkusRoute: typeof AdminSkusRoute
   AdminTicketsRoute: typeof AdminTicketsRoute
@@ -812,6 +872,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFestivalsRoute: AdminFestivalsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPanditsRoute: AdminPanditsRouteWithChildren,
+  AdminPayoutsRoute: AdminPayoutsRoute,
   AdminPoojasRoute: AdminPoojasRoute,
   AdminSkusRoute: AdminSkusRoute,
   AdminTicketsRoute: AdminTicketsRoute,
@@ -830,8 +891,10 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
   DarshanRoute: DarshanRoute,
+  EarningsRoute: EarningsRoute,
   FestivalsRoute: FestivalsRoute,
   LanguageRoute: LanguageRoute,
+  NotificationsRoute: NotificationsRoute,
   OrdersRoute: OrdersRoute,
   ProfileRoute: ProfileRoute,
   ReferRoute: ReferRoute,
@@ -854,3 +917,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

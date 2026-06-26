@@ -1,7 +1,7 @@
 // Local WebRTC loopback: connects two RTCPeerConnections in the same browser
 // so the call is actually transported over WebRTC (SRTP/DTLS). The "remote"
 // stream we receive is a simulated peer feed (canvas video + silent audio
-// with a soft ambience) — used because we don't have a signaling server yet.
+// with a soft ambience) - used because we don't have a signaling server yet.
 // Replace `buildSimulatedRemoteStream` with a real signaling exchange when
 // the backend is ready; the rest of the wiring stays the same.
 

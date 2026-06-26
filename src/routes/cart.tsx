@@ -9,7 +9,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: "Your Cart — Pranam" },
+      { title: "Your Cart - Pranam" },
       { name: "description", content: "Review your samagri order and checkout." },
     ],
   }),

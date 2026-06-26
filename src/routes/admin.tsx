@@ -1,12 +1,12 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays, LifeBuoy, ShoppingBag } from "lucide-react";
+import { BarChart3, Package, Users, Sparkles, UserCheck, Inbox, CalendarDays, LifeBuoy, ShoppingBag, IndianRupee } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Pranam" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Admin - Pranam" }, { name: "robots", content: "noindex" }] }),
   component: AdminLayout,
 });
 
@@ -17,6 +17,7 @@ const TABS = [
   { to: "/admin/poojas", label: "Poojas", icon: Sparkles, exact: false },
   { to: "/admin/skus", label: "Store SKUs", icon: ShoppingBag, exact: false },
   { to: "/admin/pandits", label: "Pandits", icon: UserCheck, exact: false },
+  { to: "/admin/payouts", label: "Payouts", icon: IndianRupee, exact: false },
   { to: "/admin/applications", label: "Applications", icon: Inbox, exact: false },
   { to: "/admin/festivals", label: "Festivals", icon: CalendarDays, exact: false },
   { to: "/admin/tickets", label: "Tickets", icon: LifeBuoy, exact: false },

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-// Support assistant — uses Lovable AI Gateway. Returns a reply plus
+// Support assistant - uses Lovable AI Gateway. Returns a reply plus
 // a `shouldEscalate` flag the UI uses to offer ticket creation.
 
 const MessageSchema = z.object({
@@ -15,7 +15,7 @@ const InputSchema = z.object({
 
 type Reply = { reply: string; shouldEscalate: boolean; suggestedSubject?: string };
 
-const SYSTEM_PROMPT = `You are "Pranam Sahayak", the friendly customer-support assistant for Pranam — an Indian app for booking poojas, ordering samagri, talking to astrologers, and viewing festivals/muhurat.
+const SYSTEM_PROMPT = `You are "Pranam Sahayak", the friendly customer-support assistant for Pranam - an Indian app for booking poojas, ordering samagri, talking to astrologers, and viewing festivals/muhurat.
 
 Answer ONLY common, factual support questions confidently:
 - Booking / rescheduling / cancelling a pooja
@@ -28,11 +28,12 @@ Answer ONLY common, factual support questions confidently:
 - App bugs the user can self-fix (clear cache, update app, retry)
 
 If a question is:
+- The user directly asks to talk to a human, an agent, or a real person
 - Specific to ONE user's order/account/payment status
 - A complaint requiring a human (refund disputes, pandit complaint, billing dispute)
 - Outside the app's scope (general life advice, legal advice, medical, etc.)
 - Something you genuinely cannot answer with confidence
-… DO NOT guess. Briefly say a human will help and set escalate=true.
+DO NOT guess. Warmly confirm that a human from the team will help, tell them they can call or email support or raise a ticket right here, and set escalate=true.
 
 Reply rules:
 - 1-3 short sentences. Friendly, in Hinglish or English (mirror the user).
@@ -66,10 +67,10 @@ export const supportAssistant = createServerFn({ method: "POST" })
       });
 
       if (res.status === 429) {
-        return { reply: "Many people are reaching out right now — please retry in a few seconds.", shouldEscalate: false };
+        return { reply: "Many people are reaching out right now - please retry in a few seconds.", shouldEscalate: false };
       }
       if (res.status === 402) {
-        return { reply: "Our assistant is paused. A human will help — let's create a ticket.", shouldEscalate: true };
+        return { reply: "Our assistant is paused. A human will help - let's create a ticket.", shouldEscalate: true };
       }
       if (!res.ok) {
         const t = await res.text().catch(() => "");
@@ -103,6 +104,6 @@ export const supportAssistant = createServerFn({ method: "POST" })
       };
     } catch (err) {
       console.error("[support-chat] error", err);
-      return { reply: "Connection hiccup — let's create a ticket so our team can follow up.", shouldEscalate: true };
+      return { reply: "Connection hiccup - let's create a ticket so our team can follow up.", shouldEscalate: true };
     }
   });

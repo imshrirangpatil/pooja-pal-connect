@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, IndianRupee, Send, CreditCard, Smartphone, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, IndianRupee, Send, CreditCard, Smartphone, CheckCircle2, Clock, Link2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/pandits/$id")({ component: AdminPanditDetail });
 
@@ -77,6 +77,8 @@ function AdminPanditDetail() {
         <p className="text-[11px] text-muted-foreground">{pandit.city} · {pandit.experience} yrs · ⭐ {Number(pandit.rating)} ({pandit.reviews})</p>
       </Card>
 
+      <LinkUserCard panditId={id} current={(pandit as any).user_id ?? null} />
+
       <Card className="p-4">
         <h3 className="text-sm font-bold">Payout details</h3>
         {pandit.upi_id || pandit.account_number ? (
@@ -123,8 +125,8 @@ function AdminPanditDetail() {
                   <p className="text-[10px] text-muted-foreground">{new Date(b.created_at).toLocaleDateString()} · {b.status}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold">₹{(b.total / 100).toLocaleString("en-IN")}</p>
-                  <PayBookingButton panditId={id} orderId={b.id} amountPaise={Math.round(b.total * 0.85)} method={defaultMethod} />
+                  <p className="font-semibold">₹{Number(b.total).toLocaleString("en-IN")}</p>
+                  <PayBookingButton panditId={id} orderId={b.id} amountPaise={Math.round(b.total * 0.85 * 100)} method={defaultMethod} />
                 </div>
               </li>
             ))}
@@ -164,6 +166,37 @@ function AdminPanditDetail() {
   );
 }
 
+function LinkUserCard({ panditId, current }: { panditId: string; current: string | null }) {
+  const qc = useQueryClient();
+  const [uid, setUid] = useState(current ?? "");
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const value = uid.trim() || null;
+      const { error } = await (supabase.from("pandits") as any).update({ user_id: value }).eq("id", panditId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("User link updated");
+      qc.invalidateQueries({ queryKey: ["admin-pandit", panditId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <Card className="space-y-2 p-4">
+      <h3 className="flex items-center gap-1.5 text-sm font-bold"><Link2 className="h-4 w-4" /> Linked user account</h3>
+      <p className="text-[11px] text-muted-foreground">
+        Paste the pandit's user ID (from the Users tab) so they can see earnings and request payouts. Leave blank to unlink.
+      </p>
+      <Input placeholder="User UUID" value={uid} onChange={(e) => setUid(e.target.value)} />
+      <Button size="sm" disabled={save.isPending} onClick={() => save.mutate()}>
+        {current ? "Update link" : "Link account"}
+      </Button>
+    </Card>
+  );
+}
+
 function PayoutDetailsForm({ panditId }: { panditId: string }) {
   const qc = useQueryClient();
   const [upi, setUpi] = useState("");
@@ -194,7 +227,7 @@ function PayoutDetailsForm({ panditId }: { panditId: string }) {
     <div className="mt-2 space-y-2">
       <p className="text-xs text-amber-700">No payout details on file. Add UPI or bank info to send payments.</p>
       <Input placeholder="UPI ID (e.g. name@okhdfc)" value={upi} onChange={(e) => setUpi(e.target.value)} />
-      <p className="text-center text-[10px] text-muted-foreground">— or —</p>
+      <p className="text-center text-[10px] text-muted-foreground"> - or - </p>
       <Input placeholder="Account holder name" value={holder} onChange={(e) => setHolder(e.target.value)} />
       <Input placeholder="Account number" inputMode="numeric" value={acct} onChange={(e) => setAcct(e.target.value.replace(/\D/g, ""))} />
       <Input placeholder="IFSC code" value={ifsc} onChange={(e) => setIfsc(e.target.value.toUpperCase().slice(0, 11))} />

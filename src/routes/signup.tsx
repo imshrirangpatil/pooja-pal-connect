@@ -9,11 +9,11 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Sign up — Pranam" },
+      { title: "Sign up - Pranam" },
       { name: "description", content: "Create your Pranam account with phone OTP or Google to book verified pandits." },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => ({
     redirect: typeof s.redirect === "string" ? s.redirect : undefined,
   }),
   component: SignUp,
@@ -27,8 +27,17 @@ function SignUp() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0); // seconds until resend is allowed again
+  const [attempts, setAttempts] = useState(0); // wrong-code attempts in this session
 
   const target = search.redirect && search.redirect.startsWith("/") ? search.redirect : "/";
+
+  // Resend cooldown timer so a code cannot be requested repeatedly in a burst.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setInterval(() => setCooldown((c) => Math.max(0, c - 1)), 1000);
+    return () => clearInterval(t);
+  }, [cooldown]);
 
   // If a session arrives (Google OAuth round-trip, or any auth state change), leave the signup page.
   useEffect(() => {
@@ -40,10 +49,14 @@ function SignUp() {
       toast.error("Enter a valid 10-digit number");
       return;
     }
+    if (cooldown > 0 || loading) return;
     setLoading(true);
     try {
       await sendPhoneOtp(phone);
       setStep("otp");
+      setOtp(["", "", "", "", "", ""]);
+      setAttempts(0);
+      setCooldown(30);
       toast.success(`OTP sent to +91 ${phone}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not send OTP");
@@ -64,10 +77,28 @@ function SignUp() {
       toast.success("Welcome to Pranam 🙏");
       navigate({ to: target });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Invalid OTP");
+      const next = attempts + 1;
+      setAttempts(next);
+      setOtp(["", "", "", "", "", ""]);
+      document.getElementById("otp-0")?.focus();
+      if (next >= 5) {
+        toast.error("Too many wrong attempts. Please request a fresh code.");
+      } else {
+        toast.error(err instanceof Error ? err.message : "Invalid or expired OTP");
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    const text = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!text) return;
+    e.preventDefault();
+    const next = ["", "", "", "", "", ""];
+    for (let i = 0; i < text.length; i++) next[i] = text[i];
+    setOtp(next);
+    document.getElementById(`otp-${Math.min(text.length, 5)}`)?.focus();
   };
 
   const handleGoogle = async () => {
@@ -178,9 +209,11 @@ function SignUp() {
                   key={i}
                   id={`otp-${i}`}
                   inputMode="numeric"
+                  autoComplete="one-time-code"
                   maxLength={1}
                   value={d}
                   onChange={(e) => updateOtp(i, e.target.value)}
+                  onPaste={handleOtpPaste}
                   className="h-13 w-11 rounded-xl border border-border bg-card text-center text-xl font-bold text-foreground shadow-soft focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
               ))}
@@ -196,10 +229,14 @@ function SignUp() {
 
             <button
               onClick={sendOtp}
-              className="mx-auto mt-4 block text-xs font-medium text-accent"
+              disabled={cooldown > 0 || loading}
+              className="mx-auto mt-4 block text-xs font-medium text-accent disabled:text-muted-foreground"
             >
-              Didn't receive code? Resend OTP
+              {cooldown > 0 ? `Resend code in ${cooldown}s` : "Didn't receive code? Resend OTP"}
             </button>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+              The code expires in a few minutes. Enter it soon, or resend a fresh one.
+            </p>
           </>
         )}
 

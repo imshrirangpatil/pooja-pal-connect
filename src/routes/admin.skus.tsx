@@ -98,6 +98,21 @@ function AdminSkus() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const bulkActive = useMutation({
+    mutationFn: async (makeActive: boolean) => {
+      const { error } = await supabase.from("store_skus").update({ active: makeActive }).eq("active", !makeActive);
+      if (error) throw error;
+    },
+    onSuccess: (_d, makeActive) => {
+      toast.success(makeActive ? "Published all hidden SKUs" : "Hid all active SKUs");
+      qc.invalidateQueries({ queryKey: ["admin-skus"] });
+      qc.invalidateQueries({ queryKey: ["store-skus"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const hiddenCount = skus.filter((s: any) => !s.active).length;
+
   const grouped = (["kit", "samagri", "blessed"] as SkuCategory[]).map((cat) => ({
     cat, items: skus.filter((s: any) => s.category === cat),
   }));
@@ -113,6 +128,13 @@ function AdminSkus() {
           <Plus className="mr-1 h-4 w-4" /> New SKU
         </Button>
       </div>
+
+      {hiddenCount > 0 && (
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-primary/30 bg-primary/5 p-3">
+          <p className="text-xs"><span className="font-semibold">{hiddenCount}</span> hidden {hiddenCount === 1 ? "SKU is" : "SKUs are"} not in the store. Review prices and images, then publish.</p>
+          <Button size="sm" disabled={bulkActive.isPending} onClick={() => bulkActive.mutate(true)}>Publish all</Button>
+        </div>
+      )}
 
       {editing && (
         <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">

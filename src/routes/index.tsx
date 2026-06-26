@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { festivals, pandits } from "@/lib/data";
+import { pandits } from "@/lib/data";
 import { usePoojas } from "@/lib/poojas-source";
-import { Search, MapPin, Bell, Sparkles, Flame, ShoppingBag, ChevronRight, Star, Zap, Package, Hand, Video } from "lucide-react";
+import { useUpcomingFestivals } from "@/lib/festivals-source";
+import { useUnreadCount } from "@/lib/notifications";
+import { Search, MapPin, Bell, Sparkles, Flame, ShoppingBag, ChevronRight, Star, Zap, Video } from "lucide-react";
+import logoAsset from "@/assets/pranam-logo.png.asset.json";
 import heroImg from "@/assets/hero-pooja.jpg";
 import astroImg from "@/assets/cat-astrology.jpg";
 import samagriImg from "@/assets/cat-samagri.jpg";
@@ -12,8 +15,8 @@ import darshanImg from "@/assets/cat-darshan.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Pranam — Book Pandit & Pooja, Astrology on demand" },
-      { name: "description", content: "Verified pandits, full samagri delivered, astrology consults — every ritual, made easy." },
+      { title: "Pranam - Book Pandit & Pooja, Astrology on demand" },
+      { name: "description", content: "Verified pandits, full samagri delivered, astrology consults - every ritual, made easy." },
     ],
   }),
   component: Home,
@@ -21,6 +24,8 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { poojas } = usePoojas();
+  const { festivals } = useUpcomingFestivals(8);
+  const unread = useUnreadCount();
   return (
     <MobileShell>
       {/* Hero */}
@@ -29,13 +34,20 @@ function Home() {
         <div className="absolute inset-0 h-[420px] bg-gradient-to-b from-maroon/70 via-maroon/40 to-background" />
         <div className="relative px-5 pb-6 pt-6 text-cream">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs">
-              <MapPin className="h-3.5 w-3.5" />
-              <span className="font-medium">Mumbai, MH</span>
+            <div className="flex items-center gap-2">
+              <img src={logoAsset.url} alt="Pranam" width={32} height={32} className="h-8 w-8 rounded-lg bg-white/90 object-contain p-0.5" />
+              <span className="inline-flex items-center gap-1 text-xs font-medium">
+                <MapPin className="h-3.5 w-3.5" /> Mumbai, MH
+              </span>
             </div>
-            <button className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur">
+            <Link to="/notifications" aria-label="Notifications" className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur">
               <Bell className="h-4 w-4" />
-            </button>
+              {unread > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              )}
+            </Link>
           </div>
 
           <div className="mt-16">
@@ -44,7 +56,7 @@ function Home() {
               Every ritual,<br />done right.
             </h1>
             <p className="mt-2 max-w-xs text-sm text-cream/85">
-              Verified pandits, samagri at your door, astrology in your pocket.
+              Book a pandit, order samagri, or talk to an astrologer.
             </p>
           </div>
 
@@ -71,26 +83,17 @@ function Home() {
       {/* Direct booking shortcut */}
       <section className="mx-5 mt-6 overflow-hidden rounded-3xl border border-primary/30 bg-primary/5 p-5">
         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
-          <Zap className="h-3.5 w-3.5" /> Know your pooja already?
+          <Zap className="h-3.5 w-3.5" /> Book in a minute
         </div>
-        <h3 className="mt-2 text-lg font-bold leading-tight">Pick a pandit, pick a pooja, book in 60 seconds.</h3>
-        <p className="mt-1 text-xs text-muted-foreground">Skip the browsing — your pandit will call you to confirm timing and details.</p>
+        <h3 className="mt-2 text-lg font-bold leading-tight">Choose your pooja, we handle the rest.</h3>
+        <p className="mt-1 text-xs text-muted-foreground">A verified pandit calls to confirm timing, and samagri can come with the booking.</p>
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <Link to="/pandits" className="flex items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground">
-            Choose pandit <ChevronRight className="h-3.5 w-3.5" />
+          <Link to="/poojas" className="flex items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground">
+            Browse poojas <ChevronRight className="h-3.5 w-3.5" />
           </Link>
-          <Link to="/poojas" className="flex items-center justify-center gap-1.5 rounded-full border border-primary/40 bg-card py-2.5 text-xs font-semibold text-primary">
-            Choose pooja <ChevronRight className="h-3.5 w-3.5" />
+          <Link to="/pandits" className="flex items-center justify-center gap-1.5 rounded-full border border-primary/40 bg-card py-2.5 text-xs font-semibold text-primary">
+            Find a pandit <ChevronRight className="h-3.5 w-3.5" />
           </Link>
-        </div>
-
-        <div className="mt-4 rounded-2xl bg-card p-3 text-[11px] text-muted-foreground">
-          <p className="font-semibold text-foreground">For samagri, you choose:</p>
-          <ul className="mt-2 space-y-1.5">
-            <li className="flex items-start gap-2"><Package className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> Order the curated kit on Pranam</li>
-            <li className="flex items-start gap-2"><ShoppingBag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> Order individual items from our store</li>
-            <li className="flex items-start gap-2"><Hand className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> Or bring your own — pandit will guide you</li>
-          </ul>
         </div>
       </section>
 
@@ -100,10 +103,12 @@ function Home() {
         <SectionHeader title="Festivals & Muhurat" icon={<Flame className="h-4 w-4" />} action="See all" to="/festivals" />
         <div className="-mx-5 mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {festivals.map((f) => (
-            <Link key={f.name} to="/festivals" className={`min-w-[160px] rounded-2xl ${f.color} p-4 text-secondary-foreground shadow-soft`}>
-              <p className="text-[10px] font-semibold uppercase tracking-wider opacity-90">{f.date}</p>
+            <Link key={f.id} to="/festivals" className="min-w-[160px] rounded-2xl bg-secondary p-4 text-secondary-foreground shadow-soft">
+              <p className="text-[10px] font-semibold uppercase tracking-wider opacity-90">{f.label}</p>
               <p className="mt-2 text-lg font-bold leading-tight">{f.name}</p>
-              <p className="mt-3 text-xs opacity-90">{f.days === 0 ? "Today" : `In ${f.days} days`}</p>
+              <p className="mt-3 text-xs opacity-90">
+                {f.daysFromNow === 0 ? "Today" : f.daysFromNow === 1 ? "Tomorrow" : `In ${f.daysFromNow} days`}
+              </p>
             </Link>
           ))}
         </div>
@@ -154,7 +159,7 @@ function Home() {
           <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
             <Video className="h-3.5 w-3.5" /> Mandir darshan, anytime
           </div>
-          <h3 className="mt-1.5 text-lg font-bold leading-tight">Aarti from Kashi, Tirupati, Mahakal — on your phone</h3>
+          <h3 className="mt-1.5 text-lg font-bold leading-tight">Aarti from Kashi, Tirupati and Mahakal, on your phone</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             Watch live aarti from India's most sacred temples, or book a private live pooja in your name with prasad delivered home.
           </p>
@@ -201,7 +206,7 @@ function Home() {
       </section>
 
       <p className="mt-8 px-5 text-center text-[11px] text-muted-foreground">
-        🪔 Made with devotion in India
+        Made in India
       </p>
     </MobileShell>
   );

@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
@@ -12,7 +13,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout — Pranam" },
+      { title: "Checkout - Pranam" },
       { name: "description", content: "Confirm your delivery address and place your samagri order." },
     ],
   }),
@@ -36,6 +37,7 @@ type Address = {
 function CheckoutPage() {
   const cart = useCart();
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const { user, loading: authLoading } = useAuth();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -43,6 +45,27 @@ function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [placing, setPlacing] = useState(false);
   const [payment, setPayment] = useState<"cod" | "wallet">("cod");
+  const [applyCredits, setApplyCredits] = useState(false);
+
+  const { data: balancePaise = 0 } = useQuery({
+    queryKey: ["credit-balance", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_credit_balance", { _user_id: user!.id });
+      if (error) throw error;
+      return (data as number) ?? 0;
+    },
+  });
+  const walletRupees = balancePaise / 100;
+  const walletEnough = walletRupees >= cart.total;
+
+  // Credits can pay a samagri order in full via the wallet option, or shave up to
+  // 20% off a cash-on-delivery order.
+  const orderPaise = cart.total * 100;
+  const cap20Paise = Math.floor(orderPaise * 0.2);
+  const codCreditPaise = payment === "cod" && applyCredits ? Math.min(balancePaise, cap20Paise) : 0;
+  const creditsUsedPaise = payment === "wallet" ? orderPaise : codCreditPaise;
+  const payablePaise = orderPaise - creditsUsedPaise;
 
   useEffect(() => {
     if (authLoading) return;
@@ -78,10 +101,13 @@ function CheckoutPage() {
       toast.error("Please select a delivery address");
       return;
     }
+    if (payment === "wallet" && !walletEnough) {
+      toast.error("Your wallet balance is not enough for this order");
+      return;
+    }
     setPlacing(true);
     try {
-      const { data: order, error } = await supabase
-        .from("orders")
+      const { data: order, error } = await (supabase.from("orders") as any)
         .insert({
           user_id: user.id,
           subtotal: cart.subtotal,
@@ -90,6 +116,7 @@ function CheckoutPage() {
           payment_method: payment,
           payment_status: payment === "wallet" ? "paid" : "pending",
           status: "placed",
+          credits_applied: creditsUsedPaise,
           address_label: addr.label,
           recipient_name: addr.recipient_name,
           phone: addr.phone,
@@ -115,6 +142,15 @@ function CheckoutPage() {
       }));
       const { error: itemsError } = await supabase.from("order_items").insert(lines);
       if (itemsError) throw itemsError;
+
+      if (creditsUsedPaise > 0) {
+        const { error: redeemErr } = await (supabase as any).rpc("redeem_credits", {
+          _amount_paise: creditsUsedPaise,
+          _description: `Order ${order.id}`,
+        });
+        if (redeemErr) console.error("[checkout] redeem failed", redeemErr);
+        qc.invalidateQueries({ queryKey: ["credit-balance", user.id] });
+      }
 
       cart.clear();
       toast.success("Order placed! We'll notify you when it's on the way.");
@@ -217,10 +253,24 @@ function CheckoutPage() {
           <PayOption
             active={payment === "wallet"}
             onClick={() => setPayment("wallet")}
+            disabled={!walletEnough}
             icon={<Wallet className="h-4 w-4" />}
             title="Pranam Wallet"
-            sub="Balance: ₹250"
+            sub={
+              walletEnough
+                ? `Balance: ₹${walletRupees.toLocaleString("en-IN")}`
+                : `Balance ₹${walletRupees.toLocaleString("en-IN")}, not enough for this order`
+            }
           />
+          {balancePaise > 0 && payment === "cod" && (
+            <label className="flex items-start gap-2 rounded-2xl border border-border/60 bg-card p-3.5 text-xs">
+              <input type="checkbox" checked={applyCredits} onChange={(e) => setApplyCredits(e.target.checked)} className="mt-0.5" />
+              <span>
+                Use Pranam credits (up to 20% of the order). You save up to{" "}
+                <span className="font-semibold text-foreground">₹{(Math.min(balancePaise, cap20Paise) / 100).toLocaleString("en-IN")}</span>.
+              </span>
+            </label>
+          )}
         </div>
       </section>
 
@@ -248,6 +298,18 @@ function CheckoutPage() {
           <span>Total</span>
           <span className="text-accent">₹{cart.total}</span>
         </div>
+        {creditsUsedPaise > 0 && (
+          <>
+            <div className="flex justify-between text-emerald-700">
+              <span>Pranam credits</span>
+              <span>- ₹{(creditsUsedPaise / 100).toLocaleString("en-IN")}</span>
+            </div>
+            <div className="flex justify-between border-t border-border pt-2 text-base font-bold">
+              <span>{payment === "wallet" ? "Paid by wallet" : "Payable"}</span>
+              <span className="text-accent">₹{(payablePaise / 100).toLocaleString("en-IN")}</span>
+            </div>
+          </>
+        )}
       </section>
 
       <div className="fixed bottom-16 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-card/95 p-4 backdrop-blur-xl">
@@ -256,7 +318,7 @@ function CheckoutPage() {
           disabled={placing || !selectedId || cart.items.length === 0}
           className="h-12 w-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
         >
-          {placing ? "Placing order…" : `Place Order · ₹${cart.total}`}
+          {placing ? "Placing order…" : `Place Order · ₹${(payablePaise / 100).toLocaleString("en-IN")}`}
         </Button>
       </div>
     </MobileShell>
@@ -269,17 +331,20 @@ function PayOption({
   icon,
   title,
   sub,
+  disabled = false,
 }: {
   active: boolean;
   onClick: () => void;
   icon: React.ReactNode;
   title: string;
   sub: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-2xl border bg-card p-3.5 text-left shadow-soft transition-colors ${
+      disabled={disabled}
+      className={`flex w-full items-center gap-3 rounded-2xl border bg-card p-3.5 text-left shadow-soft transition-colors disabled:opacity-50 ${
         active ? "border-primary ring-1 ring-primary" : "border-border/60"
       }`}
     >

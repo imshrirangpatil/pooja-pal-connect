@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/language")({
   head: () => ({
     meta: [
-      { title: "App Language — Pranam" },
+      { title: "App Language - Pranam" },
       { name: "description", content: "Choose your preferred app language." },
     ],
   }),

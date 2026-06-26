@@ -7,7 +7,7 @@ import { ShieldCheck, Star, MapPin, Languages, SlidersHorizontal, X } from "luci
 export const Route = createFileRoute("/pandits/")({
   head: () => ({
     meta: [
-      { title: "Verified Pandits — Pranam" },
+      { title: "Verified Pandits - Pranam" },
       { name: "description", content: "Hand-vetted pandits across India, with shastra knowledge and lineage verified." },
     ],
   }),

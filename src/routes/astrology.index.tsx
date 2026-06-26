@@ -7,7 +7,7 @@ import { Phone, MessageCircle, Star, Sparkles, Video } from "lucide-react";
 export const Route = createFileRoute("/astrology/")({
   head: () => ({
     meta: [
-      { title: "Astrology consult — Pranam" },
+      { title: "Astrology consult - Pranam" },
       { name: "description", content: "Talk to verified Vedic astrologers, tarot readers and numerologists, live." },
     ],
   }),
@@ -22,6 +22,7 @@ function Astrology() {
     () => (filter === "All" ? astrologers : astrologers.filter((a) => a.category === filter)),
     [filter],
   );
+  const firstOnline = useMemo(() => astrologers.find((a) => a.online), []);
 
   return (
     <MobileShell>
@@ -32,8 +33,20 @@ function Astrology() {
           <Sparkles className="h-3.5 w-3.5" /> Free first consult
         </div>
         <h2 className="mt-2 text-xl font-bold leading-tight">Your free 5-min reading awaits</h2>
-        <p className="mt-1 text-sm text-secondary-foreground/90">Share your details to get matched with the right astrologer.</p>
-        <button className="mt-4 rounded-full bg-background/95 px-4 py-2 text-xs font-semibold text-accent">Get free reading</button>
+        <p className="mt-1 text-sm text-secondary-foreground/90">Your first five minutes are on us. Pick up where it feels right.</p>
+        {firstOnline ? (
+          <Link
+            to="/astrology/chat/$id"
+            params={{ id: firstOnline.id }}
+            className="mt-4 inline-block rounded-full bg-background/95 px-5 py-2.5 text-xs font-semibold text-accent"
+          >
+            Start free reading
+          </Link>
+        ) : (
+          <button disabled className="mt-4 rounded-full bg-background/95 px-5 py-2.5 text-xs font-semibold text-accent opacity-60">
+            Astrologers are offline right now
+          </button>
+        )}
       </section>
 
       <section className="px-5 pt-6">
@@ -83,7 +96,7 @@ function Astrology() {
                   <Link
                     to="/astrology/chat/$id"
                     params={{ id: a.id }}
-                    className="flex items-center justify-center gap-1.5 rounded-full bg-secondary py-2.5 text-xs font-semibold text-secondary-foreground"
+                    className="flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-secondary py-3 text-xs font-semibold text-secondary-foreground"
                   >
                     <MessageCircle className="h-3.5 w-3.5" /> Chat
                   </Link>
@@ -97,7 +110,7 @@ function Astrology() {
                     to="/astrology/call/$id"
                     params={{ id: a.id }}
                     search={{ mode: "audio" }}
-                    className="flex items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground"
+                    className="flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary py-3 text-xs font-semibold text-primary-foreground"
                   >
                     <Phone className="h-3.5 w-3.5" /> Call
                   </Link>
@@ -111,7 +124,7 @@ function Astrology() {
                     to="/astrology/call/$id"
                     params={{ id: a.id }}
                     search={{ mode: "video" }}
-                    className="flex items-center justify-center gap-1.5 rounded-full border border-border bg-card py-2.5 text-xs font-semibold text-foreground"
+                    className="flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-border bg-card py-3 text-xs font-semibold text-foreground"
                   >
                     <Video className="h-3.5 w-3.5" /> Video
                   </Link>

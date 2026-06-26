@@ -12,7 +12,7 @@ export const Route = createFileRoute("/pandits/$id")({
     const p = pandits.find((x) => x.id === params.id);
     return {
       meta: [
-        { title: p ? `${p.name} — Verified Pandit on Pranam` : "Pandit profile — Pranam" },
+        { title: p ? `${p.name} - Verified Pandit on Pranam` : "Pandit profile - Pranam" },
         { name: "description", content: p ? `Book ${p.name}, ${p.experience}+ years experience, ${p.rating}★ across ${p.reviews} reviews.` : "Pandit profile" },
       ],
     };

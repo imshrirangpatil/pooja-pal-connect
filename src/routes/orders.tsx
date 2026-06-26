@@ -9,7 +9,7 @@ import { BackButton } from "@/components/BackButton";
 export const Route = createFileRoute("/orders")({
   head: () => ({
     meta: [
-      { title: "My Orders — Pranam" },
+      { title: "My Orders - Pranam" },
       { name: "description", content: "Track your samagri orders." },
     ],
   }),

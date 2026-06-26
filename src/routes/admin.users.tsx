@@ -62,7 +62,7 @@ function AdminUsers() {
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="text-sm font-semibold">{u.full_name || "Unnamed"}</p>
-              <p className="text-[11px] text-muted-foreground">{u.phone || "—"}</p>
+              <p className="text-[11px] text-muted-foreground">{u.phone || " - "}</p>
               <p className="text-[10px] text-muted-foreground font-mono truncate">{u.id}</p>
             </div>
           </div>

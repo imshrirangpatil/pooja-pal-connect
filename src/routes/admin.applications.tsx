@@ -47,9 +47,9 @@ function AdminApplications() {
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="font-semibold">{a.full_name}</p>
-              <p className="text-[11px] text-muted-foreground">{a.phone} · {a.city || "—"} · {a.experience} yrs</p>
-              <p className="mt-1 text-xs"><span className="text-muted-foreground">Specialties:</span> {a.specialties || "—"}</p>
-              <p className="text-xs"><span className="text-muted-foreground">Languages:</span> {a.languages || "—"}</p>
+              <p className="text-[11px] text-muted-foreground">{a.phone} · {a.city || " - "} · {a.experience} yrs</p>
+              <p className="mt-1 text-xs"><span className="text-muted-foreground">Specialties:</span> {a.specialties || " - "}</p>
+              <p className="text-xs"><span className="text-muted-foreground">Languages:</span> {a.languages || " - "}</p>
               {a.message && <p className="mt-1 text-xs italic text-muted-foreground">"{a.message}"</p>}
               <p className="mt-1 text-[10px] text-muted-foreground">{new Date(a.created_at).toLocaleString("en-IN")}</p>
             </div>

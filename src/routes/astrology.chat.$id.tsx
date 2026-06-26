@@ -19,7 +19,7 @@ import { ReviewModule } from "@/components/ReviewModule";
 
 export const Route = createFileRoute("/astrology/chat/$id")({
   head: () => ({
-    meta: [{ title: "Live chat — Pranam Astrology" }],
+    meta: [{ title: "Live chat - Pranam Astrology" }],
   }),
   component: ChatPage,
   notFoundComponent: () => (
@@ -45,7 +45,15 @@ function ChatPage() {
 
   const replyFn = useServerFn(generateAstrologerReply);
 
-  // UI state — initialised immediately so the interface renders without waiting on backend.
+  // Greet a signed-in seeker by their first name and carry it into the model prompt.
+  const userName = (user?.user_metadata?.full_name as string) || (user?.user_metadata?.name as string) || "";
+  const firstName = userName.trim().split(/\s+/)[0] || "";
+  const astroFirstName = astrologer.name.split(" ").slice(-1)[0];
+  const greetingText = firstName
+    ? `Namaste ${firstName} 🙏 I'm ${astroFirstName}. Whenever you're ready, share your date, time and place of birth and I'll guide you.`
+    : `Namaste 🙏 I'm ${astroFirstName}. Please share your name, date and place of birth so I can guide you.`;
+
+  // UI state - initialised immediately so the interface renders without waiting on backend.
   const [messages, setMessages] = useState<Msg[]>(() => [
     {
       id: "sys-1",
@@ -56,7 +64,7 @@ function ChatPage() {
     {
       id: "greet-1",
       from: "astrologer",
-      text: `Namaste 🙏 I'm ${astrologer.name.split(" ").slice(-1)[0]}. Please share your name, date and place of birth so I can guide you.`,
+      text: greetingText,
       at: Date.now(),
     },
   ]);
@@ -67,12 +75,12 @@ function ChatPage() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const startedAtRef = useRef<number>(Date.now());
 
-  // Backend wiring — populated asynchronously; null means run in local mode.
+  // Backend wiring - populated asynchronously; null means run in local mode.
   const [sessionId, setSessionId] = useState<string | null>(null);
   const keyRef = useRef<CryptoKey | null>(null);
   const [backendReady, setBackendReady] = useState(false);
 
-  // Bootstrap or resume the persisted session — non-blocking.
+  // Bootstrap or resume the persisted session - non-blocking.
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
@@ -137,7 +145,7 @@ function ChatPage() {
         } else {
           // Persist the seeded greeting for the brand-new session.
           const sysText = "Free first 5 minutes • Conversation is end-to-end encrypted on this device";
-          const greetText = `Namaste 🙏 I'm ${astrologer.name.split(" ").slice(-1)[0]}. Please share your name, date and place of birth so I can guide you.`;
+          const greetText = greetingText;
           const sysEnc = await encryptText(key, sysText);
           const grEnc = await encryptText(key, greetText);
           await supabase.from("astro_chat_messages").insert([
@@ -148,7 +156,7 @@ function ChatPage() {
         setBackendReady(true);
       } catch (e) {
         console.error("[astro-chat] backend setup failed", e);
-        // Continue without persistence — UI keeps working in local-only mode.
+        // Continue without persistence - UI keeps working in local-only mode.
       }
     })();
     return () => {
@@ -205,6 +213,7 @@ function ChatPage() {
           astrologerName: astrologer.name,
           expertise: astrologer.expertise,
           languages: astrologer.languages,
+          userName: userName || undefined,
           history,
         },
       });

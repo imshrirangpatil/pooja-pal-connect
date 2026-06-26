@@ -5,7 +5,7 @@ import logoAsset from "@/assets/pranam-logo.png.asset.json";
 export const Route = createFileRoute("/welcome")({
   head: () => ({
     meta: [
-      { title: "Pranam — Pandit, Pooja & Astrology" },
+      { title: "Pranam - Pandit, Pooja & Astrology" },
       { name: "description", content: "Book verified pandits, get samagri delivered, and consult trusted astrologers across India." },
     ],
   }),

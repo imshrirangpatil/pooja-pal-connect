@@ -9,14 +9,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { supportAssistant } from "@/lib/support-chat.functions";
 import { toast } from "sonner";
-import { Bot, Mail, Send, Loader2, MessageSquarePlus, CheckCircle2 } from "lucide-react";
+import { Bot, Mail, Send, Loader2, MessageSquarePlus, CheckCircle2, Phone, Headphones } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_E164, SUPPORT_EMAIL, SUPPORT_HOURS } from "@/lib/support-contact";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Help & Support — Pranam" },
-      { name: "description", content: "Get help with bookings, orders, payments and more — chat with our assistant or write to our team." },
+      { title: "Help & Support - Pranam" },
+      { name: "description", content: "Get help with bookings, orders, payments and more - chat with our assistant or write to our team." },
     ],
   }),
   component: SupportPage,
@@ -46,6 +47,9 @@ function SupportPage() {
           ))}
         </div>
       </div>
+      <p className="px-5 pt-2 text-center text-[11px] text-muted-foreground">
+        Chat for quick answers, or write to us. You can reach a human from either one.
+      </p>
       {tab === "form" ? <TicketForm /> : <SupportChat />}
     </MobileShell>
   );
@@ -53,7 +57,7 @@ function SupportPage() {
 
 function TicketForm({ prefill }: { prefill?: { subject?: string; transcript?: ChatMsg[]; message?: string } }) {
   const { user } = useAuth();
-  const [name, setName] = useState("");
+  const [name, setName] = useState((user?.user_metadata?.full_name as string) || (user?.user_metadata?.name as string) || "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [subject, setSubject] = useState(prefill?.subject ?? "");
   const [message, setMessage] = useState(prefill?.message ?? "");
@@ -63,6 +67,10 @@ function TicketForm({ prefill }: { prefill?: { subject?: string; transcript?: Ch
   useEffect(() => { if (user?.email && !email) setEmail(user.email); }, [user]);
 
   const submit = async () => {
+    if (!name.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
     if (!email.trim() || !subject.trim() || !message.trim()) {
       toast.error("Please fill email, subject and message");
       return;
@@ -72,7 +80,7 @@ function TicketForm({ prefill }: { prefill?: { subject?: string; transcript?: Ch
       .from("support_tickets")
       .insert({
         user_id: user?.id ?? null,
-        name: name.trim() || null,
+        name: name.trim(),
         email: email.trim(),
         subject: subject.trim(),
         message: message.trim(),
@@ -108,7 +116,7 @@ function TicketForm({ prefill }: { prefill?: { subject?: string; transcript?: Ch
       <div className="rounded-2xl border border-border/60 bg-card p-4 space-y-3">
         <div>
           <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Your name</label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Optional" className="mt-1.5" />
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className="mt-1.5" />
         </div>
         <div>
           <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Email</label>
@@ -133,23 +141,45 @@ function TicketForm({ prefill }: { prefill?: { subject?: string; transcript?: Ch
         </Button>
       </div>
       <p className="px-1 text-[11px] text-muted-foreground">
-        Prefer chatting? Switch to the <span className="font-semibold">Chat with assistant</span> tab — quick answers, with the option to escalate to a human.
+        Prefer chatting? Switch to the <span className="font-semibold">Chat with assistant</span> tab - quick answers, with the option to escalate to a human.
       </p>
     </section>
   );
 }
 
+const GREETING = "Namaste 🙏 I'm Pranam Sahayak. How can I help - booking, order, payment, account, anything?";
+
 function SupportChat() {
   const { user } = useAuth();
   const ask = useServerFn(supportAssistant);
-  const [messages, setMessages] = useState<ChatMsg[]>([
-    { role: "assistant", content: "Namaste 🙏 I'm Pranam Sahayak. How can I help — booking, order, payment, account, anything?" },
-  ]);
+  const [messages, setMessages] = useState<ChatMsg[]>([{ role: "assistant", content: GREETING }]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const [escalate, setEscalate] = useState<{ subject: string } | null>(null);
   const [showForm, setShowForm] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Load saved conversation for a signed-in user so it follows them across devices.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await (supabase as any)
+        .from("support_chat_messages")
+        .select("role, content")
+        .order("created_at", { ascending: true })
+        .limit(200);
+      if (cancelled || error || !data || data.length === 0) return;
+      setMessages([{ role: "assistant", content: GREETING }, ...(data as ChatMsg[])]);
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  // Persist a single message for signed-in users (best effort, non-blocking).
+  const persist = (role: ChatMsg["role"], content: string) => {
+    if (!user) return;
+    void (supabase as any).from("support_chat_messages").insert({ user_id: user.id, role, content });
+  };
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -161,16 +191,18 @@ function SupportChat() {
     setInput("");
     const next: ChatMsg[] = [...messages, { role: "user", content: text }];
     setMessages(next);
+    persist("user", text);
     setPending(true);
     try {
       const res = await ask({ data: { history: next } });
       setMessages((m) => [...m, { role: "assistant", content: res.reply }]);
+      persist("assistant", res.reply);
       if (res.shouldEscalate) {
         setEscalate({ subject: res.suggestedSubject || text.slice(0, 80) });
       }
     } catch (e) {
       console.error(e);
-      setMessages((m) => [...m, { role: "assistant", content: "Sorry — something went wrong. Let's create a ticket so our team can help." }]);
+      setMessages((m) => [...m, { role: "assistant", content: "Sorry - something went wrong. Let's create a ticket so our team can help." }]);
       setEscalate({ subject: text.slice(0, 80) });
     } finally {
       setPending(false);
@@ -208,12 +240,38 @@ function SupportChat() {
       </div>
 
       {escalate && (
-        <button
-          onClick={() => setShowForm(true)}
-          className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-2xl border border-primary/40 bg-primary/10 px-4 py-2.5 text-xs font-semibold text-primary"
-        >
-          <MessageSquarePlus className="h-4 w-4" /> Create a ticket for our team
-        </button>
+        <div className="mt-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
+            <Headphones className="h-3.5 w-3.5" /> Talk to a human
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Our support team is here to help. Reach us directly, or raise a ticket and we will follow up.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <a
+              href={`tel:${SUPPORT_PHONE_E164}`}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground"
+            >
+              <Phone className="h-3.5 w-3.5" /> Call us
+            </a>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-primary/40 bg-card px-3 py-2.5 text-xs font-semibold text-primary"
+            >
+              <Mail className="h-3.5 w-3.5" /> Email us
+            </a>
+          </div>
+          <div className="mt-2 space-y-0.5 text-[11px] text-muted-foreground">
+            <p><span className="font-medium text-foreground">{SUPPORT_PHONE_DISPLAY}</span> · {SUPPORT_HOURS}</p>
+            <p className="font-medium text-foreground">{SUPPORT_EMAIL}</p>
+          </div>
+          <button
+            onClick={() => setShowForm(true)}
+            className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/40 bg-primary/10 px-4 py-2.5 text-xs font-semibold text-primary"
+          >
+            <MessageSquarePlus className="h-4 w-4" /> Create a support ticket
+          </button>
+        </div>
       )}
 
       <div className="mt-3 flex gap-2">

@@ -10,7 +10,7 @@ import { startLoopback, type LoopbackHandle } from "@/lib/webrtc-loop";
 export const Route = createFileRoute("/astrology/call/$id")({
   validateSearch: (s: Record<string, unknown>) =>
     z.object({ mode: z.enum(["audio", "video"]).default("audio") }).parse(s),
-  head: () => ({ meta: [{ title: "Live call — Pranam Astrology" }] }),
+  head: () => ({ meta: [{ title: "Live call - Pranam Astrology" }] }),
   component: CallPage,
   notFoundComponent: () => (
     <div className="p-6 text-center text-sm text-muted-foreground">Astrologer not found.</div>

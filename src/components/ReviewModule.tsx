@@ -105,7 +105,7 @@ export function ReviewModule({ targetKind, targetId, source = "profile", referen
       {!compact && (
         <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
           <div>
-            <p className="text-3xl font-bold text-accent">{avg ? avg.toFixed(1) : "—"}</p>
+            <p className="text-3xl font-bold text-accent">{avg ? avg.toFixed(1) : " - "}</p>
             <div className="mt-0.5 flex">
               {[1, 2, 3, 4, 5].map((n) => (
                 <Star key={n} className={`h-3.5 w-3.5 ${n <= Math.round(avg) ? "fill-primary text-primary" : "text-muted-foreground/40"}`} />
@@ -113,7 +113,7 @@ export function ReviewModule({ targetKind, targetId, source = "profile", referen
             </div>
           </div>
           <div className="flex-1 text-xs text-muted-foreground">
-            {reviews.length === 0 ? "No ratings yet — be the first." : `${reviews.length} verified rating${reviews.length === 1 ? "" : "s"}`}
+            {reviews.length === 0 ? "No ratings yet - be the first." : `${reviews.length} verified rating${reviews.length === 1 ? "" : "s"}`}
           </div>
         </div>
       )}

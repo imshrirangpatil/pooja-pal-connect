@@ -6,7 +6,7 @@ import { lovable } from "@/integrations/lovable";
 /**
  * Pranam Auth module.
  *
- * Backed by Lovable Cloud — token issuance, refresh, and session storage are
+ * Backed by Lovable Cloud - token issuance, refresh, and session storage are
  * handled by the platform. This module exposes a small surface that mirrors
  * the conceptual endpoints (send OTP, verify OTP, Google sign-in, refresh,
  * logout) on top of it.
@@ -30,7 +30,7 @@ type AuthCtx = {
 
 const Ctx = createContext<AuthCtx | null>(null);
 
-// Normalize to E.164 (+91…) — Supabase phone OTP requires it.
+// Normalize to E.164 (+91…) - Supabase phone OTP requires it.
 function toE164(phone: string) {
   const digits = phone.replace(/\D/g, "");
   if (digits.startsWith("91") && digits.length === 12) return `+${digits}`;

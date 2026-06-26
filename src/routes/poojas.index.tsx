@@ -6,8 +6,8 @@ import { ChevronRight, Filter, Clock, Sparkles } from "lucide-react";
 export const Route = createFileRoute("/poojas/")({
   head: () => ({
     meta: [
-      { title: "All Poojas — Pranam" },
-      { name: "description", content: "Browse all poojas — Ganesh, Satyanarayan, Griha Pravesh, Lakshmi and more." },
+      { title: "All Poojas - Pranam" },
+      { name: "description", content: "Browse all poojas - Ganesh, Satyanarayan, Griha Pravesh, Lakshmi and more." },
     ],
   }),
   component: PoojasList,
