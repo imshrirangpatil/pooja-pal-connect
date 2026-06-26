@@ -194,7 +194,7 @@ export function Bookings() {
                 <p className="text-base font-bold">Rate {rating.name}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">Help others find the right acharya.</p>
               </div>
-              <button onClick={() => setRating(null)} className="rounded-full p-1 hover:bg-muted">
+              <button onClick={() => setRating(null)} aria-label="Close" className="rounded-full p-1 hover:bg-muted">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -220,7 +220,7 @@ export function Bookings() {
                 <p className="text-base font-bold">Booking details</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">Ref: {details.id.slice(0, 8)}</p>
               </div>
-              <button onClick={() => setDetails(null)} className="rounded-full p-1 hover:bg-muted">
+              <button onClick={() => setDetails(null)} aria-label="Close" className="rounded-full p-1 hover:bg-muted">
                 <X className="h-4 w-4" />
               </button>
             </div>

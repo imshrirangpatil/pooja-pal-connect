@@ -150,7 +150,7 @@ function Pandits() {
           <div onClick={(e) => e.stopPropagation()} className="mx-auto flex max-h-[85vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-soft">
             <div className="flex items-center justify-between px-5 pb-3 pt-5">
               <h3 className="text-base font-bold">Filter pandits</h3>
-              <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-muted">
+              <button onClick={() => setOpen(false)} aria-label="Close" className="rounded-full p-1 hover:bg-muted">
                 <X className="h-4 w-4" />
               </button>
             </div>

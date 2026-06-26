@@ -66,7 +66,7 @@
   --secondary-foreground: #5C3D1E;
 
   --muted: #F5EFE6;
-  --muted-foreground: #9C7A5A;
+  --muted-foreground: #6B5236;     /* Darkened for WCAG AA contrast on cream */
 
   --accent: #C9910A;                /* Sacred gold */
   --accent-foreground: #1A0F00;
@@ -114,7 +114,7 @@
   --secondary: #261800;
   --secondary-foreground: #FAF0E0;
   --muted: #261800;
-  --muted-foreground: #9C7A5A;
+  --muted-foreground: #C2A782;     /* Lightened for contrast on dark bg */
   --accent: #FFB300;
   --accent-foreground: #1A0F00;
   --destructive: #C62828;
@@ -141,6 +141,11 @@
     outline-offset: 2px;
     border-radius: 6px;
   }
+
+  /* Consistent interactive affordances. */
+  :where(button):not(:disabled), :where([role="button"]) { cursor: pointer; }
+  :where(button, a, [role="button"]) { -webkit-tap-highlight-color: transparent; }
+  :where(button):disabled { cursor: not-allowed; }
 
   /* Respect users who prefer reduced motion. */
   @media (prefers-reduced-motion: reduce) {
