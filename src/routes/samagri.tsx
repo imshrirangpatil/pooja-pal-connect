@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import samagriHero from "@/assets/samagri-hero.jpg.asset.json";
 import samagriDiwali from "@/assets/samagri-diwali.jpg";
 import { useCart } from "@/lib/cart";
+import { useI18n } from "@/lib/i18n";
 import { ShoppingCart, Plus, Minus, Truck, Package, Sparkles, Gem, LayoutGrid, Search } from "lucide-react";
 import { toast } from "sonner";
 import { haptic } from "@/lib/haptics";
@@ -25,15 +26,16 @@ type Cat = "all" | "kit" | "samagri" | "blessed";
 
 type StoreItem = Samagri & { category: Cat extends "all" ? never : "kit" | "samagri" | "blessed" };
 
-const TABS: { key: Cat; label: string; icon: typeof Package }[] = [
-  { key: "all", label: "All", icon: LayoutGrid },
-  { key: "kit", label: "Kits", icon: Package },
-  { key: "samagri", label: "Samagri", icon: Sparkles },
-  { key: "blessed", label: "Blessed", icon: Gem },
+const TABS: { key: Cat; labelKey: string; icon: typeof Package }[] = [
+  { key: "all", labelKey: "samagri.tabAll", icon: LayoutGrid },
+  { key: "kit", labelKey: "samagri.tabKits", icon: Package },
+  { key: "samagri", labelKey: "samagri.tabSamagri", icon: Sparkles },
+  { key: "blessed", labelKey: "samagri.tabBlessed", icon: Gem },
 ];
 
 function Samagri() {
   const cart = useCart();
+  const { t } = useI18n();
   const [tab, setTab] = useState<Cat>("all");
   const [query, setQuery] = useState("");
   const qtyOf = (id: string) => cart.items.find((i) => i.item.id === id)?.qty ?? 0;
@@ -83,8 +85,8 @@ function Samagri() {
   return (
     <MobileShell>
       <TopBar
-        title="Samagri Store"
-        subtitle="Curated by pandits"
+        title={t("samagri.title")}
+        subtitle={t("samagri.subtitle")}
         right={
           <Link
             to="/cart"
@@ -112,7 +114,7 @@ function Samagri() {
 
       <div className="mx-5 mt-4 flex items-center gap-2 rounded-2xl bg-secondary p-3 text-xs text-secondary-foreground">
         <Truck className="h-4 w-4 text-accent" />
-        <span><strong>Free delivery</strong> on orders over ₹499. Same-day in metros.</span>
+        <span><strong>{t("samagri.freeDelivery")}</strong> {t("samagri.freeDeliverySub")}</span>
       </div>
 
       <div className="relative mx-5 mt-4">
@@ -120,27 +122,27 @@ function Samagri() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search kits and samagri, e.g. Diwali, rudraksh"
-          aria-label="Search the store"
+          placeholder={t("samagri.searchPlaceholder")}
+          aria-label={t("common.search")}
           className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
       <nav className="-mx-1 mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
-        {TABS.map((t) => {
-          const active = tab === t.key;
-          const Icon = t.icon;
-          const count = t.key === "all" ? items.length : items.filter((i) => i.category === t.key).length;
+        {TABS.map((tabDef) => {
+          const active = tab === tabDef.key;
+          const Icon = tabDef.icon;
+          const count = tabDef.key === "all" ? items.length : items.filter((i) => i.category === tabDef.key).length;
           return (
             <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
+              key={tabDef.key}
+              onClick={() => setTab(tabDef.key)}
               className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                 active ? "bg-primary text-primary-foreground shadow-glow" : "bg-secondary text-secondary-foreground"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
-              {t.label}
+              {t(tabDef.labelKey)}
               <span className={`ml-0.5 rounded-full px-1.5 text-[10px] ${active ? "bg-primary-foreground/20" : "bg-background/60"}`}>{count}</span>
             </button>
           );
@@ -149,7 +151,7 @@ function Samagri() {
 
       {filtered.length === 0 ? (
         <div className="mx-5 mt-6 rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          {query.trim() ? `Nothing matches "${query.trim()}". Try another search.` : "No items in this category yet."}
+          {query.trim() ? `${t("samagri.emptyCategory")} (${query.trim()})` : t("samagri.emptyCategory")}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 px-5 pt-4">
@@ -173,7 +175,7 @@ function Samagri() {
                         onClick={() => {
                           cart.add({ id: s.id, name: s.name, desc: s.desc, price: s.price, mrp: s.mrp, image: s.image });
                           haptic();
-                          toast.success(`${s.name} added to cart`);
+                          toast.success(`${s.name} ${t("samagri.added")}`);
                         }}
                         aria-label={`Add ${s.name} to cart`}
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition-transform active:scale-95"

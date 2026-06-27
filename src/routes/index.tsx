@@ -6,6 +6,7 @@ import { useUpcomingFestivals } from "@/lib/festivals-source";
 import { useUnreadCount } from "@/lib/notifications";
 import { useAuth } from "@/lib/auth";
 import { useCity, CITIES } from "@/lib/city";
+import { useI18n } from "@/lib/i18n";
 import { Search, MapPin, Bell, Flame, ChevronRight, Star, Zap, Video, X, Check } from "lucide-react";
 import logoAsset from "@/assets/pranam-logo.png.asset.json";
 import heroImg from "@/assets/hero-pooja.jpg";
@@ -30,6 +31,7 @@ function Home() {
   const unread = useUnreadCount();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
   const { city, setCity } = useCity();
   const [cityOpen, setCityOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -92,13 +94,13 @@ function Home() {
 
           <div className="mt-16">
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-marigold/90">
-              {firstName ? `Namaste ${firstName} 🙏` : "Namaste 🙏"}
+              {firstName ? `${t("home.greeting")} ${firstName} 🙏` : `${t("home.greeting")} 🙏`}
             </p>
             <h1 className="mt-2 text-3xl font-bold leading-tight text-balance">
-              Every ritual,<br />done right.
+              {t("home.heroTitle1")}<br />{t("home.heroTitle2")}
             </h1>
             <p className="mt-2 max-w-xs text-sm text-cream/85">
-              Book a pandit, order samagri, or talk to an astrologer.
+              {t("home.heroSub")}
             </p>
           </div>
 
@@ -115,8 +117,8 @@ function Home() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") runSearch(); }}
-              placeholder="Search poojas by name or type…"
-              aria-label="Search poojas"
+              placeholder={t("home.searchPlaceholder")}
+              aria-label={t("common.search")}
               className="h-12 w-full rounded-full border border-border/40 bg-card pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -126,16 +128,16 @@ function Home() {
       {/* Categories */}
       <section className="px-5 pt-2">
         <div className="grid grid-cols-2 gap-3">
-          <CategoryCard to="/darshan" img={darshanImg} label="Live Darshan" sub="Aarti & live pooja" />
-          <CategoryCard to="/astrology" img={astroImg} label="Astrology" sub="Live chat & call" tone="dark" />
-          <CategoryCard to="/samagri" img={samagriImg} label="Samagri" sub="Free delivery" />
-          <CategoryCard to="/pandits" img={panditImg} label="Pandits" sub={`${pandits.length}+ verified`} />
+          <CategoryCard to="/darshan" img={darshanImg} label={t("home.catDarshan")} sub={t("home.catDarshanSub")} />
+          <CategoryCard to="/astrology" img={astroImg} label={t("home.catAstrology")} sub={t("home.catAstrologySub")} tone="dark" />
+          <CategoryCard to="/samagri" img={samagriImg} label={t("home.catSamagri")} sub={t("home.catSamagriSub")} />
+          <CategoryCard to="/pandits" img={panditImg} label={t("home.catPandits")} sub={`${pandits.length}+ ${t("home.catPanditsSub")}`} />
         </div>
       </section>
 
       {/* Top pandits */}
       <section className="mt-7 px-5">
-        <SectionHeader title="Top pandits near you" action="See all" to="/pandits" />
+        <SectionHeader title={t("home.topPandits")} action={t("common.seeAll")} to="/pandits" />
         <div className="-mx-5 mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {pandits.slice(0, 6).map((p) => (
             <Link key={p.id} to="/pandits/$id" params={{ id: p.id }} className="min-w-[170px] rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
@@ -161,16 +163,16 @@ function Home() {
       {/* Direct booking shortcut */}
       <section className="mx-5 mt-6 overflow-hidden rounded-3xl border border-primary/30 bg-primary/5 p-5">
         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
-          <Zap className="h-3.5 w-3.5" /> Book in a minute
+          <Zap className="h-3.5 w-3.5" /> {t("home.bookInMinute")}
         </div>
-        <h3 className="mt-2 text-lg font-bold leading-tight">Choose your pooja, we handle the rest.</h3>
-        <p className="mt-1 text-xs text-muted-foreground">A verified pandit calls to confirm timing, and samagri can come with the booking.</p>
+        <h3 className="mt-2 text-lg font-bold leading-tight">{t("home.bookTitle")}</h3>
+        <p className="mt-1 text-xs text-muted-foreground">{t("home.bookSub")}</p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Link to="/poojas" className="flex items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground">
-            Browse poojas <ChevronRight className="h-3.5 w-3.5" />
+            {t("home.browsePoojas")} <ChevronRight className="h-3.5 w-3.5" />
           </Link>
           <Link to="/pandits" className="flex items-center justify-center gap-1.5 rounded-full border border-primary/40 bg-card py-2.5 text-xs font-semibold text-primary">
-            Find a pandit <ChevronRight className="h-3.5 w-3.5" />
+            {t("home.findPandit")} <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </section>
@@ -178,14 +180,14 @@ function Home() {
 
       {/* Festival strip */}
       <section className="mt-7 px-5">
-        <SectionHeader title="Festivals & Muhurat" icon={<Flame className="h-4 w-4" />} action="See all" to="/festivals" />
+        <SectionHeader title={t("home.festivals")} icon={<Flame className="h-4 w-4" />} action={t("common.seeAll")} to="/festivals" />
         <div className="-mx-5 mt-3 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {festivals.map((f) => (
             <Link key={f.id} to="/festivals" className="min-w-[160px] rounded-2xl bg-secondary p-4 text-secondary-foreground shadow-soft">
               <p className="text-[10px] font-semibold uppercase tracking-wider opacity-90">{f.label}</p>
               <p className="mt-2 text-lg font-bold leading-tight">{f.name}</p>
               <p className="mt-3 text-xs opacity-90">
-                {f.daysFromNow === 0 ? "Today" : f.daysFromNow === 1 ? "Tomorrow" : `In ${f.daysFromNow} days`}
+                {f.daysFromNow === 0 ? t("home.today") : f.daysFromNow === 1 ? t("home.tomorrow") : t("home.inDays").replace("{n}", String(f.daysFromNow))}
               </p>
             </Link>
           ))}
@@ -203,20 +205,20 @@ function Home() {
         </div>
         <div className="p-4">
           <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
-            <Video className="h-3.5 w-3.5" /> Mandir darshan, anytime
+            <Video className="h-3.5 w-3.5" /> {t("home.darshanTag")}
           </div>
-          <h3 className="mt-1.5 text-lg font-bold leading-tight">Aarti from Kashi, Tirupati and Mahakal, on your phone</h3>
+          <h3 className="mt-1.5 text-lg font-bold leading-tight">{t("home.darshanTitle")}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Watch live aarti from India's most sacred temples, or book a private live pooja in your name with prasad delivered home.
+            {t("home.darshanSub")}
           </p>
           <Link to="/darshan" className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">
-            Open live darshan <ChevronRight className="h-3.5 w-3.5" />
+            {t("home.openDarshan")} <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </section>
 
       <p className="mt-8 px-5 text-center text-[11px] text-muted-foreground">
-        Made in India
+        {t("home.madeInIndia")}
       </p>
     </MobileShell>
   );

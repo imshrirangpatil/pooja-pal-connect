@@ -3,7 +3,17 @@ import { useMemo, useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { usePoojas } from "@/lib/poojas-source";
 import type { Pooja } from "@/lib/data";
+import { useI18n } from "@/lib/i18n";
 import { Search } from "lucide-react";
+
+const FILTER_LABEL_KEY: Record<FilterKey, string> = {
+  All: "poojas.filterAll",
+  Popular: "poojas.filterPopular",
+  Festive: "poojas.filterFestive",
+  Home: "poojas.filterHome",
+  Business: "poojas.filterBusiness",
+  Wellness: "poojas.filterWellness",
+};
 
 export const Route = createFileRoute("/poojas/")({
   validateSearch: (s: Record<string, unknown>): { q?: string } => ({
@@ -46,6 +56,7 @@ function matchesTheme(p: Pooja, theme: FilterKey): boolean {
 
 function PoojasList() {
   const { poojas, loading } = usePoojas();
+  const { t } = useI18n();
   const { q } = Route.useSearch();
   const [active, setActive] = useState<FilterKey>("All");
   const [query, setQuery] = useState(q ?? "");
@@ -63,7 +74,7 @@ function PoojasList() {
 
   return (
     <MobileShell>
-      <TopBar title="All Poojas" subtitle={`${filtered.length} of ${poojas.length} rituals`} />
+      <TopBar title={t("poojas.title")} subtitle={`${filtered.length} / ${poojas.length} ${t("poojas.rituals")}`} />
 
       <div className="px-5 pt-4 pb-8">
         {/* Search */}
@@ -72,25 +83,25 @@ function PoojasList() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search poojas, e.g. Ganesh, Navagraha, Griha Pravesh"
-            aria-label="Search poojas"
+            placeholder={t("poojas.searchPlaceholder")}
+            aria-label={t("common.search")}
             className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
 
         {/* Filters */}
         <div className="-mx-5 mt-3 flex gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {FILTERS.map((t) => (
+          {FILTERS.map((f) => (
             <button
-              key={t}
-              onClick={() => setActive(t)}
+              key={f}
+              onClick={() => setActive(f)}
               className={`shrink-0 rounded-full px-5 py-2.5 text-xs font-semibold tracking-wide transition active:scale-95 ${
-                active === t
+                active === f
                   ? "bg-primary text-primary-foreground shadow-glow"
                   : "border border-border bg-card text-foreground hover:bg-secondary"
               }`}
             >
-              {t}
+              {t(FILTER_LABEL_KEY[f])}
             </button>
           ))}
         </div>
@@ -98,7 +109,7 @@ function PoojasList() {
         {/* Best Sellers */}
         {active === "All" && !query.trim() && popular.length > 0 && (
           <section className="mt-4">
-            <h2 className="text-sm font-bold">Best Sellers</h2>
+            <h2 className="text-sm font-bold">{t("poojas.bestSellers")}</h2>
             <div className="-mx-5 mt-2 flex gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {popular.map((p) => (
                 <Link
@@ -127,7 +138,7 @@ function PoojasList() {
 
           {!loading && filtered.length === 0 && (
             <div className="col-span-2 rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
-              No poojas match{query ? ` "${query}"` : ""}. Try another search or filter.
+              {query ? `${t("poojas.noMatch")} (${query})` : t("poojas.noMatch")}
             </div>
           )}
 
@@ -141,7 +152,7 @@ function PoojasList() {
               <div className="relative aspect-[4/3]">
                 <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                 {p.popular ? (
-                  <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary-foreground shadow-soft">Best Seller</span>
+                  <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary-foreground shadow-soft">{t("poojas.bestSeller")}</span>
                 ) : p.season ? (
                   <span className="absolute left-2 top-2 rounded-full bg-background/95 px-2 py-0.5 text-[9px] font-semibold text-accent shadow-soft">{p.season}</span>
                 ) : null}

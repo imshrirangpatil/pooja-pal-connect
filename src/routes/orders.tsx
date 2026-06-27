@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, Clock, RotateCcw } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 import { BackButton } from "@/components/BackButton";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { haptic } from "@/lib/haptics";
@@ -49,18 +50,19 @@ function statusColor(status: string) {
 // The journey a samagri order travels, in order. The order's current status
 // lights up this step and everything before it.
 const DELIVERY_STEPS = [
-  { key: "placed", label: "Placed" },
-  { key: "confirmed", label: "Confirmed" },
-  { key: "shipped", label: "Shipped" },
-  { key: "out_for_delivery", label: "Out" },
-  { key: "delivered", label: "Delivered" },
+  { key: "placed", labelKey: "orders.stepPlaced" },
+  { key: "confirmed", labelKey: "orders.stepConfirmed" },
+  { key: "shipped", labelKey: "orders.stepShipped" },
+  { key: "out_for_delivery", labelKey: "orders.stepOut" },
+  { key: "delivered", labelKey: "orders.stepDelivered" },
 ] as const;
 
 function DeliverySteps({ status }: { status: string }) {
+  const { t } = useI18n();
   if (status === "cancelled") {
     return (
       <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-[11px] font-medium text-red-700">
-        This order was cancelled. Any credits used have been refunded.
+        {t("orders.cancelledNote")}
       </p>
     );
   }
@@ -76,7 +78,7 @@ function DeliverySteps({ status }: { status: string }) {
               <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${done ? "bg-primary" : "bg-border"}`} />
               <span className={`h-0.5 flex-1 ${i === DELIVERY_STEPS.length - 1 ? "opacity-0" : i < current ? "bg-primary" : "bg-border"}`} />
             </div>
-            <span className={`mt-1 text-[9px] ${done ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{s.label}</span>
+            <span className={`mt-1 text-[9px] ${done ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{t(s.labelKey)}</span>
           </div>
         );
       })}
@@ -87,6 +89,7 @@ function DeliverySteps({ status }: { status: string }) {
 function OrdersPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useI18n();
   const cart = useCart();
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -115,15 +118,15 @@ function OrdersPage() {
       cart.setQty(it.samagri_id, it.qty);
     }
     haptic();
-    toast.success("Added to cart");
+    toast.success(t("orders.addedToCart"));
     navigate({ to: "/cart" });
   };
 
   return (
     <MobileShell>
       <TopBar
-        title="My Orders"
-        subtitle={orders.length ? `${orders.length} order${orders.length === 1 ? "" : "s"}` : "Samagri & essentials"}
+        title={t("orders.title")}
+        subtitle={orders.length ? `${orders.length} order${orders.length === 1 ? "" : "s"}` : t("orders.subtitle")}
         right={
           <BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />
         }
@@ -141,15 +144,15 @@ function OrdersPage() {
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary">
               <Package className="h-8 w-8 text-accent" />
             </div>
-            <h3 className="mt-4 text-base font-semibold">No orders yet</h3>
+            <h3 className="mt-4 text-base font-semibold">{t("orders.empty")}</h3>
             <p className="mt-1 max-w-xs text-xs text-muted-foreground">
-              Browse the samagri store and your orders will show up here.
+              {t("orders.emptySub")}
             </p>
             <Link
               to="/samagri"
               className="mt-4 rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow"
             >
-              Open store
+              {t("orders.openStore")}
             </Link>
           </div>
         ) : (
@@ -174,7 +177,7 @@ function OrdersPage() {
                     {items.length > 2 ? `, +${items.length - 2} more` : ""}
                   </h3>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    Delivering to {o.city}, {o.state}
+                    {t("orders.deliveringTo")} {o.city}, {o.state}
                   </p>
                   <DeliverySteps status={o.status} />
                   <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
@@ -197,7 +200,7 @@ function OrdersPage() {
                     onClick={() => reorder(o)}
                     className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary"
                   >
-                    <RotateCcw className="h-3.5 w-3.5" /> Reorder
+                    <RotateCcw className="h-3.5 w-3.5" /> {t("orders.reorder")}
                   </button>
                 </article>
               );
