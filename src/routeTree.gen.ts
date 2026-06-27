@@ -18,6 +18,7 @@ import { Route as SavedPanditsRouteImport } from './routes/saved-pandits'
 import { Route as SamagriRouteImport } from './routes/samagri'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PanditRouteImport } from './routes/pandit'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LanguageRouteImport } from './routes/language'
@@ -95,6 +96,11 @@ const ReferRoute = ReferRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanditRoute = PanditRouteImport.update({
+  id: '/pandit',
+  path: '/pandit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersRoute = OrdersRouteImport.update({
@@ -277,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/language': typeof LanguageRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
+  '/pandit': typeof PanditRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
@@ -320,6 +327,7 @@ export interface FileRoutesByTo {
   '/language': typeof LanguageRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
+  '/pandit': typeof PanditRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
@@ -365,6 +373,7 @@ export interface FileRoutesById {
   '/language': typeof LanguageRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
+  '/pandit': typeof PanditRoute
   '/profile': typeof ProfileRoute
   '/refer': typeof ReferRoute
   '/samagri': typeof SamagriRoute
@@ -411,6 +420,7 @@ export interface FileRouteTypes {
     | '/language'
     | '/notifications'
     | '/orders'
+    | '/pandit'
     | '/profile'
     | '/refer'
     | '/samagri'
@@ -454,6 +464,7 @@ export interface FileRouteTypes {
     | '/language'
     | '/notifications'
     | '/orders'
+    | '/pandit'
     | '/profile'
     | '/refer'
     | '/samagri'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/language'
     | '/notifications'
     | '/orders'
+    | '/pandit'
     | '/profile'
     | '/refer'
     | '/samagri'
@@ -543,6 +555,7 @@ export interface RootRouteChildren {
   LanguageRoute: typeof LanguageRoute
   NotificationsRoute: typeof NotificationsRoute
   OrdersRoute: typeof OrdersRoute
+  PanditRoute: typeof PanditRoute
   ProfileRoute: typeof ProfileRoute
   ReferRoute: typeof ReferRoute
   SamagriRoute: typeof SamagriRoute
@@ -625,6 +638,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pandit': {
+      id: '/pandit'
+      path: '/pandit'
+      fullPath: '/pandit'
+      preLoaderRoute: typeof PanditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders': {
@@ -917,6 +937,7 @@ const rootRouteChildren: RootRouteChildren = {
   LanguageRoute: LanguageRoute,
   NotificationsRoute: NotificationsRoute,
   OrdersRoute: OrdersRoute,
+  PanditRoute: PanditRoute,
   ProfileRoute: ProfileRoute,
   ReferRoute: ReferRoute,
   SamagriRoute: SamagriRoute,

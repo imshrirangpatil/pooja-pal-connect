@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import samagriHero from "@/assets/samagri-hero.jpg.asset.json";
 import samagriDiwali from "@/assets/samagri-diwali.jpg";
 import { useCart } from "@/lib/cart";
-import { ShoppingCart, Plus, Minus, Truck, Package, Sparkles, Gem, LayoutGrid } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Truck, Package, Sparkles, Gem, LayoutGrid, Search } from "lucide-react";
 import { toast } from "sonner";
 import { haptic } from "@/lib/haptics";
 
@@ -35,6 +35,7 @@ const TABS: { key: Cat; label: string; icon: typeof Package }[] = [
 function Samagri() {
   const cart = useCart();
   const [tab, setTab] = useState<Cat>("all");
+  const [query, setQuery] = useState("");
   const qtyOf = (id: string) => cart.items.find((i) => i.item.id === id)?.qty ?? 0;
 
   const { data: dbSkus = [] } = useQuery({
@@ -70,7 +71,14 @@ function Samagri() {
     return fromDb;
   }, [dbSkus]);
 
-  const filtered = tab === "all" ? items : items.filter((i) => i.category === tab);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((i) => {
+      if (tab !== "all" && i.category !== tab) return false;
+      if (q && !`${i.name} ${i.desc}`.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [items, tab, query]);
 
   return (
     <MobileShell>
@@ -107,6 +115,17 @@ function Samagri() {
         <span><strong>Free delivery</strong> on orders over ₹499. Same-day in metros.</span>
       </div>
 
+      <div className="relative mx-5 mt-4">
+        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search kits and samagri, e.g. Diwali, rudraksh"
+          aria-label="Search the store"
+          className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      </div>
+
       <nav className="-mx-1 mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
         {TABS.map((t) => {
           const active = tab === t.key;
@@ -130,7 +149,7 @@ function Samagri() {
 
       {filtered.length === 0 ? (
         <div className="mx-5 mt-6 rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          No items in this category yet.
+          {query.trim() ? `Nothing matches "${query.trim()}". Try another search.` : "No items in this category yet."}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 px-5 pt-4">

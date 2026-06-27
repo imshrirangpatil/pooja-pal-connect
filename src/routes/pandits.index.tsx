@@ -4,7 +4,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { poojas } from "@/lib/data";
 import { usePandits } from "@/lib/pandits-source";
 import { usePanditRatings } from "@/lib/ratings";
-import { ShieldCheck, Star, MapPin, Languages, SlidersHorizontal, X } from "lucide-react";
+import { ShieldCheck, Star, MapPin, Languages, SlidersHorizontal, X, Search } from "lucide-react";
 
 export const Route = createFileRoute("/pandits/")({
   head: () => ({
@@ -34,6 +34,7 @@ function Pandits() {
   const { pandits } = usePandits();
   const ratings = usePanditRatings();
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const [language, setLanguage] = useState<string | null>(null);
   const [expMin, setExpMin] = useState(0);
   const [ratingMin, setRatingMin] = useState(0);
@@ -41,21 +42,25 @@ function Pandits() {
 
   const ALL_LANGS = useMemo(() => Array.from(new Set(pandits.flatMap((p) => p.languages))).sort(), [pandits]);
 
-  const filtered = useMemo(
-    () =>
-      pandits.filter(
-        (p) =>
-          (!language || p.languages.includes(language)) &&
-          p.experience >= expMin &&
-          p.rating >= ratingMin &&
-          (!pooja || p.poojaSlugs.includes(pooja)),
-      ),
-    [pandits, language, expMin, ratingMin, pooja],
-  );
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return pandits.filter((p) => {
+      if (!(!language || p.languages.includes(language))) return false;
+      if (p.experience < expMin) return false;
+      if (p.rating < ratingMin) return false;
+      if (pooja && !p.poojaSlugs.includes(pooja)) return false;
+      if (q) {
+        const hay = `${p.name} ${p.city} ${p.specialties.join(" ")} ${p.languages.join(" ")}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [pandits, query, language, expMin, ratingMin, pooja]);
 
   const activeCount = (language ? 1 : 0) + (expMin ? 1 : 0) + (ratingMin ? 1 : 0) + (pooja ? 1 : 0);
 
   const reset = () => {
+    setQuery("");
     setLanguage(null);
     setExpMin(0);
     setRatingMin(0);
@@ -67,7 +72,17 @@ function Pandits() {
       <TopBar title="Our Pandits" subtitle={`${filtered.length} of ${pandits.length} verified acharyas`} />
 
       {/* Filters bar */}
-      <div className="sticky top-0 z-20 -mx-0 border-b border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
+      <div className="sticky top-0 z-20 -mx-0 space-y-3 border-b border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by name, city, specialty or language"
+            aria-label="Search pandits"
+            className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
         <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button
             onClick={() => setOpen(true)}
@@ -107,9 +122,13 @@ function Pandits() {
             <Link key={p.id} to="/pandits/$id" params={{ id: p.id }} className="block">
               <article className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary text-lg font-bold text-secondary-foreground">
-                    {p.initials}
-                  </div>
+                  {p.photoUrl ? (
+                    <img src={p.photoUrl} alt={p.name} className="h-16 w-16 shrink-0 rounded-full object-cover" loading="lazy" />
+                  ) : (
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-secondary text-lg font-bold text-secondary-foreground">
+                      {p.initials}
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <h3 className="truncate text-sm font-semibold">{p.name}</h3>

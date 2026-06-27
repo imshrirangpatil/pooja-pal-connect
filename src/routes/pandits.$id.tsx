@@ -74,9 +74,13 @@ function PanditProfile() {
       <section className="px-5 pt-5">
         <div className="rounded-3xl border border-border/60 bg-card p-5 shadow-soft">
           <div className="flex items-start gap-4">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary text-2xl font-bold text-secondary-foreground">
-              {pandit.initials}
-            </div>
+            {pandit.photoUrl ? (
+              <img src={pandit.photoUrl} alt={pandit.name} className="h-20 w-20 shrink-0 rounded-full object-cover" />
+            ) : (
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-secondary text-2xl font-bold text-secondary-foreground">
+                {pandit.initials}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <h2 className="truncate text-lg font-bold">{pandit.name}</h2>

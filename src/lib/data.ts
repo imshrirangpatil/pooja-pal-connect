@@ -90,6 +90,7 @@ export type Pandit = {
   feeFrom: number;
   verified: true;
   initials: string;
+  photoUrl?: string | null;
 };
 
 export const pandits: Pandit[] = [

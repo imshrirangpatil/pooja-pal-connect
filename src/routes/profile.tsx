@@ -112,11 +112,11 @@ function Profile() {
       )}
 
       {myPandit && (
-        <Link to="/earnings" className="mx-5 mt-4 flex items-center gap-3 rounded-2xl border border-accent/40 bg-accent/10 p-3.5">
+        <Link to="/pandit" className="mx-5 mt-4 flex items-center gap-3 rounded-2xl border border-accent/40 bg-accent/10 p-3.5">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 text-accent">
             <BadgeIndianRupee className="h-4 w-4" />
           </span>
-          <span className="flex-1 text-sm font-semibold">My earnings and payouts</span>
+          <span className="flex-1 text-sm font-semibold">Pandit portal, profile and earnings</span>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </Link>
       )}

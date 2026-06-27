@@ -20,6 +20,7 @@ type PanditRow = {
   fee_from: number | null;
   verified: boolean | null;
   initials: string | null;
+  photo_url: string | null;
 };
 
 function arr(v: unknown): string[] {
@@ -41,6 +42,7 @@ function rowToPandit(r: PanditRow): Pandit {
     feeFrom: r.fee_from ?? 0,
     verified: true,
     initials: r.initials ?? "",
+    photoUrl: r.photo_url,
   };
 }
 
@@ -53,7 +55,7 @@ export function usePandits() {
     (async () => {
       const { data, error } = await (supabase as any)
         .from("pandits")
-        .select("ref, name, city, experience, rating, reviews, languages, specialties, pooja_slugs, bio, fee_from, verified, initials")
+        .select("ref, name, city, experience, rating, reviews, languages, specialties, pooja_slugs, bio, fee_from, verified, initials, photo_url")
         .eq("visible", true)
         .order("rating", { ascending: false });
       if (cancelled) return;
