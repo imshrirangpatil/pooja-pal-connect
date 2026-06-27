@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
+import { useI18n } from "@/lib/i18n";
 import { Video, MapPin, ChevronRight, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/darshan")({
@@ -43,10 +44,11 @@ function watchUrl(channelId: string) {
 
 function DarshanPage() {
   const [selected, setSelected] = useState<Temple>(TEMPLES[0]);
+  const { t } = useI18n();
 
   return (
     <MobileShell>
-      <TopBar title="Live Darshan" subtitle="Aarti from temples, straight to your phone" />
+      <TopBar title={t("darshan.title")} subtitle={t("darshan.subtitle")} />
 
       <section className="px-5 pt-4">
         <div className="overflow-hidden rounded-3xl border border-primary/20 bg-card shadow-soft">
@@ -81,22 +83,22 @@ function DarshanPage() {
           </div>
         </div>
         <p className="mt-2 px-1 text-[11px] text-muted-foreground">
-          If a temple is between aartis, its feed may pause. Tap another temple below to keep watching.
+          {t("darshan.feedNote")}
         </p>
       </section>
 
       <section className="mt-6 px-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold">Choose a temple</h3>
-          <span className="text-[11px] text-muted-foreground">{TEMPLES.length} live feeds</span>
+          <h3 className="text-sm font-bold">{t("darshan.chooseTemple")}</h3>
+          <span className="text-[11px] text-muted-foreground">{t("darshan.liveFeeds").replace("{n}", String(TEMPLES.length))}</span>
         </div>
         <div className="mt-3 space-y-2">
-          {TEMPLES.map((t) => {
-            const active = t.id === selected.id;
+          {TEMPLES.map((temple) => {
+            const active = temple.id === selected.id;
             return (
               <button
-                key={t.id}
-                onClick={() => setSelected(t)}
+                key={temple.id}
+                onClick={() => setSelected(temple)}
                 className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left shadow-soft transition ${
                   active ? "border-primary bg-primary/5" : "border-border/60 bg-card"
                 }`}
@@ -105,14 +107,14 @@ function DarshanPage() {
                   <Video className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{t.name}</p>
+                  <p className="truncate text-sm font-semibold">{temple.name}</p>
                   <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                    <MapPin className="h-3 w-3" /> {t.city}
+                    <MapPin className="h-3 w-3" /> {temple.city}
                   </p>
                 </div>
                 {active ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" /> Live
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" /> {t("darshan.live")}
                   </span>
                 ) : (
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -124,11 +126,11 @@ function DarshanPage() {
       </section>
 
       <section className="mx-5 mt-6 mb-6 rounded-3xl border border-primary/30 bg-primary/5 p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">Private live pooja</p>
-        <h3 className="mt-1 text-base font-bold">Sankalp in your name, streamed live</h3>
-        <p className="mt-1 text-xs text-muted-foreground">A verified pandit performs your pooja with your gotra and sankalp on a private link, and prasad reaches your home.</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">{t("darshan.privatePooja")}</p>
+        <h3 className="mt-1 text-base font-bold">{t("darshan.privateTitle")}</h3>
+        <p className="mt-1 text-xs text-muted-foreground">{t("darshan.privateSub")}</p>
         <Link to="/poojas" className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">
-          Browse poojas <ChevronRight className="h-3.5 w-3.5" />
+          {t("home.browsePoojas")} <ChevronRight className="h-3.5 w-3.5" />
         </Link>
       </section>
     </MobileShell>

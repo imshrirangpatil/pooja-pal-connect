@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { isValidEmail } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/become-pandit")({
   head: () => ({
@@ -45,6 +46,7 @@ type Step = 0 | 1 | 2 | 3 | 4 | 5;
 
 function BecomePandit() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [step, setStep] = useState<Step>(0);
   const [form, setForm] = useState({
     fullName: "",
@@ -172,12 +174,12 @@ function BecomePandit() {
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div className="flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">Partner application</p>
-          <h1 className="text-base font-bold">Become a Pranam Pandit</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">{t("bp.partnerApplication")}</p>
+          <h1 className="text-base font-bold">{t("bp.becomeTitle")}</h1>
         </div>
         {step > 0 && step < 5 && (
           <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-accent">
-            Step {step}/4
+            {t("bp.step")} {step}/4
           </span>
         )}
       </header>
@@ -197,7 +199,7 @@ function BecomePandit() {
         {step === 0 && <Intro />}
         {step === 1 && (
           <section className="space-y-4">
-            <H2>Personal details</H2>
+            <H2>{t("bp.personalDetails")}</H2>
             <Field label="Full name (as per ID)">
               <Input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} placeholder="Pandit Ramesh Sharma" />
             </Field>
@@ -230,7 +232,7 @@ function BecomePandit() {
 
         {step === 2 && (
           <section className="space-y-5">
-            <H2>Your expertise</H2>
+            <H2>{t("bp.expertise")}</H2>
             <div>
               <Label>Specialties (poojas you perform)</Label>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -284,7 +286,7 @@ function BecomePandit() {
 
         {step === 3 && (
           <section className="space-y-4">
-            <H2>How you get paid</H2>
+            <H2>{t("bp.howYouPaid")}</H2>
             <p className="-mt-2 text-xs text-muted-foreground">
               Your sewa reaches your UPI or bank account soon after every completed booking.
             </p>
@@ -349,7 +351,7 @@ function BecomePandit() {
 
         {step === 4 && (
           <section className="space-y-4">
-            <H2>Let's verify you</H2>
+            <H2>{t("bp.verifyYou")}</H2>
             <p className="-mt-2 text-xs text-muted-foreground">
               Your documents are encrypted and seen only by our verification team.
             </p>
@@ -398,7 +400,7 @@ function BecomePandit() {
             onClick={next}
             className="h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
           >
-            {step === 0 ? "Start application" : step === 4 ? "Submit for verification" : "Continue"}
+            {step === 0 ? t("bp.startApplication") : step === 4 ? t("bp.submitForVerification") : t("common.continue")}
             <ChevronRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
@@ -410,7 +412,7 @@ function BecomePandit() {
             onClick={() => navigate({ to: "/" })}
             className="h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
           >
-            Back to home
+            {t("bp.backToHome")}
           </Button>
         </div>
       )}
@@ -419,6 +421,7 @@ function BecomePandit() {
 }
 
 function Intro() {
+  const { t } = useI18n();
   return (
     <div className="space-y-5">
       <div className="overflow-hidden rounded-3xl bg-secondary p-6 text-secondary-foreground shadow-glow">
@@ -426,21 +429,21 @@ function Intro() {
           <Award className="h-6 w-6" />
         </div>
         <h2 className="mt-4 font-display text-2xl font-bold leading-tight">
-          Grow your sewa with India's most trusted pooja platform
+          {t("bp.introTitle")}
         </h2>
         <p className="mt-2 text-sm opacity-90">
-          Receive bookings from devotees across your city. Get paid securely after every ritual.
+          {t("bp.introSub")}
         </p>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
-        <Stat icon={<Users className="h-4 w-4" />} k="50k+" v="Devotees" />
-        <Stat icon={<IndianRupee className="h-4 w-4" />} k="₹35k" v="Avg/mo" />
-        <Stat icon={<ShieldCheck className="h-4 w-4" />} k="100%" v="Secure" />
+        <Stat icon={<Users className="h-4 w-4" />} k="50k+" v={t("bp.statDevotees")} />
+        <Stat icon={<IndianRupee className="h-4 w-4" />} k="₹35k" v={t("bp.statAvgMo")} />
+        <Stat icon={<ShieldCheck className="h-4 w-4" />} k="100%" v={t("bp.statSecure")} />
       </div>
 
       <div>
-        <h3 className="font-display text-base font-bold">How verification works</h3>
+        <h3 className="font-display text-base font-bold">{t("bp.howVerification")}</h3>
         <ol className="mt-3 space-y-3">
           {[
             { t: "Apply online", d: "Fill basic details and your specialties (2 min)" },
@@ -472,14 +475,15 @@ function Intro() {
 }
 
 function Success() {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col items-center text-center">
       <div className="mt-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-warm shadow-glow">
         <CheckCircle2 className="h-10 w-10 text-primary-foreground" />
       </div>
-      <h2 className="mt-5 font-display text-2xl font-bold">Application received 🙏</h2>
+      <h2 className="mt-5 font-display text-2xl font-bold">{t("bp.successTitle")} 🙏</h2>
       <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-        Our team will verify your documents and reach out within <span className="font-semibold text-foreground">48 hours</span> to schedule your video interview.
+        {t("bp.successSub")}
       </p>
       <div className="mt-6 w-full space-y-2 rounded-2xl border border-border/60 bg-secondary/40 p-4 text-left">
         <p className="text-xs font-semibold uppercase tracking-wider text-accent">What's next</p>
@@ -497,7 +501,7 @@ function Success() {
         rel="noopener noreferrer"
         className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-primary/40 bg-card py-3 text-sm font-semibold text-primary"
       >
-        <CalendarClock className="h-4 w-4" /> Book your interview slot
+        <CalendarClock className="h-4 w-4" /> {t("bp.bookInterview")}
       </a>
     </div>
   );

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { BackButton } from "@/components/BackButton";
+import { useI18n } from "@/lib/i18n";
 import { FileText, Lock, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/terms")({
@@ -16,11 +17,12 @@ export const Route = createFileRoute("/terms")({
 const UPDATED = "21 June 2026";
 
 function TermsPage() {
+  const { t } = useI18n();
   return (
     <MobileShell>
       <TopBar
-        title="Terms & Privacy"
-        subtitle={`Last updated · ${UPDATED}`}
+        title={t("terms.title")}
+        subtitle={`${t("terms.lastUpdated")} · ${UPDATED}`}
         right={
           <BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />
         }
@@ -28,9 +30,7 @@ function TermsPage() {
 
       <div className="px-5 pt-4 pb-12 space-y-5">
         <p className="rounded-2xl border border-border/60 bg-card p-3 text-[11px] leading-relaxed text-muted-foreground shadow-soft">
-          This page is maintained by the Pranam team to summarise common questions
-          about how the app works and how your data is handled. It is not a legal
-          contract substitute or independent certification.
+          {t("terms.disclaimer")}
         </p>
 
         {/* Quick links */}
@@ -39,19 +39,19 @@ function TermsPage() {
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-accent">
               <FileText className="h-4 w-4" />
             </span>
-            <span className="text-xs font-semibold">Terms of Use</span>
+            <span className="text-xs font-semibold">{t("terms.termsOfUse")}</span>
           </a>
           <a href="#privacy" className="flex items-center gap-2 rounded-2xl border border-border/60 bg-card p-3 shadow-soft">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-accent">
               <Lock className="h-4 w-4" />
             </span>
-            <span className="text-xs font-semibold">Privacy Policy</span>
+            <span className="text-xs font-semibold">{t("terms.privacyPolicy")}</span>
           </a>
         </div>
 
         {/* Terms */}
         <section id="terms" className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
-          <h2 className="text-base font-bold">Terms of Use</h2>
+          <h2 className="text-base font-bold">{t("terms.termsOfUse")}</h2>
 
           <Block title="1. About Pranam">
             Pranam is a marketplace that connects devotees with verified pandits, astrologers,
@@ -102,7 +102,7 @@ function TermsPage() {
 
         {/* Privacy */}
         <section id="privacy" className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
-          <h2 className="text-base font-bold">Privacy Policy</h2>
+          <h2 className="text-base font-bold">{t("terms.privacyPolicy")}</h2>
 
           <Block title="What we collect">
             <ul className="list-disc pl-4 space-y-1">
@@ -148,9 +148,9 @@ function TermsPage() {
         </section>
 
         <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
-          <h2 className="text-base font-bold">Contact</h2>
+          <h2 className="text-base font-bold">{t("terms.contact")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Questions, data requests, or grievances?
+            {t("terms.contactSub")}
           </p>
           <a
             href="mailto:care@pranam.app"
@@ -159,7 +159,7 @@ function TermsPage() {
             <Mail className="h-3.5 w-3.5" /> care@pranam.app
           </a>
           <p className="mt-3 text-[11px] text-muted-foreground">
-            Grievance Officer: Pranam Care Team · Response within 7 working days.
+            {t("terms.grievance")}
           </p>
         </section>
       </div>

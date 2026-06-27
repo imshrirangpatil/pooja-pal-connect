@@ -5,6 +5,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { BackButton } from "@/components/BackButton";
 import { useAuth } from "@/lib/auth";
 import { useMyPandit } from "@/lib/my-pandit";
+import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { IndianRupee, Wallet, Clock, CheckCircle2, XCircle, Loader2, BadgeIndianRupee } from "lucide-react";
@@ -32,6 +33,7 @@ function EarningsPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { pandit, loading: panditLoading } = useMyPandit();
+  const { t } = useI18n();
   const qc = useQueryClient();
 
   useEffect(() => {
@@ -92,7 +94,7 @@ function EarningsPage() {
 
   const request = useMutation({
     mutationFn: async () => {
-      if (availablePaise <= 0) throw new Error("Nothing available to withdraw yet");
+      if (availablePaise <= 0) throw new Error(t("earn.nothingToWithdraw"));
       const { error } = await (supabase as any).from("pandit_payouts").insert({
         pandit_id: pandit!.id,
         amount_paise: availablePaise,
@@ -103,7 +105,7 @@ function EarningsPage() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Payout requested. Our team will process it shortly.");
+      toast.success(t("earn.payoutRequested"));
       qc.invalidateQueries({ queryKey: ["pandit-own-payouts", pandit?.id] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -111,7 +113,7 @@ function EarningsPage() {
 
   return (
     <MobileShell>
-      <TopBar title="My Earnings" right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />} />
+      <TopBar title={t("earn.title")} right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />} />
 
       <div className="px-5 pt-4 pb-10">
         {authLoading || panditLoading ? (
@@ -119,38 +121,38 @@ function EarningsPage() {
         ) : !pandit ? (
           <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center shadow-soft">
             <BadgeIndianRupee className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm font-semibold">No pandit profile linked</p>
+            <p className="mt-2 text-sm font-semibold">{t("earn.noProfile")}</p>
             <p className="text-xs text-muted-foreground">
-              This page is for verified Pranam pandits. Once your profile is linked, your earnings appear here.
+              {t("earn.noProfileSub")}
             </p>
           </div>
         ) : (
           <div className="space-y-3">
             <div className="rounded-3xl bg-secondary p-5 text-secondary-foreground shadow-glow">
-              <p className="text-xs opacity-90">Available to withdraw</p>
+              <p className="text-xs opacity-90">{t("earn.available")}</p>
               <p className="mt-1 inline-flex items-center text-3xl font-bold">
                 <IndianRupee className="h-6 w-6" />
                 {(availablePaise / 100).toLocaleString("en-IN")}
               </p>
               <div className="mt-3 flex gap-3 text-xs">
-                <span className="rounded-full bg-background/20 px-2.5 py-1">Earned ₹{(earnedPaise / 100).toLocaleString("en-IN")}</span>
-                <span className="rounded-full bg-background/20 px-2.5 py-1">Drawn ₹{(drawnPaise / 100).toLocaleString("en-IN")}</span>
+                <span className="rounded-full bg-background/20 px-2.5 py-1">{t("earn.earned")} ₹{(earnedPaise / 100).toLocaleString("en-IN")}</span>
+                <span className="rounded-full bg-background/20 px-2.5 py-1">{t("earn.drawn")} ₹{(drawnPaise / 100).toLocaleString("en-IN")}</span>
               </div>
               <button
                 onClick={() => request.mutate()}
                 disabled={request.isPending || availablePaise <= 0}
                 className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow disabled:opacity-50"
               >
-                <Wallet className="h-4 w-4" /> {request.isPending ? "Requesting…" : "Request payout"}
+                <Wallet className="h-4 w-4" /> {request.isPending ? t("earn.requesting") : t("earn.requestPayout")}
               </button>
-              <p className="mt-2 text-[11px] opacity-80">Earnings are shown after the platform fee (15%) on completed bookings.</p>
+              <p className="mt-2 text-[11px] opacity-80">{t("earn.feeNote")}</p>
             </div>
 
-            <h3 className="px-1 pt-2 text-sm font-bold">Assigned bookings</h3>
+            <h3 className="px-1 pt-2 text-sm font-bold">{t("earn.assignedBookings")}</h3>
             {bookingsQ.isLoading ? (
               <div className="h-16 animate-pulse rounded-2xl bg-secondary/60" />
             ) : (bookingsQ.data ?? []).length === 0 ? (
-              <p className="px-1 text-xs text-muted-foreground">No bookings assigned to you yet.</p>
+              <p className="px-1 text-xs text-muted-foreground">{t("earn.noBookings")}</p>
             ) : (
               <div className="space-y-2">
                 {(bookingsQ.data ?? []).map((b) => (
@@ -170,11 +172,11 @@ function EarningsPage() {
               </div>
             )}
 
-            <h3 className="px-1 pt-2 text-sm font-bold">Payout history</h3>
+            <h3 className="px-1 pt-2 text-sm font-bold">{t("earn.payoutHistory")}</h3>
             {payoutsQ.isLoading ? (
               <div className="h-16 animate-pulse rounded-2xl bg-secondary/60" />
             ) : (payoutsQ.data ?? []).length === 0 ? (
-              <p className="px-1 text-xs text-muted-foreground">No payouts yet. Request one when you have a balance.</p>
+              <p className="px-1 text-xs text-muted-foreground">{t("earn.noPayouts")}</p>
             ) : (
               <div className="space-y-2">
                 {(payoutsQ.data ?? []).map((p) => (

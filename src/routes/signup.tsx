@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/signup")({
 function SignUp() {
   const navigate = useNavigate();
   const search = Route.useSearch();
+  const { t } = useI18n();
   const { sendPhoneOtp, verifyPhoneOtp, signInWithGoogle, user } = useAuth();
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
@@ -46,7 +48,7 @@ function SignUp() {
 
   const sendOtp = async () => {
     if (phone.length !== 10) {
-      toast.error("Enter a valid 10-digit number");
+      toast.error(t("auth.invalidPhone"));
       return;
     }
     if (cooldown > 0 || loading) return;
@@ -57,9 +59,9 @@ function SignUp() {
       setOtp(["", "", "", "", "", ""]);
       setAttempts(0);
       setCooldown(30);
-      toast.success(`OTP sent to +91 ${phone}`);
+      toast.success(`${t("auth.otpSentTo", "OTP sent to")} +91 ${phone}`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not send OTP");
+      toast.error(err instanceof Error ? err.message : t("auth.couldNotSend"));
     } finally {
       setLoading(false);
     }
@@ -68,13 +70,13 @@ function SignUp() {
   const verifyOtp = async () => {
     const code = otp.join("");
     if (code.length !== 6) {
-      toast.error("Enter the 6-digit OTP");
+      toast.error(t("auth.enter6"));
       return;
     }
     setLoading(true);
     try {
       await verifyPhoneOtp(phone, code);
-      toast.success("Welcome to Pranam 🙏");
+      toast.success(`${t("auth.welcomeToast")} 🙏`);
       navigate({ to: target });
     } catch (err) {
       const next = attempts + 1;
@@ -82,9 +84,9 @@ function SignUp() {
       setOtp(["", "", "", "", "", ""]);
       document.getElementById("otp-0")?.focus();
       if (next >= 5) {
-        toast.error("Too many wrong attempts. Please request a fresh code.");
+        toast.error(t("auth.tooMany"));
       } else {
-        toast.error(err instanceof Error ? err.message : "Invalid or expired OTP");
+        toast.error(err instanceof Error ? err.message : t("auth.invalidOtp"));
       }
     } finally {
       setLoading(false);
@@ -145,12 +147,12 @@ function SignUp() {
             <Sparkles className="h-6 w-6" />
           </div>
           <h1 className="mt-3 font-display text-2xl font-bold">
-            {step === "phone" ? "Welcome to Pranam" : "Verify your number"}
+            {step === "phone" ? t("auth.welcomeTitle") : t("auth.verifyTitle")}
           </h1>
           <p className="mt-1 text-sm opacity-90">
             {step === "phone"
-              ? "Book verified pandits, get samagri delivered, talk to astrologers."
-              : `We sent a 6-digit code to +91 ${phone}`}
+              ? t("auth.phoneSub")
+              : `${t("auth.codeSentTo", "We sent a 6-digit code to")} +91 ${phone}`}
           </p>
         </div>
       </div>
@@ -159,7 +161,7 @@ function SignUp() {
         {step === "phone" ? (
           <>
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Phone number
+              {t("auth.phoneNumber")}
             </label>
             <div className="mt-2 flex items-center gap-2 rounded-2xl border border-border bg-card px-3 shadow-soft">
               <span className="text-sm font-medium text-foreground">🇮🇳 +91</span>
@@ -180,28 +182,28 @@ function SignUp() {
               disabled={loading}
               className="mt-5 h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
             >
-              {loading ? "Sending..." : "Send OTP"}
+              {loading ? t("auth.sending") : t("auth.sendOtp")}
             </Button>
 
             <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
               <div className="h-px flex-1 bg-border" />
-              <span>or continue with</span>
+              <span>{t("auth.orContinue")}</span>
               <div className="h-px flex-1 bg-border" />
             </div>
 
             <button onClick={handleGoogle} className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-border bg-card text-sm font-semibold shadow-soft">
-              <GoogleIcon /> Continue with Google
+              <GoogleIcon /> {t("auth.google")}
             </button>
 
             <p className="mt-6 flex items-start gap-2 text-[11px] leading-relaxed text-muted-foreground">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-              By continuing you agree to Pranam's Terms of Service and Privacy Policy. We'll never share your number.
+              {t("auth.terms")}
             </p>
           </>
         ) : (
           <>
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Enter OTP
+              {t("auth.enterOtp")}
             </label>
             <div className="mt-3 flex justify-between gap-2">
               {otp.map((d, i) => (
@@ -224,7 +226,7 @@ function SignUp() {
               disabled={loading}
               className="mt-6 h-12 w-full rounded-full bg-primary text-base font-semibold shadow-glow"
             >
-              {loading ? "Verifying..." : "Verify & Continue"}
+              {loading ? t("auth.verifying") : t("auth.verify")}
             </Button>
 
             <button
@@ -232,23 +234,23 @@ function SignUp() {
               disabled={cooldown > 0 || loading}
               className="mx-auto mt-4 block text-xs font-medium text-accent disabled:text-muted-foreground"
             >
-              {cooldown > 0 ? `Resend code in ${cooldown}s` : "Didn't receive code? Resend OTP"}
+              {cooldown > 0 ? t("auth.resendIn").replace("{n}", String(cooldown)) : t("auth.resend")}
             </button>
             <p className="mt-2 text-center text-[11px] text-muted-foreground">
-              The code expires in a few minutes. Enter it soon, or resend a fresh one.
+              {t("auth.codeExpires")}
             </p>
           </>
         )}
 
         <div className="mt-10 rounded-2xl border border-border/60 bg-secondary/40 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-accent">For pandits & astrologers</p>
-          <p className="mt-1 text-sm font-medium text-foreground">Are you a spiritual professional?</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">Apply to join Pranam's verified network and start receiving bookings.</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-accent">{t("auth.forPros")}</p>
+          <p className="mt-1 text-sm font-medium text-foreground">{t("auth.areYouPro")}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{t("auth.proSub")}</p>
           <Link
             to="/become-pandit"
             className="mt-3 inline-flex items-center text-xs font-semibold text-accent underline-offset-2 hover:underline"
           >
-            Apply as a Pandit →
+            {t("auth.applyPandit")} →
           </Link>
         </div>
       </div>

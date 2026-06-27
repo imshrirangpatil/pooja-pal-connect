@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import logoAsset from "@/assets/pranam-logo.png.asset.json";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/welcome")({
   head: () => ({
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/welcome")({
 
 function Welcome() {
   const [loaded, setLoaded] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 100);
@@ -33,9 +35,7 @@ function Welcome() {
           className="h-64 w-64 object-contain"
         />
         <p className="mt-2 text-center text-sm font-medium leading-relaxed text-foreground/80">
-          Verified pandits, samagri at your door,
-          <br />
-          astrology in your pocket.
+          {t("welcome.tagline")}
         </p>
       </div>
 
@@ -48,18 +48,18 @@ function Welcome() {
           to="/signup"
           className="flex h-14 w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
         >
-          Get Started
+          {t("welcome.getStarted")}
         </Link>
         <Link
           to="/"
           className="mt-4 block text-center text-sm font-medium text-muted-foreground hover:text-foreground"
         >
-          Skip for now
+          {t("welcome.skip")}
         </Link>
       </div>
 
       <p className="absolute bottom-8 text-[11px] text-muted-foreground">
-        🪔 Made with devotion in India
+        🪔 {t("welcome.madeWithDevotion")}
       </p>
     </div>
   );

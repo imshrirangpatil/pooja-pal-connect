@@ -4,6 +4,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Plus, Star, Trash2, Map as MapIcon } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
@@ -81,6 +82,7 @@ const emptyForm: FormState = {
 function AddressesPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useI18n();
   const search = Route.useSearch();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -185,7 +187,7 @@ function AddressesPage() {
           .update({ latitude: picked.lat, longitude: picked.lng, city: parsed.data.city })
           .eq("id", user.id);
       }
-      toast.success("Address saved");
+      toast.success(t("addr.savedToast"));
       setForm(emptyForm);
       setErrors({});
       setPicked(null);
@@ -196,7 +198,7 @@ function AddressesPage() {
         navigate({ to: search.redirect as "/checkout" });
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not save address");
+      toast.error(e instanceof Error ? e.message : t("addr.couldNotSave", "Could not save address"));
     } finally {
       setSaving(false);
     }
@@ -209,17 +211,17 @@ function AddressesPage() {
       .eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Default updated");
+      toast.success(t("addr.defaultUpdated"));
       refresh();
     }
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Remove this address?")) return;
+    if (!confirm(t("addr.removeConfirm"))) return;
     const { error } = await supabase.from("addresses").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast("Address removed");
+      toast(t("addr.removedToast"));
       refresh();
     }
   };
@@ -227,8 +229,8 @@ function AddressesPage() {
   return (
     <MobileShell>
       <TopBar
-        title="Saved Addresses"
-        subtitle={addresses.length ? `${addresses.length} saved` : "None yet"}
+        title={t("addr.title")}
+        subtitle={addresses.length ? t("addr.savedCount").replace("{n}", String(addresses.length)) : t("addr.none")}
         right={
           <BackButton
             fallback={(search.redirect as string | undefined) ?? "/profile"}
@@ -246,8 +248,8 @@ function AddressesPage() {
         ) : addresses.length === 0 && !adding ? (
           <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center shadow-soft">
             <MapPin className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm font-semibold">No addresses yet</p>
-            <p className="text-xs text-muted-foreground">Add one to get pooja samagri delivered.</p>
+            <p className="mt-2 text-sm font-semibold">{t("addr.empty")}</p>
+            <p className="text-xs text-muted-foreground">{t("addr.emptySub")}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -264,7 +266,7 @@ function AddressesPage() {
                     <span className="text-sm font-semibold">{a.label}</span>
                     {a.is_default && (
                       <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-secondary-foreground">
-                        Default
+                        {t("addr.default")}
                       </span>
                     )}
                   </div>
@@ -276,7 +278,7 @@ function AddressesPage() {
                     {a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.state} {a.pincode}
                   </p>
                   {a.landmark && (
-                    <p className="text-[11px] text-muted-foreground">Landmark: {a.landmark}</p>
+                    <p className="text-[11px] text-muted-foreground">{t("addr.landmarkPrefix")}: {a.landmark}</p>
                   )}
                   <div className="mt-2 flex gap-3">
                     {!a.is_default && (
@@ -284,14 +286,14 @@ function AddressesPage() {
                         onClick={() => setDefault(a.id)}
                         className="flex items-center gap-1 text-[11px] font-semibold text-accent"
                       >
-                        <Star className="h-3 w-3" /> Set default
+                        <Star className="h-3 w-3" /> {t("addr.setDefault")}
                       </button>
                     )}
                     <button
                       onClick={() => remove(a.id)}
                       className="flex items-center gap-1 text-[11px] font-semibold text-destructive"
                     >
-                      <Trash2 className="h-3 w-3" /> Remove
+                      <Trash2 className="h-3 w-3" /> {t("common.remove")}
                     </button>
                   </div>
                 </div>
@@ -308,7 +310,7 @@ function AddressesPage() {
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-accent">
               <Plus className="h-4 w-4" />
             </span>
-            Add new address
+            {t("addr.addNew")}
           </button>
         ) : (
           <div className="mt-4 space-y-3 rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
@@ -317,18 +319,18 @@ function AddressesPage() {
               onClick={() => setShowMap((v) => !v)}
               className="flex w-full items-center gap-2 rounded-xl border border-primary/40 bg-primary/5 px-3 py-2.5 text-xs font-semibold text-primary"
             >
-              <MapIcon className="h-4 w-4" /> {showMap ? "Hide map" : "Pick location on map"}
+              <MapIcon className="h-4 w-4" /> {showMap ? t("addr.hideMap") : t("addr.pickMap")}
             </button>
             {showMap && <LocationPicker value={picked} onChange={onPick} />}
             <div className="grid grid-cols-2 gap-2">
-              <Field label="Label" error={errors.label}>
+              <Field label={t("addr.label")} error={errors.label}>
                 <Input
                   value={form.label}
                   onChange={(e) => update({ label: e.target.value })}
                   placeholder="Home / Work"
                 />
               </Field>
-              <Field label="Pincode" error={errors.pincode}>
+              <Field label={t("addr.pincode")} error={errors.pincode}>
                 <Input
                   inputMode="numeric"
                   maxLength={6}
@@ -342,14 +344,14 @@ function AddressesPage() {
                 />
               </Field>
             </div>
-            <Field label="Recipient name" error={errors.recipient_name}>
+            <Field label={t("addr.recipientName")} error={errors.recipient_name}>
               <Input
                 value={form.recipient_name}
                 onChange={(e) => update({ recipient_name: e.target.value })}
                 placeholder="Full name"
               />
             </Field>
-            <Field label="Phone (10 digits)" error={errors.phone}>
+            <Field label={t("addr.phone10")} error={errors.phone}>
               <div className="flex">
                 <span className="inline-flex items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm text-muted-foreground">
                   +91
@@ -364,14 +366,14 @@ function AddressesPage() {
                 />
               </div>
             </Field>
-            <Field label="Address line 1" error={errors.line1}>
+            <Field label={t("addr.line1")} error={errors.line1}>
               <Input
                 value={form.line1}
                 onChange={(e) => update({ line1: e.target.value })}
                 placeholder="Flat / House / Street"
               />
             </Field>
-            <Field label="Address line 2 (optional)">
+            <Field label={t("addr.line2")}>
               <Input
                 value={form.line2 ?? ""}
                 onChange={(e) => update({ line2: e.target.value })}
@@ -379,27 +381,27 @@ function AddressesPage() {
               />
             </Field>
             <div className="grid grid-cols-2 gap-2">
-              <Field label="City" error={errors.city}>
+              <Field label={t("addr.city")} error={errors.city}>
                 <Input
                   value={form.city}
                   onChange={(e) => update({ city: e.target.value })}
                   placeholder="Bengaluru"
                 />
               </Field>
-              <Field label="State" error={errors.state}>
+              <Field label={t("addr.state")} error={errors.state}>
                 <select
                   value={form.state}
                   onChange={(e) => update({ state: e.target.value })}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
-                  <option value="">Select state…</option>
+                  <option value="">{t("addr.selectState")}</option>
                   {INDIAN_STATES.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </Field>
             </div>
-            <Field label="Landmark (optional)">
+            <Field label={t("addr.landmark")}>
               <Input
                 value={form.landmark ?? ""}
                 onChange={(e) => update({ landmark: e.target.value })}
@@ -412,7 +414,7 @@ function AddressesPage() {
                 checked={form.is_default}
                 onChange={(e) => update({ is_default: e.target.checked })}
               />
-              Make this my default address
+              {t("addr.makeDefault")}
             </label>
             <div className="flex gap-2 pt-1">
               <Button
@@ -426,14 +428,14 @@ function AddressesPage() {
                   setShowMap(false);
                 }}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 onClick={save}
                 disabled={saving}
                 className="flex-1 bg-primary text-primary-foreground shadow-glow"
               >
-                {saving ? "Saving…" : "Save address"}
+                {saving ? t("addr.saving") : t("addr.save")}
               </Button>
             </div>
           </div>

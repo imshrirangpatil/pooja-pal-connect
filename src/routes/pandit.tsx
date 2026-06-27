@@ -5,6 +5,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { BackButton } from "@/components/BackButton";
 import { useAuth } from "@/lib/auth";
 import { useMyPandit } from "@/lib/my-pandit";
+import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ function PanditPortal() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { pandit, loading } = useMyPandit();
+  const { t } = useI18n();
   const qc = useQueryClient();
   const photoInput = useRef<HTMLInputElement>(null);
 
@@ -66,7 +68,7 @@ function PanditPortal() {
         .eq("id", pandit.id);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["my-pandit", user?.id] });
-      toast.success("Profile updated");
+      toast.success(t("portal.profileUpdated"));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not save");
     } finally {
@@ -92,7 +94,7 @@ function PanditPortal() {
       const { error } = await (supabase.from("pandits") as any).update({ photo_url: url }).eq("id", pandit.id);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["my-pandit", user.id] });
-      toast.success("Photo updated");
+      toast.success(t("portal.photoUpdated"));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Upload failed");
     } finally {
@@ -102,7 +104,7 @@ function PanditPortal() {
 
   return (
     <MobileShell>
-      <TopBar title="Pandit Portal" right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />} />
+      <TopBar title={t("portal.title")} right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />} />
 
       <div className="px-5 pt-4 pb-10">
         {authLoading || loading ? (
@@ -110,12 +112,12 @@ function PanditPortal() {
         ) : !pandit ? (
           <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center shadow-soft">
             <ShieldCheck className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm font-semibold">No pandit profile linked</p>
+            <p className="mt-2 text-sm font-semibold">{t("portal.noProfile")}</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              This portal is for verified Pranam pandits. Apply to join, and once your application is approved your profile appears here.
+              {t("portal.noProfileSub")}
             </p>
             <Link to="/become-pandit" className="mt-4 inline-block rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow">
-              Apply to become a pandit
+              {t("portal.applyCta")}
             </Link>
           </div>
         ) : (
@@ -144,7 +146,7 @@ function PanditPortal() {
                 </div>
                 <div className="min-w-0">
                   <h2 className="flex items-center gap-1.5 text-lg font-bold">{pandit.name} <ShieldCheck className="h-4 w-4 text-accent" /></h2>
-                  <p className="flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3" /> {pandit.city || "City not set"}</p>
+                  <p className="flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3" /> {pandit.city || t("portal.cityNotSet")}</p>
                   <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
                     <span className="inline-flex items-center gap-0.5 font-semibold text-foreground"><Star className="h-3 w-3 fill-primary text-primary" /> {Number(pandit.rating ?? 0).toFixed(1)}</span>
                     <span>({pandit.reviews ?? 0}) · {pandit.experience ?? 0} yrs</span>
@@ -153,7 +155,7 @@ function PanditPortal() {
               </div>
               {pandit.visible === false && (
                 <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-700">
-                  Your profile is currently hidden from devotees. Our team makes it visible after verification.
+                  {t("portal.hiddenNote")}
                 </p>
               )}
             </div>
@@ -163,42 +165,42 @@ function PanditPortal() {
               <Link to="/earnings" className="flex items-center gap-2 rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent"><Wallet className="h-4 w-4" /></span>
                 <div>
-                  <p className="text-sm font-semibold">Earnings</p>
-                  <p className="text-[11px] text-muted-foreground">View & withdraw</p>
+                  <p className="text-sm font-semibold">{t("portal.earnings")}</p>
+                  <p className="text-[11px] text-muted-foreground">{t("portal.earningsSub")}</p>
                 </div>
               </Link>
               <a href={INTERVIEW_BOOKING_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent"><CalendarClock className="h-4 w-4" /></span>
                 <div>
-                  <p className="text-sm font-semibold">Interview</p>
-                  <p className="text-[11px] text-muted-foreground">Book a slot</p>
+                  <p className="text-sm font-semibold">{t("portal.interview")}</p>
+                  <p className="text-[11px] text-muted-foreground">{t("portal.bookSlot")}</p>
                 </div>
               </a>
             </div>
 
             {/* Editable profile */}
             <div className="rounded-3xl border border-border/60 bg-card p-5 shadow-soft">
-              <h3 className="text-sm font-bold">Your profile</h3>
+              <h3 className="text-sm font-bold">{t("portal.yourProfile")}</h3>
               <div className="mt-3 space-y-3">
                 <div>
-                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Bio</label>
-                  <Textarea rows={4} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell devotees about your tradition, training and the ceremonies you perform." className="mt-1" />
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("portal.bio")}</label>
+                  <Textarea rows={4} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("portal.bioPlaceholder")} className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Starting fee (₹)</label>
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("portal.startingFee")}</label>
                   <Input type="number" min="0" value={fee || ""} onChange={(e) => setFee(Number(e.target.value))} placeholder="1100" className="mt-1" />
                 </div>
-                <Button onClick={saveProfile} disabled={saving} className="w-full">{saving ? "Saving…" : "Save profile"}</Button>
+                <Button onClick={saveProfile} disabled={saving} className="w-full">{saving ? t("portal.saving") : t("portal.saveProfile")}</Button>
               </div>
             </div>
 
             {/* Bookings */}
             <div>
-              <h3 className="px-1 text-sm font-bold">Your bookings</h3>
+              <h3 className="px-1 text-sm font-bold">{t("portal.yourBookings")}</h3>
               {bookingsQ.isLoading ? (
                 <div className="mt-2 h-16 animate-pulse rounded-2xl bg-secondary/60" />
               ) : (bookingsQ.data ?? []).length === 0 ? (
-                <p className="mt-2 px-1 text-xs text-muted-foreground">No bookings assigned to you yet.</p>
+                <p className="mt-2 px-1 text-xs text-muted-foreground">{t("portal.noBookings")}</p>
               ) : (
                 <div className="mt-2 space-y-2">
                   {(bookingsQ.data ?? []).map((b) => (
