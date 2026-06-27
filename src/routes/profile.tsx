@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n, LANGUAGES } from "@/lib/i18n";
 import { useSavedPandits } from "@/lib/saved-pandits";
 import { getInitials } from "@/lib/utils";
-import { useUnreadCount } from "@/lib/notifications";
 import { useMyPandit } from "@/lib/my-pandit";
 import { LogIn } from "lucide-react";
 
@@ -30,7 +29,6 @@ function Profile() {
   const navigate = useNavigate();
   const { lang, t } = useI18n();
   const { ids: savedPanditIds } = useSavedPandits();
-  const unread = useUnreadCount();
   const { pandit: myPandit } = useMyPandit();
   const { theme, toggle: toggleTheme } = useTheme();
 
@@ -125,11 +123,9 @@ function Profile() {
 
       <div className="mt-5 space-y-1 px-5">
         <Row to="/orders" icon={<Package className="h-4 w-4" />} label={t("profile.orders")} />
-        <Row to="/addresses" icon={<MapPin className="h-4 w-4" />} label={t("profile.addresses")} />
         <Row to="/wallet" icon={<Wallet className="h-4 w-4" />} label={t("profile.walletCredits")} hint={walletDisplay} />
         <Row to="/saved-pandits" icon={<Heart className="h-4 w-4" />} label={t("profile.savedPandits")} hint={savedPanditIds.length ? String(savedPanditIds.length) : undefined} />
         <Row to="/refer" icon={<Gift className="h-4 w-4" />} label={t("profile.refer")} />
-        <Row to="/notifications" icon={<Bell className="h-4 w-4" />} label={t("profile.notifications")} hint={unread ? String(unread) : undefined} />
         <button onClick={toggleTheme} className="flex w-full items-center gap-3 rounded-2xl bg-card p-3.5 text-left shadow-soft">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-accent">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

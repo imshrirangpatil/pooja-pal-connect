@@ -155,7 +155,7 @@ function CallPage() {
     loopRef.current = null;
     streamRef.current?.getTracks().forEach((t) => t.stop());
     setStatus("ended");
-    setTimeout(() => navigate({ to: "/astrology" }), 600);
+    setTimeout(() => navigate({ to: "/astrology/chat/$id", params: { id } }), 600);
   };
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");

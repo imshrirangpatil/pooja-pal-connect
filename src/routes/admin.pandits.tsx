@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Plus, Trash2, IndianRupee } from "lucide-react";
+import { Trash2, IndianRupee } from "lucide-react";
 
 export const Route = createFileRoute("/admin/pandits")({ component: AdminPandits });
 
@@ -26,24 +26,24 @@ type Form = {
   feeFrom: number;
   poojaSlugs: string;
 };
-const empty: Form = { name: "", city: "", experience: 0, rating: 4.5, reviews: 0, languages: "", specialties: "", initials: "", verified: true, visible: true, bio: "", feeFrom: 0, poojaSlugs: "" };
-
 function AdminPandits() {
   const qc = useQueryClient();
-  const [adding, setAdding] = useState(false);
-  const [draft, setDraft] = useState<Form>(empty);
 
   const { data: pandits = [], isLoading } = useQuery({
     queryKey: ["admin-pandits"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("pandits").select("*").order("name");
+      // Avoid select("*") because bank columns are revoked from authenticated.
+      const { data, error } = await (supabase as any)
+        .from("pandits")
+        .select("id, name, city, experience, rating, reviews, languages, specialties, initials, verified, visible, bio, fee_from, pooja_slugs")
+        .order("name");
       if (error) throw error;
-      return data;
+      return data as any[];
     },
   });
 
   const save = useMutation({
-    mutationFn: async ({ id, f }: { id?: string; f: Form }) => {
+    mutationFn: async ({ id, f }: { id: string; f: Form }) => {
       const payload = {
         name: f.name, city: f.city, experience: f.experience, rating: f.rating, reviews: f.reviews,
         languages: f.languages.split(",").map((s) => s.trim()).filter(Boolean),
@@ -54,18 +54,12 @@ function AdminPandits() {
         fee_from: f.feeFrom,
         pooja_slugs: f.poojaSlugs.split(",").map((s) => s.trim()).filter(Boolean),
       };
-      if (id) {
-        const { error } = await (supabase.from("pandits") as any).update(payload).eq("id", id);
-        if (error) throw error;
-      } else {
-        const { error } = await (supabase.from("pandits") as any).insert(payload);
-        if (error) throw error;
-      }
+      const { error } = await (supabase.from("pandits") as any).update(payload).eq("id", id);
+      if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Saved");
       qc.invalidateQueries({ queryKey: ["admin-pandits"] });
-      setAdding(false); setDraft(empty);
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -81,26 +75,13 @@ function AdminPandits() {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-bold">Pandits ({pandits.length})</h2>
-        <Button size="sm" onClick={() => setAdding((a) => !a)}><Plus className="h-3.5 w-3.5" /> {adding ? "Cancel" : "Add"}</Button>
+        <Link to="/admin/applications" className="text-[11px] font-semibold text-primary">Review applications</Link>
       </div>
-
-      {adding && (
-        <Card className="space-y-2 p-4">
-          <Input placeholder="Name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
-          <Input placeholder="City" value={draft.city} onChange={(e) => setDraft({ ...draft, city: e.target.value })} />
-          <Input type="number" placeholder="Experience (years)" value={draft.experience || ""} onChange={(e) => setDraft({ ...draft, experience: Number(e.target.value) })} />
-          <Input type="number" step="0.1" placeholder="Rating" value={draft.rating} onChange={(e) => setDraft({ ...draft, rating: Number(e.target.value) })} />
-          <Input type="number" placeholder="Reviews" value={draft.reviews} onChange={(e) => setDraft({ ...draft, reviews: Number(e.target.value) })} />
-          <Input placeholder="Languages (comma-separated)" value={draft.languages} onChange={(e) => setDraft({ ...draft, languages: e.target.value })} />
-          <Input placeholder="Specialties (comma-separated)" value={draft.specialties} onChange={(e) => setDraft({ ...draft, specialties: e.target.value })} />
-          <Input type="number" placeholder="Fee from (₹)" value={draft.feeFrom || ""} onChange={(e) => setDraft({ ...draft, feeFrom: Number(e.target.value) })} />
-          <Input placeholder="Pooja slugs (comma-separated, e.g. ganesh-pooja)" value={draft.poojaSlugs} onChange={(e) => setDraft({ ...draft, poojaSlugs: e.target.value })} />
-          <Textarea placeholder="Bio" value={draft.bio} onChange={(e) => setDraft({ ...draft, bio: e.target.value })} />
-          <Button onClick={() => save.mutate({ f: draft })} disabled={save.isPending || !draft.name}>Create</Button>
-        </Card>
-      )}
+      <p className="text-[11px] text-muted-foreground">
+        New pandits join by applying and getting approved under Applications. Here you can edit, hide or pay existing pandits.
+      </p>
 
       {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
 

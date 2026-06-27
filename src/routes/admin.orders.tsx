@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/orders")({ component: AdminOrders });
 
-const STATUSES = ["placed", "confirmed", "shipped", "delivered", "cancelled"] as const;
+const STATUSES = ["placed", "confirmed", "shipped", "out_for_delivery", "delivered", "cancelled"] as const;
 
 function AdminOrders() {
   const qc = useQueryClient();

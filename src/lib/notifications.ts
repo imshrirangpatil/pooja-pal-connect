@@ -44,7 +44,13 @@ export function useNotifications() {
 
   const markAllRead = useMutation({
     mutationFn: async () => {
-      const { error } = await db.from("notifications").update({ is_read: true }).eq("is_read", false);
+      if (!user) return;
+      const { error } = await db
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("user_id", user.id)
+        .eq("is_read", false)
+        .select("id");
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications", user?.id] }),

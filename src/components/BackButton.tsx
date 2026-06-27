@@ -30,7 +30,12 @@ export function BackButton({
   const navigate = useNavigate();
 
   const onClick = () => {
-    if (canGoBack()) {
+    // Only pop the browser history when we tracked an in-app step to return to
+    // AND the browser actually has an entry to go back to. Otherwise (deep link,
+    // hard refresh, opened in a new tab) go to a sensible parent so back never
+    // dead-ends or leaves the app.
+    const hasBrowserHistory = typeof window !== "undefined" && window.history.length > 1;
+    if (canGoBack() && hasBrowserHistory) {
       router.history.back();
     } else {
       navigate({ to: fallback });

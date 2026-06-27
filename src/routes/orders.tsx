@@ -46,6 +46,44 @@ function statusColor(status: string) {
   }
 }
 
+// The journey a samagri order travels, in order. The order's current status
+// lights up this step and everything before it.
+const DELIVERY_STEPS = [
+  { key: "placed", label: "Placed" },
+  { key: "confirmed", label: "Confirmed" },
+  { key: "shipped", label: "Shipped" },
+  { key: "out_for_delivery", label: "Out" },
+  { key: "delivered", label: "Delivered" },
+] as const;
+
+function DeliverySteps({ status }: { status: string }) {
+  if (status === "cancelled") {
+    return (
+      <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-[11px] font-medium text-red-700">
+        This order was cancelled. Any credits used have been refunded.
+      </p>
+    );
+  }
+  const current = Math.max(0, DELIVERY_STEPS.findIndex((s) => s.key === status));
+  return (
+    <div className="mt-3 flex items-center">
+      {DELIVERY_STEPS.map((s, i) => {
+        const done = i <= current;
+        return (
+          <div key={s.key} className="flex flex-1 flex-col items-center">
+            <div className="flex w-full items-center">
+              <span className={`h-0.5 flex-1 ${i === 0 ? "opacity-0" : done ? "bg-primary" : "bg-border"}`} />
+              <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${done ? "bg-primary" : "bg-border"}`} />
+              <span className={`h-0.5 flex-1 ${i === DELIVERY_STEPS.length - 1 ? "opacity-0" : i < current ? "bg-primary" : "bg-border"}`} />
+            </div>
+            <span className={`mt-1 text-[9px] ${done ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{s.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function OrdersPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
@@ -138,6 +176,7 @@ function OrdersPage() {
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     Delivering to {o.city}, {o.state}
                   </p>
+                  <DeliverySteps status={o.status} />
                   <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />

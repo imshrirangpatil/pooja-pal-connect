@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ArrowLeft,
   ShieldCheck,
@@ -9,8 +9,10 @@ import {
   Users,
   IndianRupee,
   ChevronRight,
+  CalendarClock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { INTERVIEW_BOOKING_URL } from "@/lib/partner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,9 +61,9 @@ function BecomePandit() {
     accountNumber: "",
     ifsc: "",
     bankName: "",
-    aadhaarUploaded: false,
-    credentialUploaded: false,
-    selfieUploaded: false,
+    aadhaarPath: "",
+    credentialPath: "",
+    selfiePath: "",
     agree: false,
   });
 
@@ -115,7 +117,7 @@ function BecomePandit() {
       return setStep(4);
     }
     if (step === 4) {
-      if (!form.aadhaarUploaded || !form.credentialUploaded || !form.selfieUploaded) {
+      if (!form.aadhaarPath || !form.credentialPath || !form.selfiePath) {
         toast.error("Upload all 3 documents to continue");
         return;
       }
@@ -140,7 +142,10 @@ function BecomePandit() {
           account_number: form.payoutMethod === "bank" ? form.accountNumber.trim() : null,
           ifsc: form.payoutMethod === "bank" ? form.ifsc.trim().toUpperCase() : null,
           bank_name: form.payoutMethod === "bank" ? form.bankName.trim() : null,
-        });
+          aadhaar_url: form.aadhaarPath,
+          credential_url: form.credentialPath,
+          selfie_url: form.selfiePath,
+        } as never);
         if (error) toast.error(error.message);
         else toast.success("Application submitted! Our team will verify within 48 hours.");
       })();
@@ -351,20 +356,23 @@ function BecomePandit() {
             <DocUpload
               label="Aadhaar / Government ID"
               hint="Front side, clear photo"
-              done={form.aadhaarUploaded}
-              onUpload={() => setForm({ ...form, aadhaarUploaded: true })}
+              field="aadhaar"
+              path={form.aadhaarPath}
+              onUploaded={(p) => setForm((f) => ({ ...f, aadhaarPath: p }))}
             />
             <DocUpload
               label="Credential / Diploma"
               hint="Vidyapeeth certificate or guruji reference letter"
-              done={form.credentialUploaded}
-              onUpload={() => setForm({ ...form, credentialUploaded: true })}
+              field="credential"
+              path={form.credentialPath}
+              onUploaded={(p) => setForm((f) => ({ ...f, credentialPath: p }))}
             />
             <DocUpload
               label="Selfie holding your ID"
               hint="For liveness verification"
-              done={form.selfieUploaded}
-              onUpload={() => setForm({ ...form, selfieUploaded: true })}
+              field="selfie"
+              path={form.selfiePath}
+              onUploaded={(p) => setForm((f) => ({ ...f, selfiePath: p }))}
             />
 
             <label className="mt-3 flex items-start gap-3 rounded-2xl border border-border/60 bg-secondary/40 p-3">
@@ -478,10 +486,19 @@ function Success() {
         <ul className="space-y-1.5 text-xs text-foreground">
           <li>✓ KYC review (~24h)</li>
           <li>✓ Credential check with your Vidyapeeth</li>
-          <li>✓ Video interview scheduled via WhatsApp</li>
+          <li>✓ Video interview, pick a slot below</li>
           <li>✓ Profile goes live · first booking within a week</li>
         </ul>
       </div>
+
+      <a
+        href={INTERVIEW_BOOKING_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-primary/40 bg-card py-3 text-sm font-semibold text-primary"
+      >
+        <CalendarClock className="h-4 w-4" /> Book your interview slot
+      </a>
     </div>
   );
 }
@@ -514,33 +531,74 @@ function Stat({ icon, k, v }: { icon: React.ReactNode; k: string; v: string }) {
 function DocUpload({
   label,
   hint,
-  done,
-  onUpload,
+  field,
+  path,
+  onUploaded,
 }: {
   label: string;
   hint: string;
-  done: boolean;
-  onUpload: () => void;
+  field: string;
+  path: string;
+  onUploaded: (path: string) => void;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const done = !!path;
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Please pick a file under 8 MB");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: { user } } = await supabase.auth.getUser();
+      const ext = file.name.split(".").pop() || "jpg";
+      const folder = user?.id ?? "anon";
+      const key = `${folder}/${field}-${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("pandit-docs").upload(key, file, { upsert: true });
+      if (error) throw error;
+      onUploaded(key);
+      toast.success(`${label} uploaded`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed, please try again");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
-    <button
-      onClick={onUpload}
-      className={`flex w-full items-center gap-3 rounded-2xl border p-3.5 text-left transition ${
-        done ? "border-primary bg-secondary/60" : "border-dashed border-border bg-card"
-      } shadow-soft`}
-    >
-      <span
-        className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-          done ? "bg-gradient-warm text-primary-foreground" : "bg-secondary text-accent"
-        }`}
+    <>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*,application/pdf"
+        className="hidden"
+        onChange={(e) => void handleFile(e.target.files?.[0])}
+      />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={busy}
+        className={`flex w-full items-center gap-3 rounded-2xl border p-3.5 text-left transition ${
+          done ? "border-primary bg-secondary/60" : "border-dashed border-border bg-card"
+        } shadow-soft disabled:opacity-60`}
       >
-        {done ? <CheckCircle2 className="h-5 w-5" /> : <Upload className="h-5 w-5" />}
-      </span>
-      <div className="flex-1">
-        <p className="text-sm font-semibold">{label}</p>
-        <p className="text-xs text-muted-foreground">{done ? "Uploaded ✓" : hint}</p>
-      </div>
-      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-    </button>
+        <span
+          className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+            done ? "bg-gradient-warm text-primary-foreground" : "bg-secondary text-accent"
+          }`}
+        >
+          {done ? <CheckCircle2 className="h-5 w-5" /> : <Upload className="h-5 w-5" />}
+        </span>
+        <div className="flex-1">
+          <p className="text-sm font-semibold">{label}</p>
+          <p className="text-xs text-muted-foreground">{busy ? "Uploading…" : done ? "Uploaded, tap to replace" : hint}</p>
+        </div>
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </button>
+    </>
   );
 }

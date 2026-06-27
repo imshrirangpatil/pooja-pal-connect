@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { usePoojas } from "@/lib/poojas-source";
 import type { Pooja } from "@/lib/data";
-import { ChevronRight, Clock, Sparkles, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 export const Route = createFileRoute("/poojas/")({
   validateSearch: (s: Record<string, unknown>): { q?: string } => ({
@@ -59,6 +59,8 @@ function PoojasList() {
     });
   }, [poojas, active, query]);
 
+  const popular = useMemo(() => poojas.filter((p) => p.popular).slice(0, 10), [poojas]);
+
   return (
     <MobileShell>
       <TopBar title="All Poojas" subtitle={`${filtered.length} of ${poojas.length} rituals`} />
@@ -93,15 +95,38 @@ function PoojasList() {
           ))}
         </div>
 
+        {/* Best Sellers */}
+        {active === "All" && !query.trim() && popular.length > 0 && (
+          <section className="mt-4">
+            <h2 className="text-sm font-bold">Best Sellers</h2>
+            <div className="-mx-5 mt-2 flex gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {popular.map((p) => (
+                <Link
+                  key={p.slug}
+                  to="/poojas/$slug"
+                  params={{ slug: p.slug }}
+                  className="min-w-[150px] overflow-hidden rounded-2xl border border-border/60 bg-card shadow-soft"
+                >
+                  <img src={p.image} alt={p.name} loading="lazy" className="h-24 w-full object-cover" />
+                  <div className="p-2.5">
+                    <p className="line-clamp-1 text-xs font-bold">{p.name}</p>
+                    <p className="mt-0.5 text-sm font-bold text-accent">₹{p.priceFrom.toLocaleString("en-IN")}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Cards */}
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="mt-4 grid grid-cols-2 gap-3">
           {loading &&
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-64 animate-pulse rounded-3xl bg-muted" />
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-48 animate-pulse rounded-2xl bg-muted" />
             ))}
 
           {!loading && filtered.length === 0 && (
-            <div className="rounded-3xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
+            <div className="col-span-2 rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
               No poojas match{query ? ` "${query}"` : ""}. Try another search or filter.
             </div>
           )}
@@ -111,65 +136,24 @@ function PoojasList() {
               key={p.slug}
               to="/poojas/$slug"
               params={{ slug: p.slug }}
-              className="group block overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft transition hover:-translate-y-0.5 hover:shadow-glow"
+              className="group block overflow-hidden rounded-2xl border border-border/60 bg-card shadow-soft transition hover:-translate-y-0.5 hover:shadow-glow"
             >
-              <article>
-                <div className="relative">
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    width={600}
-                    height={350}
-                    loading="lazy"
-                    className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
-
-                  {p.season && (
-                    <span className="absolute left-3.5 top-3.5 flex items-center gap-1 rounded-full bg-background/95 px-3 py-1.5 text-[11px] font-semibold text-accent backdrop-blur shadow-soft">
-                      <Sparkles className="h-3 w-3" />
-                      {p.season}
-                    </span>
-                  )}
-                  {p.samagriIncluded && (
-                    <span className="absolute right-3.5 top-3.5 rounded-full bg-maroon px-3 py-1.5 text-[11px] font-semibold text-cream shadow-soft">
-                      Samagri incl.
-                    </span>
-                  )}
+              <div className="relative aspect-[4/3]">
+                <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                {p.popular ? (
+                  <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary-foreground shadow-soft">Best Seller</span>
+                ) : p.season ? (
+                  <span className="absolute left-2 top-2 rounded-full bg-background/95 px-2 py-0.5 text-[9px] font-semibold text-accent shadow-soft">{p.season}</span>
+                ) : null}
+              </div>
+              <div className="p-2.5">
+                <h3 className="line-clamp-1 text-sm font-bold leading-tight">{p.name}</h3>
+                <p className="line-clamp-1 text-[11px] text-muted-foreground">{p.tagline}</p>
+                <div className="mt-1.5 flex items-center justify-between">
+                  <p className="text-sm font-bold text-accent">₹{p.priceFrom.toLocaleString("en-IN")}</p>
+                  {p.duration && <span className="text-[10px] text-muted-foreground">{p.duration}</span>}
                 </div>
-
-                <div className="p-3.5 pt-4">
-                  <h3 className="text-base font-bold leading-tight tracking-tight text-foreground font-display">{p.name}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">{p.tagline}</p>
-
-                  <div className="mt-3 flex items-center gap-2 text-[11px] text-muted-foreground">
-                    {p.duration && (
-                      <span className="flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
-                        <Clock className="h-3 w-3" />
-                        {p.duration}
-                      </span>
-                    )}
-                    {p.includes && p.includes.length > 0 && (
-                      <span className="rounded-full bg-secondary px-2 py-0.5">
-                        {p.includes.length} items
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-3 flex items-end justify-between">
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Starts at</p>
-                      <p className="mt-0.5 text-xl font-extrabold text-accent font-display">
-                        ₹{p.priceFrom.toLocaleString("en-IN")}
-                      </p>
-                    </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-warm px-4 py-2 text-sm font-semibold text-cream shadow-soft transition group-hover:shadow-glow">
-                      Book
-                      <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                    </span>
-                  </div>
-                </div>
-              </article>
+              </div>
             </Link>
           ))}
         </div>

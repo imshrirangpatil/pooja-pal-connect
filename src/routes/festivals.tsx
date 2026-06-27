@@ -176,9 +176,9 @@ function FestivalsPage() {
     const today = new Date(); today.setHours(0,0,0,0);
     return festivals
       .map((f) => ({ ...f, ts: parseLocalDate(f.date).getTime() }))
-      .filter((f) => f.ts >= today.getTime())
+      .filter((f) => f.ts >= today.getTime() && f.date !== isoSelected)
       .sort((a, b) => a.ts - b.ts);
-  }, [festivals]);
+  }, [festivals, isoSelected]);
 
   const festivalDates = useMemo(() => festivals.map((f) => parseLocalDate(f.date)), [festivals]);
 
