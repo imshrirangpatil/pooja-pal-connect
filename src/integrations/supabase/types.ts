@@ -22,8 +22,10 @@ export type Database = {
           is_default: boolean
           label: string
           landmark: string | null
+          latitude: number | null
           line1: string
           line2: string | null
+          longitude: number | null
           phone: string
           pincode: string
           recipient_name: string
@@ -38,8 +40,10 @@ export type Database = {
           is_default?: boolean
           label?: string
           landmark?: string | null
+          latitude?: number | null
           line1: string
           line2?: string | null
+          longitude?: number | null
           phone: string
           pincode: string
           recipient_name: string
@@ -54,8 +58,10 @@ export type Database = {
           is_default?: boolean
           label?: string
           landmark?: string | null
+          latitude?: number | null
           line1?: string
           line2?: string | null
+          longitude?: number | null
           phone?: string
           pincode?: string
           recipient_name?: string
@@ -217,6 +223,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          data: Json
+          id: string
+          is_read: boolean
+          link: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -266,17 +308,24 @@ export type Database = {
           address_label: string | null
           city: string
           created_at: string
+          credits_applied: number
           id: string
           landmark: string | null
           line1: string
           line2: string | null
+          muhurat: string | null
           notes: string | null
           pandit_id: string | null
+          pandit_name: string | null
+          pandit_ref: string | null
           payment_method: string
           payment_status: string
           phone: string
           pincode: string
+          pooja_name: string | null
+          pooja_slug: string | null
           recipient_name: string
+          scheduled_at: string | null
           shipping: number
           state: string
           status: string
@@ -289,17 +338,24 @@ export type Database = {
           address_label?: string | null
           city: string
           created_at?: string
+          credits_applied?: number
           id?: string
           landmark?: string | null
           line1: string
           line2?: string | null
+          muhurat?: string | null
           notes?: string | null
           pandit_id?: string | null
+          pandit_name?: string | null
+          pandit_ref?: string | null
           payment_method?: string
           payment_status?: string
           phone: string
           pincode: string
+          pooja_name?: string | null
+          pooja_slug?: string | null
           recipient_name: string
+          scheduled_at?: string | null
           shipping?: number
           state: string
           status?: string
@@ -312,17 +368,24 @@ export type Database = {
           address_label?: string | null
           city?: string
           created_at?: string
+          credits_applied?: number
           id?: string
           landmark?: string | null
           line1?: string
           line2?: string | null
+          muhurat?: string | null
           notes?: string | null
           pandit_id?: string | null
+          pandit_name?: string | null
+          pandit_ref?: string | null
           payment_method?: string
           payment_status?: string
           phone?: string
           pincode?: string
+          pooja_name?: string | null
+          pooja_slug?: string | null
           recipient_name?: string
+          scheduled_at?: string | null
           shipping?: number
           state?: string
           status?: string
@@ -476,6 +539,7 @@ export type Database = {
           specialties: Json
           updated_at: string
           upi_id: string | null
+          user_id: string | null
           verified: boolean
           visible: boolean
         }
@@ -496,6 +560,7 @@ export type Database = {
           specialties?: Json
           updated_at?: string
           upi_id?: string | null
+          user_id?: string | null
           verified?: boolean
           visible?: boolean
         }
@@ -516,6 +581,7 @@ export type Database = {
           specialties?: Json
           updated_at?: string
           upi_id?: string | null
+          user_id?: string | null
           verified?: boolean
           visible?: boolean
         }
@@ -575,9 +641,12 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          city: string | null
           created_at: string
           full_name: string | null
           id: string
+          latitude: number | null
+          longitude: number | null
           phone: string | null
           referral_code: string | null
           referred_by: string | null
@@ -585,9 +654,12 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
           full_name?: string | null
           id: string
+          latitude?: number | null
+          longitude?: number | null
           phone?: string | null
           referral_code?: string | null
           referred_by?: string | null
@@ -595,9 +667,12 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           phone?: string | null
           referral_code?: string | null
           referred_by?: string | null
@@ -703,6 +778,30 @@ export type Database = {
         }
         Relationships: []
       }
+      support_chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           admin_response: string | null
@@ -775,6 +874,17 @@ export type Database = {
     }
     Functions: {
       apply_referral_code: { Args: { _code: string }; Returns: Json }
+      create_notification: {
+        Args: {
+          _body?: string
+          _data?: Json
+          _link?: string
+          _title: string
+          _type: string
+          _user_id: string
+        }
+        Returns: string
+      }
       generate_referral_code: { Args: never; Returns: string }
       get_credit_balance: { Args: { _user_id: string }; Returns: number }
       has_role: {
@@ -783,6 +893,14 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      notify_admins: {
+        Args: { _body: string; _link: string; _title: string; _type: string }
+        Returns: undefined
+      }
+      redeem_credits: {
+        Args: { _amount_paise: number; _description: string }
+        Returns: number
       }
     }
     Enums: {
