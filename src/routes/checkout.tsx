@@ -5,6 +5,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Plus, Check, Wallet, Banknote, LogIn } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
@@ -40,6 +41,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useI18n();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -159,7 +161,7 @@ function CheckoutPage() {
 
       cart.clear();
       haptic([12, 30, 12]);
-      toast.success("Order placed! We'll notify you when it's on the way.");
+      toast.success(t("checkout.orderPlaced"));
       navigate({ to: "/orders" });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Could not place order";
@@ -172,7 +174,7 @@ function CheckoutPage() {
   return (
     <MobileShell>
       <TopBar
-        title="Checkout"
+        title={t("checkout.title")}
         subtitle={`${cart.count} item${cart.count === 1 ? "" : "s"} · ₹${cart.total}`}
         right={
           <BackButton fallback="/cart" className="h-10 w-10 border border-border bg-card" />
@@ -181,13 +183,13 @@ function CheckoutPage() {
 
       <section className="px-5 pt-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold">Delivery Address</h2>
+          <h2 className="text-sm font-semibold">{t("checkout.address")}</h2>
           <Link
             to="/addresses"
             search={{ redirect: "/checkout" } as never}
             className="text-xs font-semibold text-accent"
           >
-            Manage
+            {t("checkout.manage")}
           </Link>
         </div>
 
@@ -217,8 +219,8 @@ function CheckoutPage() {
               <Plus className="h-4 w-4" />
             </span>
             <div>
-              <p className="font-semibold">Add delivery address</p>
-              <p className="text-xs text-muted-foreground">Required to place order</p>
+              <p className="font-semibold">{t("checkout.addAddress")}</p>
+              <p className="text-xs text-muted-foreground">{t("checkout.addAddressSub")}</p>
             </div>
           </Link>
         ) : (
@@ -261,21 +263,21 @@ function CheckoutPage() {
       </section>
 
       <section className="px-5 pt-5">
-        <h2 className="text-sm font-semibold">Payment Method</h2>
+        <h2 className="text-sm font-semibold">{t("checkout.payment")}</h2>
         <div className="mt-3 space-y-2">
           <PayOption
             active={payment === "cod"}
             onClick={() => setPayment("cod")}
             icon={<Banknote className="h-4 w-4" />}
-            title="Cash on Delivery"
-            sub="Pay when your order arrives"
+            title={t("checkout.cod")}
+            sub={t("checkout.codSub")}
           />
           <PayOption
             active={payment === "wallet"}
             onClick={() => setPayment("wallet")}
             disabled={!walletEnough}
             icon={<Wallet className="h-4 w-4" />}
-            title="Pranam Wallet"
+            title={t("checkout.wallet")}
             sub={
               walletEnough
                 ? `Balance: ₹${walletRupees.toLocaleString("en-IN")}`
@@ -295,7 +297,7 @@ function CheckoutPage() {
       </section>
 
       <section className="mx-5 mt-5 space-y-2 rounded-2xl border border-border/60 bg-card p-4 text-sm shadow-soft">
-        <h2 className="text-sm font-semibold">Order Summary</h2>
+        <h2 className="text-sm font-semibold">{t("checkout.summary")}</h2>
         <div className="mt-1 space-y-1.5 text-xs">
           {cart.items.map(({ item, qty }) => (
             <div key={item.id} className="flex justify-between text-muted-foreground">
@@ -307,15 +309,15 @@ function CheckoutPage() {
           ))}
         </div>
         <div className="mt-2 flex justify-between border-t border-border pt-2 text-muted-foreground">
-          <span>Subtotal</span>
+          <span>{t("cart.subtotal")}</span>
           <span>₹{cart.subtotal}</span>
         </div>
         <div className="flex justify-between text-muted-foreground">
-          <span>Delivery</span>
-          <span>{cart.shipping === 0 ? "FREE" : `₹${cart.shipping}`}</span>
+          <span>{t("cart.delivery")}</span>
+          <span>{cart.shipping === 0 ? t("common.free") : `₹${cart.shipping}`}</span>
         </div>
         <div className="flex justify-between border-t border-border pt-2 text-base font-bold">
-          <span>Total</span>
+          <span>{t("cart.total")}</span>
           <span className="text-accent">₹{cart.total}</span>
         </div>
         {creditsUsedPaise > 0 && (
@@ -338,7 +340,7 @@ function CheckoutPage() {
           disabled={placing || cart.items.length === 0 || (!!user && !selectedId)}
           className="h-12 w-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
         >
-          {placing ? "Placing order…" : !user ? "Sign in to place order" : `Place Order · ₹${(payablePaise / 100).toLocaleString("en-IN")}`}
+          {placing ? t("checkout.placing") : !user ? t("checkout.signInToOrder") : `${t("checkout.placeOrder")} · ₹${(payablePaise / 100).toLocaleString("en-IN")}`}
         </Button>
       </div>
     </MobileShell>

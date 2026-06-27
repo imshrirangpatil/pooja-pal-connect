@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { useCart } from "@/lib/cart";
+import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2, Truck } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, Truck } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { toast } from "sonner";
 
@@ -19,12 +20,13 @@ export const Route = createFileRoute("/cart")({
 function CartPage() {
   const cart = useCart();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   return (
     <MobileShell>
       <TopBar
-        title="Your Cart"
-        subtitle={cart.count > 0 ? `${cart.count} item${cart.count > 1 ? "s" : ""}` : "Empty"}
+        title={t("cart.title")}
+        subtitle={cart.count > 0 ? `${cart.count} item${cart.count > 1 ? "s" : ""}` : t("cart.empty")}
         right={
           <BackButton fallback="/samagri" className="h-10 w-10 border border-border bg-card" />
         }
@@ -35,10 +37,10 @@ function CartPage() {
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary">
             <ShoppingBag className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h2 className="mt-5 text-lg font-semibold">Your cart is empty</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Add samagri kits and essentials to get started.</p>
+          <h2 className="mt-5 text-lg font-semibold">{t("cart.empty")}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("cart.emptySub")}</p>
           <Button asChild className="mt-6 bg-primary text-primary-foreground shadow-glow">
-            <Link to="/samagri">Browse Store</Link>
+            <Link to="/samagri">{t("cart.shopNow")}</Link>
           </Button>
         </div>
       ) : (
@@ -63,7 +65,7 @@ function CartPage() {
                     <button
                       onClick={() => {
                         cart.remove(item.id);
-                        toast(`${item.name} removed`);
+                        toast(`${item.name} ${t("cart.removed")}`);
                       }}
                       aria-label="Remove"
                       className="text-muted-foreground hover:text-destructive"
@@ -107,14 +109,14 @@ function CartPage() {
 
           <div className="mx-5 mt-4 space-y-2 rounded-2xl border border-border/60 bg-card p-4 text-sm shadow-soft">
             <div className="flex justify-between text-muted-foreground">
-              <span>Subtotal</span><span>₹{cart.subtotal}</span>
+              <span>{t("cart.subtotal")}</span><span>₹{cart.subtotal}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
-              <span>Delivery</span>
-              <span>{cart.shipping === 0 ? "FREE" : `₹${cart.shipping}`}</span>
+              <span>{t("cart.delivery")}</span>
+              <span>{cart.shipping === 0 ? t("common.free") : `₹${cart.shipping}`}</span>
             </div>
             <div className="mt-2 flex justify-between border-t border-border pt-2 text-base font-bold">
-              <span>Total</span><span className="text-accent">₹{cart.total}</span>
+              <span>{t("cart.total")}</span><span className="text-accent">₹{cart.total}</span>
             </div>
           </div>
 
@@ -123,7 +125,7 @@ function CartPage() {
               onClick={() => navigate({ to: "/checkout" })}
               className="h-12 w-full bg-primary text-base font-semibold text-primary-foreground shadow-glow"
             >
-              Checkout · ₹{cart.total}
+              {t("cart.checkout")} · ₹{cart.total}
             </Button>
           </div>
         </>

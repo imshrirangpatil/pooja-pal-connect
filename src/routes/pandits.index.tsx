@@ -4,6 +4,7 @@ import { MobileShell, TopBar } from "@/components/MobileShell";
 import { poojas } from "@/lib/data";
 import { usePandits } from "@/lib/pandits-source";
 import { usePanditRatings } from "@/lib/ratings";
+import { useI18n } from "@/lib/i18n";
 import { ShieldCheck, Star, MapPin, Languages, SlidersHorizontal, X, Search } from "lucide-react";
 
 export const Route = createFileRoute("/pandits/")({
@@ -33,6 +34,7 @@ const RATING_OPTIONS = [
 function Pandits() {
   const { pandits } = usePandits();
   const ratings = usePanditRatings();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState<string | null>(null);
@@ -69,7 +71,7 @@ function Pandits() {
 
   return (
     <MobileShell>
-      <TopBar title="Our Pandits" subtitle={`${filtered.length} of ${pandits.length} verified acharyas`} />
+      <TopBar title={t("pandits.title")} subtitle={`${filtered.length} / ${pandits.length} ${t("pandits.subtitle")}`} />
 
       {/* Filters bar */}
       <div className="sticky top-0 z-20 -mx-0 space-y-3 border-b border-border/60 bg-background/95 px-5 py-3 backdrop-blur-xl">
@@ -78,8 +80,8 @@ function Pandits() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by name, city, specialty or language"
-            aria-label="Search pandits"
+            placeholder={t("pandits.searchPlaceholder")}
+            aria-label={t("common.search")}
             className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm shadow-soft focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
@@ -89,7 +91,7 @@ function Pandits() {
             className="flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
-            Filters{activeCount > 0 ? ` · ${activeCount}` : ""}
+            {t("pandits.filters")}{activeCount > 0 ? ` · ${activeCount}` : ""}
           </button>
           {language && <Chip label={language} onClear={() => setLanguage(null)} />}
           {expMin > 0 && <Chip label={`${expMin}+ yrs`} onClear={() => setExpMin(0)} />}
@@ -100,7 +102,7 @@ function Pandits() {
 
       <section className="mx-5 mt-4 rounded-3xl border border-border/60 bg-card p-5 shadow-soft">
         <ShieldCheck className="h-6 w-6 text-accent" />
-        <h2 className="mt-2 text-base font-bold">4-step verification</h2>
+        <h2 className="mt-2 text-base font-bold">{t("pandits.verification")}</h2>
         <ol className="mt-3 space-y-2 text-xs text-muted-foreground">
           {["Aadhaar & ID verification", "Lineage & gurukul certification", "Shastra knowledge interview", "On-ground review by senior acharyas"].map((s, i) => (
             <li key={s} className="flex items-start gap-2">
@@ -114,8 +116,8 @@ function Pandits() {
       <div className="space-y-3 px-5 pb-6 pt-5">
         {filtered.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/60 px-4 py-10 text-center">
-            <p className="text-sm font-semibold">No pandits match these filters</p>
-            <button onClick={reset} className="mt-2 text-xs font-semibold text-primary">Reset filters</button>
+            <p className="text-sm font-semibold">{t("pandits.noMatch")}</p>
+            <button onClick={reset} className="mt-2 text-xs font-semibold text-primary">{t("pandits.resetFilters")}</button>
           </div>
         ) : (
           filtered.map((p) => (
@@ -159,7 +161,7 @@ function Pandits() {
                     ))}
                   </div>
                 </div>
-                <div className="mt-3 w-full rounded-full bg-foreground py-2.5 text-center text-xs font-semibold text-background">View Profile</div>
+                <div className="mt-3 w-full rounded-full bg-foreground py-2.5 text-center text-xs font-semibold text-background">{t("pandits.viewProfile")}</div>
               </article>
             </Link>
           ))

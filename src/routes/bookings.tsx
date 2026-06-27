@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { CalendarCheck, Clock, ChevronRight, Star, X, MapPin, Phone, CreditCard, Calendar, Loader2, LogIn } from "lucide-react";
@@ -42,6 +43,11 @@ type OrderRow = {
 
 type Tab = "Upcoming" | "Completed" | "Cancelled";
 const TABS: Tab[] = ["Upcoming", "Completed", "Cancelled"];
+const TAB_KEY: Record<Tab, string> = {
+  Upcoming: "bookings.upcoming",
+  Completed: "bookings.completed",
+  Cancelled: "bookings.cancelled",
+};
 
 function tabFor(status: string): Tab {
   if (status === "cancelled") return "Cancelled";
@@ -54,6 +60,7 @@ function bookedOn(iso: string) {
 
 export function Bookings() {
   const { user, loading: authLoading } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("Upcoming");
@@ -109,7 +116,7 @@ export function Bookings() {
   if (!authLoading && !user) {
     return (
       <MobileShell>
-        <TopBar title="My Bookings" subtitle="Upcoming & past poojas" />
+        <TopBar title={t("bookings.title")} subtitle={t("bookings.upcoming")} />
         <div className="px-5 pt-16 text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-accent">
             <CalendarCheck className="h-6 w-6" />
@@ -134,13 +141,13 @@ export function Bookings() {
       <PullToRefresh onRefresh={refreshBookings}>
       <div className="px-5 pt-4">
         <div className="flex gap-2 rounded-full border border-border bg-card p-1">
-          {TABS.map((t) => (
+          {TABS.map((tabName) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`flex-1 rounded-full py-2 text-xs font-semibold ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+              key={tabName}
+              onClick={() => setTab(tabName)}
+              className={`flex-1 rounded-full py-2 text-xs font-semibold ${tab === tabName ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
             >
-              {t}
+              {t(TAB_KEY[tabName])}
             </button>
           ))}
         </div>
@@ -347,17 +354,18 @@ function DetailItem({ icon, label, value }: { icon: React.ReactNode; label: stri
 }
 
 function EmptyState({ tab }: { tab: Tab }) {
+  const { t } = useI18n();
   return (
     <div className="mt-16 flex flex-col items-center text-center">
       <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary">
         <CalendarCheck className="h-8 w-8 text-accent" />
       </div>
-      <h3 className="mt-4 text-base font-semibold">No {tab.toLowerCase()} bookings</h3>
+      <h3 className="mt-4 text-base font-semibold">{t("bookings.empty")}</h3>
       <p className="mt-1 max-w-xs text-xs text-muted-foreground">
-        {tab === "Upcoming" ? "Book a pooja and it will show up here." : `You have no ${tab.toLowerCase()} bookings yet.`}
+        {tab === "Upcoming" ? t("bookings.emptySub") : t("bookings.empty")}
       </p>
       <Link to="/poojas" className="mt-4 rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-glow">
-        Browse poojas
+        {t("bookings.bookPooja")}
       </Link>
     </div>
   );
