@@ -1,0 +1,11 @@
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_credit_balance(uuid) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.apply_referral_code(text) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.redeem_credits(integer, text) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.create_notification(uuid, text, text, text, text, jsonb) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.notify_admins(text, text, text, text) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.notify_on_application_insert() FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.notify_on_ticket_insert() FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.notify_on_order_insert() FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.notify_on_order_update() FROM anon, PUBLIC;
