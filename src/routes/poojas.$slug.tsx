@@ -5,6 +5,7 @@ import { BackButton } from "@/components/BackButton";
 import { poojas as seedPoojas } from "@/lib/data";
 import { rowToPooja } from "@/lib/poojas-source";
 import { usePandits } from "@/lib/pandits-source";
+import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, Clock, ShieldCheck, Calendar, MapPin } from "lucide-react";
 
@@ -41,6 +42,7 @@ function PoojaDetail() {
   const { pooja } = Route.useLoaderData();
   const { pandit: selectedPanditId } = Route.useSearch();
   const { pandits } = usePandits();
+  const { t } = useI18n();
   const selectedPandit = selectedPanditId ? pandits.find((p) => p.id === selectedPanditId) : undefined;
   const suggested = selectedPandit
     ? [selectedPandit, ...pandits.filter((p) => p.id !== selectedPandit.id).slice(0, 1)]
@@ -69,13 +71,13 @@ function PoojaDetail() {
 
         <div className="mt-4 flex flex-wrap gap-2">
           <Chip icon={<Clock className="h-3 w-3" />} text={pooja.duration} />
-          {pooja.samagriIncluded && <Chip icon={<Check className="h-3 w-3" />} text="Samagri included" />}
-          <Chip icon={<ShieldCheck className="h-3 w-3" />} text="Verified pandit" />
+          {pooja.samagriIncluded && <Chip icon={<Check className="h-3 w-3" />} text={t("pd.samagriIncluded")} />}
+          <Chip icon={<ShieldCheck className="h-3 w-3" />} text={t("pd.verifiedPandit")} />
         </div>
 
         <p className="mt-5 text-sm leading-relaxed text-foreground/90">{pooja.description}</p>
 
-        <h2 className="mt-7 text-base font-semibold">What's included</h2>
+        <h2 className="mt-7 text-base font-semibold">{t("pd.whatsIncluded")}</h2>
         <ul className="mt-3 space-y-2.5">
           {pooja.includes.map((i: string) => (
             <li key={i} className="flex items-center gap-3 text-sm">
@@ -87,7 +89,7 @@ function PoojaDetail() {
           ))}
         </ul>
 
-        <h2 className="mt-7 text-base font-semibold">Pick a muhurat</h2>
+        <h2 className="mt-7 text-base font-semibold">{t("pd.pickMuhurat")}</h2>
         <div className="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {[
             { d: "Today", t: "Brahma Muhurat · 5:12 AM", hot: true },
@@ -100,12 +102,12 @@ function PoojaDetail() {
                 <Calendar className="h-3 w-3" /> {m.d}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">{m.t}</p>
-              {m.hot && <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-accent">Most auspicious</p>}
+              {m.hot && <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-accent">{t("pd.mostAuspicious")}</p>}
             </button>
           ))}
         </div>
 
-        <h2 className="mt-7 text-base font-semibold">{selectedPandit ? "Selected pandit" : "Suggested pandits"}</h2>
+        <h2 className="mt-7 text-base font-semibold">{selectedPandit ? t("pd.selectedPandit") : t("pd.suggestedPandits")}</h2>
         <div className="mt-3 space-y-2.5">
           {suggested.map((p) => {
             const isSelected = selectedPandit?.id === p.id;
@@ -120,7 +122,7 @@ function PoojaDetail() {
                 </div>
                 {isSelected ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground">
-                    <Check className="h-3 w-3" /> Picked
+                    <Check className="h-3 w-3" /> {t("pd.picked")}
                   </span>
                 ) : (
                   <Link
@@ -129,14 +131,14 @@ function PoojaDetail() {
                     search={{ pandit: p.id }}
                     className="rounded-full bg-secondary px-3 py-1.5 text-[11px] font-semibold text-secondary-foreground"
                   >
-                    Pick
+                    {t("pd.pick")}
                   </Link>
                 )}
               </div>
             );
           })}
           <Link to="/pandits" className="block rounded-2xl border border-dashed border-border bg-card p-3 text-center text-xs font-semibold text-primary">
-            Browse all verified pandits →
+            {t("pd.browseAllPandits")} →
           </Link>
         </div>
 
@@ -147,7 +149,7 @@ function PoojaDetail() {
       <div className="fixed bottom-16 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-card/95 px-5 py-3 backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{t("pd.total")}</p>
             <p className="text-lg font-bold text-accent">₹{(selectedPandit?.feeFrom ?? pooja.priceFrom).toLocaleString("en-IN")}</p>
           </div>
           <Link
@@ -155,7 +157,7 @@ function PoojaDetail() {
             search={{ slug: pooja.slug, pandit: selectedPandit?.id }}
             className="flex-1 rounded-full bg-primary py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-glow"
           >
-            {selectedPandit ? `Book ${selectedPandit.name.split(" ").slice(-1)[0]} Ji` : "Book Pandit Now"}
+            {selectedPandit ? t("pd.bookNamed").replace("{name}", selectedPandit.name.split(" ").slice(-1)[0]) : t("pd.bookNow")}
           </Link>
         </div>
       </div>

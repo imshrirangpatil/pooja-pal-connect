@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { BackButton } from "@/components/BackButton";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/lib/notifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { PullToRefresh } from "@/components/PullToRefresh";
@@ -17,21 +18,22 @@ export const Route = createFileRoute("/notifications")({
   component: NotificationsPage,
 });
 
-function timeAgo(iso: string): string {
+function timeAgo(iso: string, t: (k: string, f?: string) => string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t("notif.justNow");
+  if (mins < 60) return t("notif.minutesAgo").replace("{n}", String(mins));
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  if (hrs < 24) return t("notif.hoursAgo").replace("{n}", String(hrs));
   const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return t("notif.daysAgo").replace("{n}", String(days));
   return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
 function NotificationsPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { items, unreadCount, loading, markRead, markAllRead } = useNotifications();
   const qc = useQueryClient();
   const refresh = () => qc.invalidateQueries({ queryKey: ["notifications", user?.id] });
@@ -39,18 +41,18 @@ function NotificationsPage() {
   if (!authLoading && !user) {
     return (
       <MobileShell>
-        <TopBar title="Notifications" right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />} />
+        <TopBar title={t("notif.title")} right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />} />
         <div className="px-5 pt-16 text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-accent">
             <Bell className="h-6 w-6" />
           </span>
-          <p className="mt-4 text-sm font-semibold">Sign in to see your updates</p>
-          <p className="mt-1 text-xs text-muted-foreground">Booking, order and payment alerts appear here once you sign in.</p>
+          <p className="mt-4 text-sm font-semibold">{t("notif.signInTitle")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("notif.signInSub")}</p>
           <button
             onClick={() => navigate({ to: "/welcome" })}
             className="mx-auto mt-5 inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow"
           >
-            <LogIn className="h-4 w-4" /> Sign in
+            <LogIn className="h-4 w-4" /> {t("profile.signIn")}
           </button>
         </div>
       </MobileShell>
@@ -60,8 +62,8 @@ function NotificationsPage() {
   return (
     <MobileShell>
       <TopBar
-        title="Notifications"
-        subtitle={unreadCount ? `${unreadCount} unread` : "You are all caught up"}
+        title={t("notif.title")}
+        subtitle={unreadCount ? t("notif.unread").replace("{n}", String(unreadCount)) : t("notif.allCaught")}
         right={<BackButton fallback="/profile" className="h-10 w-10 border border-border bg-card" />}
       />
 
@@ -72,7 +74,7 @@ function NotificationsPage() {
             onClick={() => markAllRead()}
             className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-2 text-xs font-semibold text-primary"
           >
-            <CheckCheck className="h-3.5 w-3.5" /> Mark all as read
+            <CheckCheck className="h-3.5 w-3.5" /> {t("notif.markAll")}
           </button>
         )}
 
@@ -84,8 +86,8 @@ function NotificationsPage() {
         ) : items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center shadow-soft">
             <BellOff className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm font-semibold">No notifications yet</p>
-            <p className="text-xs text-muted-foreground">We will let you know about bookings, orders and payments here.</p>
+            <p className="mt-2 text-sm font-semibold">{t("notif.empty")}</p>
+            <p className="text-xs text-muted-foreground">{t("notif.emptySub")}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -106,7 +108,7 @@ function NotificationsPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-sm font-semibold leading-tight">{n.title}</p>
-                    <span className="shrink-0 text-[10px] text-muted-foreground">{timeAgo(n.created_at)}</span>
+                    <span className="shrink-0 text-[10px] text-muted-foreground">{timeAgo(n.created_at, t)}</span>
                   </div>
                   {n.body && <p className="mt-0.5 text-xs text-muted-foreground">{n.body}</p>}
                 </div>
