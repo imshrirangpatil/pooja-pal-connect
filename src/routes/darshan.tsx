@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { useI18n } from "@/lib/i18n";
-import { Video, MapPin, ChevronRight, ExternalLink } from "lucide-react";
+import { Video, MapPin, ChevronRight, ExternalLink, Volume2, VolumeX } from "lucide-react";
 
 export const Route = createFileRoute("/darshan")({
   head: () => ({
@@ -35,8 +35,10 @@ const TEMPLES: Temple[] = [
   { id: "iskcon", name: "ISKCON Krishna Darshan", city: "Bengaluru", channelId: "UCPXnayBvF7ynbG_I3VOTgIg", source: "ISKCON Bangalore" },
 ];
 
-function embedUrl(channelId: string) {
-  return `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1`;
+function embedUrl(channelId: string, muted: boolean) {
+  // Browsers only allow autoplay when muted, so the stream starts muted and the
+  // viewer taps the sound button to unmute (which reloads the embed unmuted).
+  return `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=${muted ? 1 : 0}&playsinline=1`;
 }
 function watchUrl(channelId: string) {
   return `https://www.youtube.com/channel/${channelId}/live`;
@@ -44,7 +46,14 @@ function watchUrl(channelId: string) {
 
 function DarshanPage() {
   const [selected, setSelected] = useState<Temple>(TEMPLES[0]);
+  const [muted, setMuted] = useState(true);
   const { t } = useI18n();
+
+  // Selecting a different temple should start muted again (autoplay needs it).
+  const pickTemple = (temple: Temple) => {
+    setSelected(temple);
+    setMuted(true);
+  };
 
   return (
     <MobileShell>
@@ -54,14 +63,31 @@ function DarshanPage() {
         <div className="overflow-hidden rounded-3xl border border-primary/20 bg-card shadow-soft">
           <div className="relative aspect-video w-full bg-black">
             <iframe
-              key={selected.id}
-              src={embedUrl(selected.channelId)}
+              key={`${selected.id}-${muted ? "m" : "s"}`}
+              src={embedUrl(selected.channelId, muted)}
               title={`${selected.name} live darshan`}
               allow="autoplay; encrypted-media; picture-in-picture"
               allowFullScreen
               loading="lazy"
               className="absolute inset-0 h-full w-full"
             />
+            <button
+              type="button"
+              onClick={() => setMuted((m) => !m)}
+              aria-label={muted ? "Unmute" : "Mute"}
+              className="absolute bottom-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition active:scale-95"
+            >
+              {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+            </button>
+            {muted && (
+              <button
+                type="button"
+                onClick={() => setMuted(false)}
+                className="absolute bottom-3 left-3 z-10 rounded-full bg-primary/90 px-3 py-1.5 text-[11px] font-semibold text-primary-foreground shadow-soft"
+              >
+                Tap for sound
+              </button>
+            )}
           </div>
           <div className="flex items-center justify-between gap-3 p-4">
             <div className="min-w-0">
@@ -98,7 +124,7 @@ function DarshanPage() {
             return (
               <button
                 key={temple.id}
-                onClick={() => setSelected(temple)}
+                onClick={() => pickTemple(temple)}
                 className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left shadow-soft transition ${
                   active ? "border-primary bg-primary/5" : "border-border/60 bg-card"
                 }`}

@@ -353,10 +353,10 @@ function ChatPage() {
                 source="astro_chat"
                 referenceId={sessionId}
                 compact
-                onSubmitted={() => setTimeout(() => navigate({ to: "/astrology" }), 800)}
+                onSubmitted={() => setTimeout(() => navigate({ to: "/astrology", replace: true }), 800)}
               />
               <button
-                onClick={() => navigate({ to: "/astrology" })}
+                onClick={() => navigate({ to: "/astrology", replace: true })}
                 className="mt-3 w-full rounded-full border border-border bg-card py-2.5 text-xs font-semibold text-muted-foreground"
               >
                 Skip for now

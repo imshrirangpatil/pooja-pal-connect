@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Mic, MicOff, Phone, Video, VideoOff, Volume2, MessageCircle, Sparkles, Signal } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
@@ -155,7 +155,8 @@ function CallPage() {
     loopRef.current = null;
     streamRef.current?.getTracks().forEach((t) => t.stop());
     setStatus("ended");
-    setTimeout(() => navigate({ to: "/astrology/chat/$id", params: { id } }), 600);
+    // Replace (not push) so pressing back from the chat does not relaunch the call.
+    setTimeout(() => navigate({ to: "/astrology/chat/$id", params: { id }, replace: true }), 600);
   };
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
@@ -209,14 +210,18 @@ function CallPage() {
         <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80">
           <Signal className="h-3 w-3" /> {connQuality}
         </span>
-        <Link
-          to="/astrology/chat/$id"
-          params={{ id: astrologer.id }}
+        <button
+          type="button"
+          onClick={() => {
+            loopRef.current?.close();
+            streamRef.current?.getTracks().forEach((t) => t.stop());
+            navigate({ to: "/astrology/chat/$id", params: { id: astrologer.id }, replace: true });
+          }}
           className="rounded-full bg-white/10 p-2 hover:bg-white/20"
           aria-label="Switch to chat"
         >
           <MessageCircle className="h-4 w-4" />
-        </Link>
+        </button>
       </header>
 
       {/* Astrologer identity (only on audio, or while ringing for video) */}

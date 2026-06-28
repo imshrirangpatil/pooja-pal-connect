@@ -6,7 +6,8 @@ import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 import { MobileShell, TopBar } from "@/components/MobileShell";
 import { PullToRefresh } from "@/components/PullToRefresh";
-import { CalendarCheck, Clock, ChevronRight, Star, X, MapPin, Phone, CreditCard, Calendar, Loader2, LogIn } from "lucide-react";
+import { CalendarCheck, Clock, ChevronRight, Star, X, MapPin, Phone, CreditCard, Calendar, Loader2, LogIn, Video } from "lucide-react";
+import { meetingLink } from "@/lib/meeting";
 import { ReviewModule } from "@/components/ReviewModule";
 import { toast } from "sonner";
 
@@ -267,12 +268,25 @@ export function Bookings() {
                 </div>
 
                 {tabFor(details.status) === "Upcoming" && (
-                  <button
-                    onClick={() => setConfirmCancel(details)}
-                    className="w-full rounded-full border border-destructive/30 bg-destructive/10 py-2.5 text-xs font-semibold text-destructive hover:bg-destructive/15"
-                  >
-                    Cancel booking
-                  </button>
+                  <>
+                    <a
+                      href={meetingLink(details.id)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-glow"
+                    >
+                      <Video className="h-4 w-4" /> Join the pooja video call
+                    </a>
+                    <p className="-mt-1 text-center text-[11px] text-muted-foreground">
+                      Open this at your muhurat. Your pandit joins the same call.
+                    </p>
+                    <button
+                      onClick={() => setConfirmCancel(details)}
+                      className="w-full rounded-full border border-destructive/30 bg-destructive/10 py-2.5 text-xs font-semibold text-destructive hover:bg-destructive/15"
+                    >
+                      Cancel booking
+                    </button>
+                  </>
                 )}
               </div>
             </div>

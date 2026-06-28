@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Camera, Wallet, Star, MapPin, ShieldCheck, CalendarClock, Loader2 } from "lucide-react";
+import { Camera, Wallet, Star, MapPin, ShieldCheck, CalendarClock, Loader2, Video } from "lucide-react";
 import { INTERVIEW_BOOKING_URL } from "@/lib/partner";
+import { meetingLink } from "@/lib/meeting";
 
 export const Route = createFileRoute("/pandit")({
   head: () => ({ meta: [{ title: "Pandit Portal - Pranam" }] }),
@@ -215,6 +216,16 @@ function PanditPortal() {
                           <p className="text-[10px] capitalize text-muted-foreground">{b.status}</p>
                         </div>
                       </div>
+                      {b.status !== "cancelled" && b.status !== "completed" && b.status !== "delivered" && (
+                        <a
+                          href={meetingLink(b.id)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground"
+                        >
+                          <Video className="h-3 w-3" /> Join the pooja call
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>

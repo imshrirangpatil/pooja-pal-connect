@@ -7,7 +7,8 @@ import { useUnreadCount } from "@/lib/notifications";
 import { useAuth } from "@/lib/auth";
 import { useCity, CITIES } from "@/lib/city";
 import { useI18n } from "@/lib/i18n";
-import { Search, MapPin, Bell, Flame, ChevronRight, Star, Zap, Video, X, Check } from "lucide-react";
+import { Search, MapPin, Bell, Flame, ChevronRight, Star, Zap, Video, X, Check, Navigation, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import logoAsset from "@/assets/pranam-logo.png.asset.json";
 import heroImg from "@/assets/hero-pooja.jpg";
 import astroImg from "@/assets/cat-astrology.jpg";
@@ -34,10 +35,50 @@ function Home() {
   const { t } = useI18n();
   const { city, setCity } = useCity();
   const [cityOpen, setCityOpen] = useState(false);
+  const [detecting, setDetecting] = useState(false);
   const [search, setSearch] = useState("");
   const runSearch = () => {
     const q = search.trim();
     navigate({ to: "/poojas", search: q ? { q } : {} });
+  };
+
+  // Detect the user's city from their device location (no API key, via OpenStreetMap).
+  const detectCity = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      toast.error("Location is not available on this device");
+      return;
+    }
+    setDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&addressdetails=1`,
+            { headers: { Accept: "application/json" } },
+          );
+          const json = await res.json();
+          const a = json.address ?? {};
+          const detected = a.city || a.town || a.village || a.suburb || a.county || a.state_district;
+          if (detected) {
+            setCity(detected);
+            setCityOpen(false);
+            toast.success(`Location set to ${detected}`);
+          } else {
+            toast.error("Could not find your city, please pick it below");
+          }
+        } catch {
+          toast.error("Could not detect your location");
+        } finally {
+          setDetecting(false);
+        }
+      },
+      () => {
+        setDetecting(false);
+        toast.error("Location permission denied. Pick your city below.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
   };
 
   const fullName = (user?.user_metadata?.full_name as string) || (user?.user_metadata?.name as string) || "";
@@ -54,6 +95,14 @@ function Home() {
                 <X className="h-4 w-4" />
               </button>
             </div>
+            <button
+              onClick={detectCity}
+              disabled={detecting}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-primary/40 bg-primary/5 py-2.5 text-sm font-semibold text-primary disabled:opacity-60"
+            >
+              {detecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Navigation className="h-4 w-4" />}
+              {detecting ? "Detecting your location..." : "Use my current location"}
+            </button>
             <div className="mt-3 grid grid-cols-2 gap-2">
               {CITIES.map((c) => (
                 <button

@@ -147,7 +147,10 @@ function Profile() {
       </div>
 
       {user && (
-        <button onClick={handleLogout} className="mx-auto mt-6 flex items-center gap-2 text-sm font-medium text-accent">
+        <button
+          onClick={handleLogout}
+          className="mx-5 mt-6 flex w-[calc(100%-2.5rem)] items-center justify-center gap-2 rounded-2xl border border-destructive/40 bg-destructive/5 py-3.5 text-sm font-semibold text-destructive shadow-soft active:scale-[0.99]"
+        >
           <LogOut className="h-4 w-4" /> {t("profile.logout")}
         </button>
       )}

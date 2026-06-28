@@ -53,11 +53,22 @@ export function usePandits() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data, error } = await (supabase as any)
+      const base = "ref, name, city, experience, rating, reviews, languages, specialties, pooja_slugs, bio, fee_from, verified, initials";
+      // photo_url arrives in a later migration. Try with it, and if the column
+      // is not there yet, fall back to the base columns so the pandits list (and
+      // any newly approved pandits) still loads instead of dropping to the seed.
+      let { data, error } = await (supabase as any)
         .from("pandits")
-        .select("ref, name, city, experience, rating, reviews, languages, specialties, pooja_slugs, bio, fee_from, verified, initials, photo_url")
+        .select(`${base}, photo_url`)
         .eq("visible", true)
         .order("rating", { ascending: false });
+      if (error) {
+        ({ data, error } = await (supabase as any)
+          .from("pandits")
+          .select(base)
+          .eq("visible", true)
+          .order("rating", { ascending: false }));
+      }
       if (cancelled) return;
       if (!error && data && data.length > 0) {
         setPandits((data as PanditRow[]).map(rowToPandit));

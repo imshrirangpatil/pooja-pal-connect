@@ -1,6 +1,5 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { canGoBack } from "@/lib/nav-stack";
 import { cn } from "@/lib/utils";
 
 interface BackButtonProps {
@@ -30,12 +29,15 @@ export function BackButton({
   const navigate = useNavigate();
 
   const onClick = () => {
-    // Only pop the browser history when we tracked an in-app step to return to
-    // AND the browser actually has an entry to go back to. Otherwise (deep link,
-    // hard refresh, opened in a new tab) go to a sensible parent so back never
-    // dead-ends or leaves the app.
-    const hasBrowserHistory = typeof window !== "undefined" && window.history.length > 1;
-    if (canGoBack() && hasBrowserHistory) {
+    // Use the router's own history: canGoBack() is true only when the user
+    // navigated to this page from somewhere inside the app this session. On a
+    // deep link, hard refresh, or a page reached via `replace`, it is false and
+    // we go to a sensible parent, so back never dead-ends or leaves the app.
+    const canBack =
+      typeof router.history.canGoBack === "function"
+        ? router.history.canGoBack()
+        : typeof window !== "undefined" && window.history.length > 1;
+    if (canBack) {
       router.history.back();
     } else {
       navigate({ to: fallback });
